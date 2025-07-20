@@ -1,0 +1,91 @@
+{
+  "name": "@narthia/jira-client",
+  "version": "0.0.0",
+  "description": "A production-ready npm package template with TypeScript, dual ESM/CJS support, and comprehensive tooling",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.cjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "prepublishOnly": "bun run clean && bun run build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish"
+  },
+  "keywords": [
+    "jira",
+    "api",
+    "client",
+    "typescript",
+    "forge",
+    "atlassian",
+    "rest-api",
+    "nodejs",
+    "sdk"
+  ],
+  "author": {
+    "name": "Jeevan Karnati",
+    "email": "jeevanreddy1999@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/narthia/jira-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/narthia/jira-client/issues"
+  },
+  "homepage": "https://github.com/narthia/jira-client#readme",
+  "peerDependencies": {
+    "@forge/api": "^5.0.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@forge/api": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.5",
+    "@eslint/js": "^9.31.0",
+    "@forge/api": "^6.0.1",
+    "@types/node": "^24.0.15",
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "jiti": "^2.4.2",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

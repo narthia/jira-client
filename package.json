@@ -1,6 +1,6 @@
 {
   "name": "@narthia/jira-client",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A production-ready npm package template with TypeScript, dual ESM/CJS support, and comprehensive tooling",
   "type": "module",
   "main": "./dist/index.js",

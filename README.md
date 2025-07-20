@@ -1,6 +1,6 @@
-# @narthia/test-new-client
+# @narthia/jira-client
 
-A production-ready TypeScript Jira API client with dual ESM/CJS support, designed for both standard Jira REST API and Atlassian Forge applications.
+A Jira API client with dual ESM/CJS support, designed for both standard Jira REST API and Atlassian Forge applications. **This project is 100% written in TypeScript** with comprehensive type definitions and zero runtime dependencies for standard usage.
 
 ## Features
 
@@ -13,7 +13,7 @@ A production-ready TypeScript Jira API client with dual ESM/CJS support, designe
 ## Installation
 
 ```bash
-npm install @narthia/test-new-client
+npm install @narthia/jira-client
 ```
 
 ## Quick Start
@@ -21,7 +21,7 @@ npm install @narthia/test-new-client
 ### Standard Jira REST API Client
 
 ```typescript
-import { createJiraClient } from "@narthia/test-new-client";
+import { createJiraClient } from "@narthia/jira-client";
 
 const client = createJiraClient({
   type: "default",
@@ -46,7 +46,7 @@ if (issue.success) {
 ### Atlassian Forge Client
 
 ```typescript
-import { createJiraClient } from "@narthia/test-new-client";
+import { createJiraClient } from "@narthia/jira-client";
 import api from "@forge/api";
 
 const client = createJiraClient({
@@ -184,5 +184,5 @@ See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
 ## Support
 
 - 📧 Email: jeevanreddy1999@gmail.com
-- 🐛 Issues: [GitHub Issues](https://github.com/narthia/test-jira-client/issues)
-- 📖 Documentation: [GitHub Repository](https://github.com/narthia/test-jira-client)
+- 🐛 Issues: [GitHub Issues](https://github.com/narthia/jira-client/issues)
+- 📖 Documentation: [GitHub Repository](https://github.com/narthia/jira-client)

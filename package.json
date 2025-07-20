@@ -1,7 +1,7 @@
 {
   "name": "@narthia/jira-client",
   "version": "0.1.0",
-  "description": "A production-ready npm package template with TypeScript, dual ESM/CJS support, and comprehensive tooling",
+  "description": "A Jira API client with dual ESM/CJS support, designed for both standard Jira REST API and Atlassian Forge applications. **This project is 100% written in TypeScript** with comprehensive type definitions and zero runtime dependencies for standard usage.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.cjs",

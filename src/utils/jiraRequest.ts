@@ -19,7 +19,7 @@ const jiraRequest = async <TClient extends ClientType, TResponse>(
     });
   } else if (config.type === "forge") {
     const { auth } = config;
-    const as = (opts as ForgeRequestOpts)?.as ?? "app";
+    const as = (opts as ForgeRequestOpts)?.as ?? "user";
 
     apiCall = (as === "app" ? auth.api.asApp() : auth.api.asUser()).requestJira(path as Route, {
       method,

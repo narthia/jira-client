@@ -57,7 +57,7 @@ const client = new JiraClient({
 // Get an issue in Forge context
 const issue = await client.issue.get({
   pathParams: { issueKeyOrId: "PROJ-123" },
-  opts: { as: "app" },
+  opts: { as: "app" }, // by default its user
 });
 
 if (issue.success) {
@@ -66,6 +66,68 @@ if (issue.success) {
 ```
 
 ## API Reference
+
+### Method Parameters
+
+Most client methods accept an options object with the following properties:
+
+- `pathParams`: An object containing variables to be substituted into the URL path. For example, `{ issueKeyOrId: "PROJ-123" }` will replace the corresponding placeholder in the endpoint path.
+- `queryParams`: An object representing URL query string parameters. For example, `{ fields: "summary,description" }` will be serialized as `?fields=summary,description`.
+- `body`: The request payload for methods that send data (such as POST, PUT, PATCH). For example, `{ fields: { summary: "New summary" } }`.
+- `opts`: Additional options for the request. This may include:
+  - `as`: For Forge apps, set to `"app"` to act as the app instead of the user.
+  - `headers`: An object of custom HTTP headers to include in the request (e.g., `{ "X-Custom-Header": "value" }`).
+
+#### Default Headers
+
+By default, the client sets the following headers for all requests:
+
+- `Accept`: `application/json`
+- `Content-Type`: `application/json` (for requests with a body)
+
+> **Note:** The `Authorization` header is set automatically based on your authentication method (API token) only for the `default` client type. It is not used for Forge apps.
+
+You can override or add additional headers using the `opts.headers` option.
+
+#### Example Usage
+
+```typescript
+// Get an issue with path and query parameters
+const issue = await client.issue.get({
+  pathParams: { issueKeyOrId: "PROJ-123" },
+  queryParams: { fields: "summary,description,status" },
+});
+
+// Create an issue with a request body
+const created = await client.issue.create({
+  body: {
+    fields: {
+      project: { key: "PROJ" },
+      summary: "New issue",
+      issuetype: { name: "Task" },
+    },
+  },
+});
+
+// Use 'as' in opts for Forge-specific options
+// In Atlassian Forge apps, you can specify the permission context for API requests.
+// By default, requests are made as the user. If you want to perform the request as the app (with app-level permissions),
+// pass opts: { as: "app" }. This is useful for operations that require app-level access or automation.
+const issueForge = await client.issue.get({
+  pathParams: { issueKeyOrId: "PROJ-123" },
+  opts: { as: "app" },
+});
+
+// Add custom headers using opts.headers
+const issueWithHeaders = await client.issue.get({
+  pathParams: { issueKeyOrId: "PROJ-123" },
+  opts: {
+    headers: {
+      "X-Custom-Header": "my-value",
+    },
+  },
+});
+```
 
 ### Currently Available Methods
 

@@ -4,12 +4,13 @@ import project from "./services/project";
 import status from "./services/status";
 import issueType from "./services/issuetype";
 
-class JiraClient<TClient extends ClientType> {
+class JiraClientImpl<TClient extends ClientType = ClientType> {
   public issue: ReturnType<typeof issue<TClient>>;
   public project: ReturnType<typeof project<TClient>>;
   public status: ReturnType<typeof status<TClient>>;
   public issueType: ReturnType<typeof issueType<TClient>>;
-  constructor(config: TClient extends "default" ? DefaultJiraConfig : ForgeJiraConfig) {
+
+  constructor(config: DefaultJiraConfig | ForgeJiraConfig) {
     this.issue = issue(config);
     this.project = project(config);
     this.status = status(config);
@@ -17,10 +18,10 @@ class JiraClient<TClient extends ClientType> {
   }
 }
 
-export function createJiraClient(config: DefaultJiraConfig): JiraClient<"default">;
-export function createJiraClient(config: ForgeJiraConfig): JiraClient<"forge">;
-export function createJiraClient(
-  config: DefaultJiraConfig | ForgeJiraConfig
-): JiraClient<ClientType> {
-  return new JiraClient(config);
+// Constructor overloads for type inference
+export interface JiraClient {
+  new (config: DefaultJiraConfig): JiraClientImpl<"default">;
+  new (config: ForgeJiraConfig): JiraClientImpl<"forge">;
 }
+
+export const JiraClient: JiraClient = JiraClientImpl;

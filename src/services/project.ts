@@ -16,7 +16,7 @@ import { queryParamBuilder } from "../utils/params";
 import { getForgeRoute } from "../utils/forgeUtils";
 
 export default function project<TClient extends ClientType>(
-  config: TClient extends "default" ? DefaultJiraConfig : ForgeJiraConfig
+  config: DefaultJiraConfig | ForgeJiraConfig
 ) {
   return {
     get: async (jiraRequestObj: GetProjectRequest<TClient>) => {

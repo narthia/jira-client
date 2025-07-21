@@ -21,9 +21,9 @@ npm install @narthia/jira-client
 ### Standard Jira REST API Client
 
 ```typescript
-import { createJiraClient } from "@narthia/jira-client";
+import { JiraClient } from "@narthia/jira-client";
 
-const client = createJiraClient({
+const client = new JiraClient({
   type: "default",
   auth: {
     email: "your-email@example.com",
@@ -46,10 +46,10 @@ if (issue.success) {
 ### Atlassian Forge Client
 
 ```typescript
-import { createJiraClient } from "@narthia/jira-client";
+import { JiraClient } from "@narthia/jira-client";
 import api from "@forge/api";
 
-const client = createJiraClient({
+const client = new JiraClient({
   type: "forge",
   auth: { api },
 });

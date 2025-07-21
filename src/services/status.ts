@@ -16,7 +16,7 @@ import type {
 } from "../types/services/status";
 
 export default function status<TClient extends ClientType>(
-  config: TClient extends "default" ? DefaultJiraConfig : ForgeJiraConfig
+  config: DefaultJiraConfig | ForgeJiraConfig
 ) {
   return {
     bulkGet: async (jiraRequestObj: BulkGetStatusesRequest<TClient>) => {

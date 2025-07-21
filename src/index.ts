@@ -3,4 +3,4 @@ export * from "./types";
 export * from "./client";
 
 // Default export for convenience
-export { createJiraClient } from "./client";
+export { JiraClient } from "./client";

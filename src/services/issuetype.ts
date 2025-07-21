@@ -16,7 +16,7 @@ import type {
 } from "../types/services/issuetype";
 
 export default function issueType<TClient extends ClientType>(
-  config: TClient extends "default" ? DefaultJiraConfig : ForgeJiraConfig
+  config: DefaultJiraConfig | ForgeJiraConfig
 ) {
   return {
     get: async (jiraRequestObj: GetIssueTypeRequest<TClient>) => {

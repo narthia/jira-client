@@ -85,7 +85,9 @@ By default, the client sets the following headers for all requests:
 - `Accept`: `application/json`
 - `Content-Type`: `application/json` (for requests with a body)
 
-> **Note:** The `Authorization` header is set automatically based on your authentication method (API token) only for the `default` client type. It is not used for Forge apps.
+> **Experimental Endpoints:** For Jira Cloud endpoints that require experimental API access, the client automatically sets the `X-ExperimentalApi: opt-in` header. This header is only sent when needed for such endpoints.
+
+> **Authorization:** The `Authorization` header is set automatically based on your authentication method (API token) only for the `default` client type. It is not used for Forge apps.
 
 You can override or add additional headers using the `opts.headers` option.
 

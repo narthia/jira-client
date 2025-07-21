@@ -75,7 +75,7 @@ Most client methods accept an options object with the following properties:
 - `queryParams`: An object representing URL query string parameters. For example, `{ fields: "summary,description" }` will be serialized as `?fields=summary,description`.
 - `body`: The request payload for methods that send data (such as POST, PUT, PATCH). For example, `{ fields: { summary: "New summary" } }`.
 - `opts`: Additional options for the request. This may include:
-  - `as`: For Forge apps, set to `"app"` to act as the app instead of the user.
+  - `as`: For Forge apps, requests are made as the user by default, but you can set to `"app"` to act as the app instead of the user.
   - `headers`: An object of custom HTTP headers to include in the request (e.g., `{ "X-Custom-Header": "value" }`).
 
 #### Default Headers
@@ -110,9 +110,10 @@ const created = await client.issue.create({
 });
 
 // Use 'as' in opts for Forge-specific options
-// In Atlassian Forge apps, you can specify the permission context for API requests.
-// By default, requests are made as the user. If you want to perform the request as the app (with app-level permissions),
-// pass opts: { as: "app" }. This is useful for operations that require app-level access or automation.
+// In Atlassian Forge apps, requests are made as the user by default.
+// If you want to perform the request as the app (with app-level permissions),
+// pass opts: { as: "app" }.
+// This is useful for operations that require app-level access or automation.
 const issueForge = await client.issue.get({
   pathParams: { issueKeyOrId: "PROJ-123" },
   opts: { as: "app" },

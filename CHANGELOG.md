@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.1.1
+
+### Patch Changes
+
+- aec4756: Removed function and Added Class export
+
 ## 0.1.0
 
 ### Initial Release

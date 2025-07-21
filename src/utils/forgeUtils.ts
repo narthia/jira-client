@@ -2,7 +2,7 @@
 export async function getForgeRoute() {
   try {
     const forgeApi = await import("@forge/api");
-    return forgeApi.route;
+    return forgeApi.assumeTrustedRoute;
   } catch (_error) {
     return null;
   }

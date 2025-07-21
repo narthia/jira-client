@@ -6,7 +6,6 @@ import type {
 } from "../types/global";
 import jiraRequest from "../utils/jiraRequest";
 import { queryParamBuilder } from "../utils/params";
-import { getForgeRoute } from "../utils/forgeUtils";
 import type {
   CreateIssueTypeRequest,
   DeleteIssueTypeRequest,
@@ -21,11 +20,7 @@ export default function issueType<TClient extends ClientType>(
   return {
     get: async (jiraRequestObj: GetIssueTypeRequest<TClient>) => {
       const { pathParams, opts } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/issuetype/${pathParams.id}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issuetype/${pathParams.id}` : path;
-      }
+      const path = `/rest/api/3/issuetype/${pathParams.id}`;
       const baseParams = {
         path,
         method: "GET",
@@ -39,13 +34,8 @@ export default function issueType<TClient extends ClientType>(
 
     delete: async (jiraRequestObj: DeleteIssueTypeRequest<TClient>) => {
       const { pathParams, opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issuetype/${pathParams.id}?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issuetype/${pathParams.id}?${queryParamsString}` : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/issuetype/${pathParams.id}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "DELETE",
@@ -59,11 +49,7 @@ export default function issueType<TClient extends ClientType>(
 
     create: async (jiraRequestObj: CreateIssueTypeRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/issuetype`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issuetype` : path;
-      }
+      const path = `/rest/api/3/issuetype`;
       const baseParams = {
         path,
         method: "POST",
@@ -78,11 +64,7 @@ export default function issueType<TClient extends ClientType>(
 
     edit: async (jiraRequestObj: UpdateIssueTypeRequest<TClient>) => {
       const { pathParams, opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/issuetype/${pathParams.id}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issuetype/${pathParams.id}` : path;
-      }
+      const path = `/rest/api/3/issuetype/${pathParams.id}`;
       const baseParams = {
         path,
         method: "PUT",

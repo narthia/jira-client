@@ -19,7 +19,6 @@ import type {
   IssuePickerResponse,
 } from "../types/services/issue";
 import { queryParamBuilder } from "../utils/params";
-import { getForgeRoute } from "../utils/forgeUtils";
 
 export default function issue<TClient extends ClientType>(
   config: DefaultJiraConfig | ForgeJiraConfig
@@ -27,15 +26,9 @@ export default function issue<TClient extends ClientType>(
   return {
     get: async (jiraRequestObj: GetIssueRequest<TClient>) => {
       const { pathParams, opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issue/${pathParams.issueKeyOrId}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route
-          ? route`/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`
-          : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`;
+
       const baseParams = {
         path,
         method: "GET",
@@ -48,13 +41,9 @@ export default function issue<TClient extends ClientType>(
     },
 
     delete: async (jiraRequestObj: DeleteIssueRequest<TClient>) => {
-      const { pathParams, opts } = jiraRequestObj;
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issue/${pathParams.issueKeyOrId}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issue/${pathParams.issueKeyOrId}` : path;
-      }
+      const { pathParams, opts, queryParams } = jiraRequestObj;
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "DELETE",
@@ -68,12 +57,8 @@ export default function issue<TClient extends ClientType>(
 
     create: async (jiraRequestObj: CreateIssueRequest<TClient>) => {
       const { opts, body, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route = `/rest/api/3/issue?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issue?${queryParamsString}` : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/issue?${queryParamsString}`;
       const baseParams = {
         path,
         method: "POST",
@@ -88,16 +73,9 @@ export default function issue<TClient extends ClientType>(
 
     edit: async (jiraRequestObj: EditIssueRequest<TClient>) => {
       const { pathParams, opts, body, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
+      const queryParamsString = queryParamBuilder({ params: queryParams });
       const isResponseAvailable = queryParams?.returnIssue ?? false;
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route
-          ? route`/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`
-          : path;
-      }
+      const path = `/rest/api/3/issue/${pathParams.issueKeyOrId}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "PUT",
@@ -112,11 +90,7 @@ export default function issue<TClient extends ClientType>(
 
     count: async (jiraRequestObj: CountIssuesRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/search/approximate-count`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/search/approximate-count` : path;
-      }
+      const path = `/rest/api/3/search/approximate-count`;
       const baseParams = {
         path,
         method: "POST",
@@ -131,11 +105,7 @@ export default function issue<TClient extends ClientType>(
 
     search: async (jiraRequestObj: SearchIssuesRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/search/jql`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/search/jql` : path;
-      }
+      const path = `/rest/api/3/search/jql`;
       const baseParams = {
         path,
         method: "POST",
@@ -152,12 +122,7 @@ export default function issue<TClient extends ClientType>(
 
     assign: async (jiraRequestObj: AssignIssueRequest<TClient>) => {
       const { pathParams, opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issue/${pathParams.issueKeyOrId}/assignee`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issue/${pathParams.issueKeyOrId}/assignee` : path;
-      }
+      const path = `/rest/api/3/issue/${pathParams.issueKeyOrId}/assignee`;
       const baseParams = {
         path,
         method: "PUT",
@@ -172,11 +137,7 @@ export default function issue<TClient extends ClientType>(
 
     check: async (jiraRequestObj: CheckIssueRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/jql/match`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/jql/match` : path;
-      }
+      const path = `/rest/api/3/jql/match`;
       const baseParams = {
         path,
         method: "POST",
@@ -193,13 +154,8 @@ export default function issue<TClient extends ClientType>(
 
     picker: async (jiraRequestObj: IssuePickerRequest<TClient>) => {
       const { opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/issue/picker?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/issue/picker?${queryParamsString}` : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/issue/picker?${queryParamsString}`;
       const baseParams = {
         path,
         method: "GET",

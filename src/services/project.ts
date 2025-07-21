@@ -13,7 +13,6 @@ import type {
   EditProjectRequest,
 } from "../types/services/project";
 import { queryParamBuilder } from "../utils/params";
-import { getForgeRoute } from "../utils/forgeUtils";
 
 export default function project<TClient extends ClientType>(
   config: DefaultJiraConfig | ForgeJiraConfig
@@ -21,15 +20,8 @@ export default function project<TClient extends ClientType>(
   return {
     get: async (jiraRequestObj: GetProjectRequest<TClient>) => {
       const { pathParams, opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/project/${pathParams.projectIdOrKey}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route
-          ? route`/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`
-          : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "GET",
@@ -43,15 +35,8 @@ export default function project<TClient extends ClientType>(
 
     delete: async (jiraRequestObj: DeleteProjectRequest<TClient>) => {
       const { pathParams, opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route
-          ? route`/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`
-          : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "DELETE",
@@ -65,11 +50,7 @@ export default function project<TClient extends ClientType>(
 
     create: async (jiraRequestObj: CreateProjectRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/project`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/project` : path;
-      }
+      const path = `/rest/api/3/project`;
       const baseParams = {
         path,
         method: "POST",
@@ -84,15 +65,8 @@ export default function project<TClient extends ClientType>(
 
     edit: async (jiraRequestObj: EditProjectRequest<TClient>) => {
       const { pathParams, opts, body, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams);
-      let path: string | import("@forge/api").Route =
-        `/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route
-          ? route`/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`
-          : path;
-      }
+      const queryParamsString = queryParamBuilder({ params: queryParams });
+      const path = `/rest/api/3/project/${pathParams.projectIdOrKey}?${queryParamsString}`;
       const baseParams = {
         path,
         method: "PUT",

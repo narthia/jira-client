@@ -13,7 +13,7 @@ export type Issue = {
   fields: IssueFields;
 };
 
-export type IssueFields = {
+export type KnownIssueFields = {
   statuscategorychangedate: string;
   issuetype: IssueType;
   timespent?: number;
@@ -31,14 +31,16 @@ export type IssueFields = {
   description: Description;
   summary: string;
   creator: User;
-  subtasks: Issue[];
+  subtasks?: Issue[];
   reporter: User;
   duedate?: null;
   aggregatetimeoriginalestimate: number | null;
   aggregatetimeestimate: number | null;
   fixVersions?: FixVersions[];
   worklog: WorklogResponse;
-} & { [k: string]: unknown };
+};
+
+export type IssueFields = KnownIssueFields & { [k: string]: unknown };
 
 export type FixVersions = {
   self: string;
@@ -228,7 +230,8 @@ export type EditIssueRequest<TClient extends ClientType> = JiraRequestGeneric<
 
 export type DeleteIssueRequest<TClient extends ClientType> = JiraRequestGeneric<
   TClient,
-  { issueKeyOrId: string }
+  { issueKeyOrId: string },
+  { deleteSubtasks?: boolean }
 >;
 
 export type CountIssuesRequest<TClient extends ClientType> = JiraRequestGeneric<

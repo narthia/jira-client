@@ -1,4 +1,4 @@
-import type { ForgeAPI, Route } from "@forge/api";
+import type { ForgeAPI } from "@forge/api";
 
 export type ClientType = "forge" | "default";
 
@@ -56,7 +56,7 @@ export interface JiraDefaultRequestParams extends JiraBaseRequestParams {
 export interface JiraForgeRequestParams extends JiraBaseRequestParams {
   config: ForgeJiraConfig;
   opts: ForgeRequestOpts;
-  path: Route;
+  path: string;
 }
 
 export type RequestParams<TClient extends ClientType> = TClient extends "default"

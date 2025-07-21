@@ -6,7 +6,6 @@ import type {
 } from "../types/global";
 import jiraRequest from "../utils/jiraRequest";
 import { queryParamBuilder } from "../utils/params";
-import { getForgeRoute } from "../utils/forgeUtils";
 import type {
   BulkCreateStatusesRequest,
   BulkDeleteStatusesRequest,
@@ -21,12 +20,11 @@ export default function status<TClient extends ClientType>(
   return {
     bulkGet: async (jiraRequestObj: BulkGetStatusesRequest<TClient>) => {
       const { opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams, ["id"]);
-      let path: string | import("@forge/api").Route = `/rest/api/3/statuses?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/statuses?${queryParamsString}` : path;
-      }
+      const queryParamsString = queryParamBuilder({
+        params: queryParams,
+        opts: { multiple: ["id"] },
+      });
+      const path = `/rest/api/3/statuses?${queryParamsString}`;
       const baseParams = {
         path,
         method: "GET",
@@ -40,12 +38,11 @@ export default function status<TClient extends ClientType>(
 
     bulkDelete: async (jiraRequestObj: BulkDeleteStatusesRequest<TClient>) => {
       const { opts, queryParams } = jiraRequestObj;
-      const queryParamsString = queryParamBuilder(queryParams, ["id"]);
-      let path: string | import("@forge/api").Route = `/rest/api/3/statuses?${queryParamsString}`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/statuses?${queryParamsString}` : path;
-      }
+      const queryParamsString = queryParamBuilder({
+        params: queryParams,
+        opts: { multiple: ["id"] },
+      });
+      const path = `/rest/api/3/statuses?${queryParamsString}`;
       const baseParams = {
         path,
         method: "DELETE",
@@ -59,11 +56,7 @@ export default function status<TClient extends ClientType>(
 
     bulkCreate: async (jiraRequestObj: BulkCreateStatusesRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/statuses`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/statuses` : path;
-      }
+      const path = `/rest/api/3/statuses`;
       const baseParams = {
         path,
         method: "POST",
@@ -78,11 +71,7 @@ export default function status<TClient extends ClientType>(
 
     bulkEdit: async (jiraRequestObj: BulkEditStatusesRequest<TClient>) => {
       const { opts, body } = jiraRequestObj;
-      let path: string | import("@forge/api").Route = `/rest/api/3/statuses`;
-      if (config.type === "forge") {
-        const route = await getForgeRoute();
-        path = route ? route`/rest/api/3/statuses` : path;
-      }
+      const path = `/rest/api/3/statuses`;
       const baseParams = {
         path,
         method: "PUT",

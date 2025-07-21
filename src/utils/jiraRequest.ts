@@ -1,7 +1,7 @@
 import type { ClientType, ForgeRequestOpts, RequestParams } from "../types/global";
 import { createHeaders } from "./headers";
 import callAndHandleError from "./callAndHandleError";
-import type { Route } from "@forge/api";
+import { getForgeRoute } from "./forgeUtils";
 
 const jiraRequest = async <TClient extends ClientType, TResponse>(
   requestParams: RequestParams<TClient>
@@ -21,11 +21,16 @@ const jiraRequest = async <TClient extends ClientType, TResponse>(
     const { auth } = config;
     const as = (opts as ForgeRequestOpts)?.as ?? "user";
 
-    apiCall = (as === "app" ? auth.api.asApp() : auth.api.asUser()).requestJira(path as Route, {
-      method,
-      headers: createHeaders({ type: config.type, isExperimental, headers: opts?.headers }),
-      ...(body && { body }),
-    }) as Promise<Response>;
+    const forgeRoute = await getForgeRoute();
+
+    apiCall = (as === "app" ? auth.api.asApp() : auth.api.asUser()).requestJira(
+      forgeRoute?.(path) as import("@forge/api").Route,
+      {
+        method,
+        headers: createHeaders({ type: config.type, isExperimental, headers: opts?.headers }),
+        ...(body && { body }),
+      }
+    ) as Promise<Response>;
   } else {
     throw new Error("Invalid client type");
   }

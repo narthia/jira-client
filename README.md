@@ -71,12 +71,12 @@ if (issue.success) {
 
 Most client methods accept an options object with the following properties:
 
-- `pathParams`: An object containing variables to be substituted into the URL path. For example, `{ issueKeyOrId: "PROJ-123" }` will replace the corresponding placeholder in the endpoint path.
-- `queryParams`: An object representing URL query string parameters. For example, `{ fields: "summary,description" }` will be serialized as `?fields=summary,description`.
-- `body`: The request payload for methods that send data (such as POST, PUT, PATCH). For example, `{ fields: { summary: "New summary" } }`.
-- `opts`: Additional options for the request. This may include:
-  - `as`: For Forge apps, requests are made as the user by default, but you can set to `"app"` to act as the app instead of the user.
-  - `headers`: An object of custom HTTP headers to include in the request (e.g., `{ "X-Custom-Header": "value" }`).
+- **`pathParams`**: An object containing variables to be substituted into the URL path. For example, `{ issueKeyOrId: "PROJ-123" }` will replace the corresponding placeholder in the endpoint path.
+- **`queryParams`**: An object representing URL query string parameters. For example, `{ fields: "summary,description" }` will be serialized as `?fields=summary,description`.
+- **`body`**: The request payload for methods that send data (such as POST, PUT, PATCH). For example, `{ fields: { summary: "New summary" } }`.
+- **`opts`**: Additional options for the request. This may include:
+  - **`as`**: For Forge apps, requests are made as the user by default, but you can set to `"app"` to act as the app instead of the user.
+  - **`headers`**: An object of custom HTTP headers to include in the request (e.g., `{ "X-Custom-Header": "value" }`).
 
 #### Default Headers
 

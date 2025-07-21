@@ -2,9 +2,9 @@
 
 ## 0.1.2
 
-### Patch Changes
+### 6177edb: Patch Changes
 
-- 6177edb: Made asUser default for forge type and updated readme on information about headers
+- Made asUser default for forge type and updated readme on information about headers
 
 ## 0.1.1
 

@@ -1,17 +1,17 @@
-import type { JiraResponse } from "../types/global";
+import type { JiraResult } from "../types/global";
 
 const callAndHandleError = async <T>({
   apiCall,
-  isResponseAvailable,
+  isResponseAvailable
 }: {
   apiCall: Promise<Response>;
   isResponseAvailable: boolean;
-}): Promise<JiraResponse<T>> => {
+}): Promise<JiraResult<T>> => {
   try {
     const response = await apiCall;
 
     if (!response.ok) {
-      let errorData;
+      let errorData: unknown;
       try {
         errorData = await response.json();
       } catch {
@@ -20,7 +20,7 @@ const callAndHandleError = async <T>({
       return {
         success: false,
         error: errorData,
-        status: response.status,
+        status: response.status
       };
     }
 
@@ -28,13 +28,13 @@ const callAndHandleError = async <T>({
     return {
       success: true,
       data,
-      status: response.status,
+      status: response.status
     };
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "An unexpected error occurred",
-      status: 0,
+      status: 0
     };
   }
 };

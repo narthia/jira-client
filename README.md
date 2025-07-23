@@ -8,7 +8,8 @@ A Jira API client with dual ESM/CJS support, designed for both standard Jira RES
 - 🔄 **Dual Client Support**: Works with both standard Jira REST API and Atlassian Forge
 - 📦 **Modern Packaging**: ESM and CommonJS dual support
 - 🛡️ **Type Safe**: Fully typed API responses and requests
-- ⚡ **Zero Dependencies**: No runtime dependencies for standard Jira REST API usage. `@forge/api` is an optional peer dependency only needed for Forge apps
+- 📚 **OpenAPI Generated**: Type definitions and documentation are automatically generated from Jira's OpenAPI Schema to ensure accuracy and completeness
+- ⚡ **Zero Dependencies**: No runtime dependencies for standard Jira REST API usage. `@forge/api` is an optional peer dependency required only for Forge applications
 
 ## Installation
 
@@ -21,21 +22,25 @@ npm install @narthia/jira-client
 ### Standard Jira REST API Client
 
 ```typescript
+// jiraClient.ts
 import { JiraClient } from "@narthia/jira-client";
 
-const client = new JiraClient({
+// Initialize the client once and reuse across your application
+export const client = new JiraClient({
   type: "default",
   auth: {
     email: "your-email@example.com",
     apiToken: "your-api-token",
-    baseUrl: "https://your-domain.atlassian.net",
-  },
+    baseUrl: "https://your-domain.atlassian.net"
+  }
 });
 
-// Get an issue
-const issue = await client.issue.get({
-  pathParams: { issueKeyOrId: "PROJ-123" },
-  queryParams: { fields: "summary,description,status" },
+// some-file-name.ts
+import { client } from "./jiraClient.ts";
+
+const issue = await client.issues.getIssue({
+  issueKeyOrId: "PROJ-123",
+  fields: ["summary", "description", "status"]
 });
 
 if (issue.success) {
@@ -46,18 +51,20 @@ if (issue.success) {
 ### Atlassian Forge Client
 
 ```typescript
+// jiraClient.ts
 import { JiraClient } from "@narthia/jira-client";
 import api from "@forge/api";
 
-const client = new JiraClient({
+// Initialize the client once and reuse across your application
+export const client = new JiraClient({
   type: "forge",
-  auth: { api },
+  auth: { api }
 });
 
-// Get an issue in Forge context
-const issue = await client.issue.get({
-  pathParams: { issueKeyOrId: "PROJ-123" },
-  opts: { as: "app" }, // by default its user
+// some-file-name.ts
+const issue = await client.issues.getIssue({
+  issueKeyOrId: "PROJ-123",
+  opts: { as: "app" } // by default its user
 });
 
 if (issue.success) {
@@ -65,109 +72,64 @@ if (issue.success) {
 }
 ```
 
+## Error Handling
+
+The client provides comprehensive error handling with strongly typed responses:
+
+```typescript
+const issue = await client.issues.getIssue({
+  pathParams: { issueKeyOrId: "PROJ-123" }
+});
+
+if (issue.success) {
+  // Handle successful response - data is type-safe and available when success is true
+  console.log(issue.data.fields.summary);
+} else {
+  // Handle error
+  console.error("Error:", issue.error);
+  console.log("Status:", issue.status);
+}
+```
+
 ## API Reference
 
 ### Method Parameters
 
-Most client methods accept an options object with the following properties:
+All client methods accept a structured options object with the following parameters:
 
-- **`pathParams`**: An object containing variables to be substituted into the URL path. For example, `{ issueKeyOrId: "PROJ-123" }` will replace the corresponding placeholder in the endpoint path.
-- **`queryParams`**: An object representing URL query string parameters. For example, `{ fields: "summary,description" }` will be serialized as `?fields=summary,description`.
-- **`body`**: The request payload for methods that send data (such as POST, PUT, PATCH). For example, `{ fields: { summary: "New summary" } }`.
-- **`opts`**: Additional options for the request. This may include:
-  - **`as`**: For Forge apps, requests are made as the user by default, but you can set to `"app"` to act as the app instead of the user.
-  - **`headers`**: An object of custom HTTP headers to include in the request (e.g., `{ "X-Custom-Header": "value" }`).
-
-#### Default Headers
-
-By default, the client sets the following headers for all requests:
-
-- `Accept`: `application/json`
-- `Content-Type`: `application/json` (for requests with a body)
-
-> **Experimental Endpoints:** For Jira Cloud endpoints that require experimental API access, the client automatically sets the `X-ExperimentalApi: opt-in` header. This header is only used when needed for such endpoints.
-
-> **Authorization:** The `Authorization` header is set automatically based on your authentication method (API token) only for the `default` client type. It is not used for Forge apps.
-
-You can override or add additional headers using the `opts.headers` option.
+- **`opts`**: Additional configuration options for the request, including:
+  - **`as`**: For Forge applications, requests are executed as the `"user"` by default. Set to `"app"` to execute requests with application-level permissions instead of user-level permissions.
+  - **`headers`**: An object containing custom HTTP headers to include in the request. All required authentication and content-type headers are automatically managed by the client. Use this option to add additional headers or override default headers for specific requests (e.g., `{ "X-Custom-Header": "value", "Accept": "application/json" }`).
 
 #### Example Usage
 
 ```typescript
 // Get an issue with path and query parameters
-const issue = await client.issue.get({
-  pathParams: { issueKeyOrId: "PROJ-123" },
-  queryParams: { fields: "summary,description,status" },
-});
-
-// Create an issue with a request body
-const created = await client.issue.create({
-  body: {
-    fields: {
-      project: { key: "PROJ" },
-      summary: "New issue",
-      issuetype: { name: "Task" },
-    },
-  },
+const issue = await client.issues.getIssue({
+  issueKeyOrId: "PROJ-123",
+  fields: ["summary", "description", "status"]
 });
 
 // Use 'as' in opts for Forge-specific options
-// In Atlassian Forge apps, requests are made as the user by default.
-// If you want to perform the request as the app (with app-level permissions),
+// In Atlassian Forge applications, requests are executed as the user by default.
+// To execute requests with application-level permissions instead of user-level permissions,
 // pass opts: { as: "app" }.
-// This is useful for operations that require app-level access or automation.
-const issueForge = await client.issue.get({
-  pathParams: { issueKeyOrId: "PROJ-123" },
-  opts: { as: "app" },
+// This is particularly useful for operations requiring elevated permissions or automated processes.
+const issueForge = await client.issues.getIssue({
+  issueKeyOrId: "PROJ-123",
+  opts: { as: "app" }
 });
 
 // Add custom headers using opts.headers
-const issueWithHeaders = await client.issue.get({
+const issueWithHeaders = await client.issues.getIssue({
   pathParams: { issueKeyOrId: "PROJ-123" },
   opts: {
     headers: {
-      "X-Custom-Header": "my-value",
-    },
-  },
+      "X-Custom-Header": "my-value"
+    }
+  }
 });
 ```
-
-### Currently Available Methods
-
-The client currently supports the following Jira REST API endpoints:
-
-#### Issues (`client.issue`)
-
-- `get` - Get issue details
-- `create` - Create a new issue
-- `edit` - Edit an existing issue
-- `delete` - Delete an issue
-- `search` - Search issues using JQL
-- `count` - Get approximate count of issues
-- `assign` - Assign an issue to a user
-- `check` - Check if issues match JQL
-- `picker` - Get issue picker suggestions
-
-#### Projects (`client.project`)
-
-- `get` - Get project details
-- `create` - Create a new project
-- `edit` - Edit an existing project
-- `delete` - Delete a project
-
-#### Statuses (`client.status`)
-
-- `bulkGet` - Get multiple statuses
-- `bulkCreate` - Create multiple statuses
-- `bulkEdit` - Edit multiple statuses
-- `bulkDelete` - Delete multiple statuses
-
-#### Issue Types (`client.issueType`)
-
-- `get` - Get issue type details
-- `create` - Create a new issue type
-- `edit` - Edit an existing issue type
-- `delete` - Delete an issue type
 
 ### Client Configuration
 
@@ -199,44 +161,23 @@ interface ForgeJiraConfig {
 
 The package exports comprehensive TypeScript definitions for all Jira entities:
 
-- `Issue` - Complete issue object with all fields
-- `User` - User information
-- `Project` - Project information
-- `Status` - Status information
-- `IssueType` - Issue type information
-- And more...
+- `Issue` - Complete issue object with comprehensive field definitions
+- `User` - User profile and account information
+- `Project` - Project configuration and metadata
+- `Status` - Workflow status and transition information
+- `IssueType` - Issue type definitions and configurations
+- And many more entity types...
 
-### Roadmap
+### Development Roadmap
 
-We are actively expanding the client to cover the entire Jira Cloud REST API. More endpoints and services will be added in future releases, including:
+#### Completed Features
 
-- Comments and worklogs
-- Attachments and avatars
-- Users and groups
-- Permissions and security
-- Workflows and transitions
-- And much more...
+- ✅ **Jira Platform APIs** - Comprehensive implementation of core Jira platform APIs with complete TypeScript support and type safety.
 
-Stay tuned for regular updates as we continue to build out the complete Jira API client!
+#### Features Under Development
 
-## Error Handling
-
-The client provides robust error handling with typed responses:
-
-```typescript
-const issue = await client.issue.get({
-  pathParams: { issueKeyOrId: "PROJ-123" },
-});
-
-if (issue.success) {
-  // Handle successful response
-  console.log(issue.data.fields.summary);
-} else {
-  // Handle error
-  console.error("Error:", issue.error);
-  console.log("Status:", issue.status);
-}
-```
+- 🔄 **Jira Software APIs** - Ongoing development of Jira Software-specific endpoints and advanced features
+- 🔄 **Jira Service Management APIs** - Implementation of comprehensive service desk and ITSM functionality
 
 ## License
 

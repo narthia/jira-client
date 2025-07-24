@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.3
+
+### Patch Changes
+
+- 484261c: Using getters instead of public property and added caching to getter services.
+
 ## 0.2.2
 
 ### Patch Changes

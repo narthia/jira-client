@@ -10,6 +10,6 @@ export interface JiraClient {
 /**
  * The Jira Cloud REST API
  *
- * @version 0.1.3
+ * @version 0.2.3
  */
 export const JiraClient: JiraClient = JiraClientImpl;

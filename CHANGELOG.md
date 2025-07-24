@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.0
+
+### Minor Changes
+
+- a232021: Generated type defs and docs from OpenApi Schema and Added all rest api's from Jira Platform
+
 ## 0.1.2
 
 ### Patch Changes

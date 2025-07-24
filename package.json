@@ -43,7 +43,16 @@
     "atlassian",
     "rest-api",
     "nodejs",
-    "sdk"
+    "sdk",
+    "rest",
+    "jira-client",
+    "jira-api-client",
+    "jira-rest-client",
+    "atlassian-client",
+    "jira-rest-api",
+    "narthia",
+    "narthia-jira",
+    "narthia-rest"
   ],
   "author": {
     "name": "Jeevan Karnati",

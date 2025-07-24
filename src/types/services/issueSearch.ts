@@ -1,4 +1,4 @@
-import type { IssueBean, JsonTypeBean } from "./common";
+import type { IssueBean, IssueFieldKeys, JsonTypeBean } from "./common";
 /**
  * A list of matched issues or errors for each JQL query, in the order the JQL
  * queries were passed.
@@ -53,11 +53,11 @@ export interface JqlCountRequestBean {
    * reasons, this parameter requires a bounded query. A bounded query is a query
    * with a search restriction.
    */
-  jql?: string;
+  jql: string;
 }
 export interface JqlCountResultsBean {
   /** Number of issues matching JQL query. */
-  count?: number;
+  count: number;
 }
 export interface SearchAndReconcileRequestBean {
   /**
@@ -103,7 +103,7 @@ export interface SearchAndReconcileRequestBean {
    * Note: By default, this resource returns IDs only. This differs from [GET
    * issue](#api-rest-api-3-issue-issueIdOrKey-get) where the default is all fields.
    */
-  fields?: string[];
+  fields?: IssueFieldKeys;
   /** Reference fields by their key (rather than ID). The default is `false`. */
   fieldsByKeys?: boolean;
   /**
@@ -116,7 +116,7 @@ export interface SearchAndReconcileRequestBean {
    *
    * Additionally, `orderBy` clause can contain a maximum of 7 fields.
    */
-  jql?: string;
+  jql: string;
   /**
    * The maximum number of items to return per page. To manage page size, API may
    * return fewer items per page where a large number of fields are requested. The

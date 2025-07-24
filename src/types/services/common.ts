@@ -6,13 +6,13 @@ import type {
   RoleActor,
   UserBean,
   VersionApprover,
-  VersionIssuesStatus
+  VersionIssuesStatus,
 } from "./dashboards";
 import type { UserPickerUser } from "./groupAndUserPicker";
 import type { FoundGroup } from "./groups";
 import type {
   SimpleListWrapperApplicationRole,
-  SimpleListWrapperGroupName
+  SimpleListWrapperGroupName,
 } from "./issueAttachments";
 import type { PropertyKey } from "./issueCommentProperties";
 import type { RemoveOptionFromIssuesResult } from "./issueCustomFieldOptions";
@@ -25,7 +25,7 @@ import type {
   IssueUpdateMetadata,
   IncludedFields,
   Operations,
-  IssueTransition
+  IssueTransition,
 } from "./issues";
 import type { PermissionGrant } from "./permissionSchemes";
 import type { AppWorkflowTransitionRule, WorkflowId } from "./workflowTransitionRules";
@@ -292,7 +292,7 @@ export interface IssueBean {
   };
   fieldsToInclude?: IncludedFields;
   /** The ID of the issue. */
-  id?: string;
+  id: string;
   /** The key of the issue. */
   key?: string;
   /** The ID and name of each field present on the issue. */

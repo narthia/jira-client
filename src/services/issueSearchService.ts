@@ -13,7 +13,7 @@ import type {
   ForgeJiraConfig,
   WithRequestOpts,
   JiraResult,
-  IssueFieldKeys
+  IssueFieldKeys,
 } from "../types";
 import jiraRequest from "../utils/jiraRequest";
 
@@ -53,7 +53,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     countIssues: async ({
       jqlCountRequestBean,
-      opts
+      opts,
     }: {
       /**
        * A JSON object containing the search request.
@@ -71,7 +71,7 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(jqlCountRequestBean),
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -100,7 +100,7 @@ export default function issueSearch<TClient extends ClientType>(
       currentProjectId,
       showSubTasks,
       showSubTaskParent,
-      opts
+      opts,
     }: {
       /**
        * A string to match against text fields in the issue such as title, description,
@@ -137,11 +137,11 @@ export default function issueSearch<TClient extends ClientType>(
           currentIssueKey,
           currentProjectId,
           showSubTasks,
-          showSubTaskParent
+          showSubTaskParent,
         },
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -194,7 +194,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     matchIssues: async ({
       issuesAndJqlQueries,
-      opts
+      opts,
     }: {
       /**
        * @example
@@ -219,7 +219,7 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(issuesAndJqlQueries),
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -456,7 +456,7 @@ export default function issueSearch<TClient extends ClientType>(
       fieldsByKeys,
       failFast,
       reconcileIssues,
-      opts
+      opts,
     }: {
       /**
        * A [JQL](https://confluence.atlassian.com/x/egORLQ) expression. For performance
@@ -468,7 +468,7 @@ export default function issueSearch<TClient extends ClientType>(
        *
        * Additionally, `orderBy` clause can contain a maximum of 7 fields.
        */
-      jql?: string;
+      jql: string;
       /**
        * The token for a page to fetch that is not the first page. The first page has a
        * `nextPageToken` of `null`. Use the `nextPageToken` to fetch the next page of
@@ -544,7 +544,7 @@ export default function issueSearch<TClient extends ClientType>(
        * 50 ids
        */
       reconcileIssues?: number[];
-    } & WithRequestOpts<TClient> = {}): Promise<JiraResult<SearchAndReconcileResults>> => {
+    } & WithRequestOpts<TClient>): Promise<JiraResult<SearchAndReconcileResults>> => {
       return jiraRequest<SearchAndReconcileResults>({
         path: "/rest/api/3/search/jql",
         method: "GET",
@@ -557,11 +557,11 @@ export default function issueSearch<TClient extends ClientType>(
           properties,
           fieldsByKeys,
           failFast,
-          reconcileIssues
+          reconcileIssues,
         },
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -786,18 +786,34 @@ export default function issueSearch<TClient extends ClientType>(
      * ```
      */
     searchAndReconsileIssuesUsingJqlPost: async ({
-      searchAndReconcileRequestBean,
-      opts
-    }: {
-      searchAndReconcileRequestBean: SearchAndReconcileRequestBean;
-    } & WithRequestOpts<TClient>): Promise<JiraResult<SearchAndReconcileResults>> => {
+      expand,
+      fields,
+      fieldsByKeys,
+      jql,
+      maxResults,
+      nextPageToken,
+      properties,
+      reconcileIssues,
+      opts,
+    }: SearchAndReconcileRequestBean & WithRequestOpts<TClient>): Promise<
+      JiraResult<SearchAndReconcileResults>
+    > => {
       return jiraRequest<SearchAndReconcileResults>({
         path: "/rest/api/3/search/jql",
         method: "POST",
-        body: JSON.stringify(searchAndReconcileRequestBean),
+        body: JSON.stringify({
+          expand,
+          fields,
+          fieldsByKeys,
+          jql,
+          maxResults,
+          nextPageToken,
+          properties,
+          reconcileIssues,
+        }),
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -1084,7 +1100,7 @@ export default function issueSearch<TClient extends ClientType>(
       properties,
       fieldsByKeys,
       failFast,
-      opts
+      opts,
     }: {
       /**
        * The [JQL](https://confluence.atlassian.com/x/egORLQ) that defines the search.
@@ -1189,11 +1205,11 @@ export default function issueSearch<TClient extends ClientType>(
           expand,
           properties,
           fieldsByKeys,
-          failFast
+          failFast,
         },
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
     },
 
@@ -1472,7 +1488,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     searchForIssuesUsingJqlPost: async ({
       searchRequestBean,
-      opts
+      opts,
     }: {
       /**
        * A JSON object containing the search request.
@@ -1503,8 +1519,8 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(searchRequestBean),
         config,
         opts,
-        isResponseAvailable: true
+        isResponseAvailable: true,
       });
-    }
+    },
   };
 }

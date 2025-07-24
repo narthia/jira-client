@@ -99,27 +99,166 @@ import workflowTransitionRulesService from "../services/workflowTransitionRulesS
 import workflowsService from "../services/workflowsService";
 
 export default class JiraClientImpl<TClient extends ClientType = ClientType> {
+  private config: DefaultJiraConfig | ForgeJiraConfig;
+  private _announcementBanner?: ReturnType<typeof announcementBannerService<TClient>>;
+  private _appDataPolicies?: ReturnType<typeof appDataPoliciesService<TClient>>;
+  private _applicationRoles?: ReturnType<typeof applicationRolesService<TClient>>;
+  private _appMigration?: ReturnType<typeof appMigrationService<TClient>>;
+  private _appProperties?: ReturnType<typeof appPropertiesService<TClient>>;
+  private _auditRecords?: ReturnType<typeof auditRecordsService<TClient>>;
+  private _avatars?: ReturnType<typeof avatarsService<TClient>>;
+  private _classificationLevels?: ReturnType<typeof classificationLevelsService<TClient>>;
+  private _dashboards?: ReturnType<typeof dashboardsService<TClient>>;
+  private _dynamicModules?: ReturnType<typeof dynamicModulesService<TClient>>;
+  private _filterSharing?: ReturnType<typeof filterSharingService<TClient>>;
+  private _filters?: ReturnType<typeof filtersService<TClient>>;
+  private _groupAndUserPicker?: ReturnType<typeof groupAndUserPickerService<TClient>>;
+  private _groups?: ReturnType<typeof groupsService<TClient>>;
+  private _issueAttachments?: ReturnType<typeof issueAttachmentsService<TClient>>;
+  private _issueBulkOperations?: ReturnType<typeof issueBulkOperationsService<TClient>>;
+  private _issueCommentProperties?: ReturnType<typeof issueCommentPropertiesService<TClient>>;
+  private _issueComments?: ReturnType<typeof issueCommentsService<TClient>>;
+  private _issueCustomFieldAssociations?: ReturnType<
+    typeof issueCustomFieldAssociationsService<TClient>
+  >;
+  private _issueCustomFieldConfigurationApps?: ReturnType<
+    typeof issueCustomFieldConfigurationAppsService<TClient>
+  >;
+  private _issueCustomFieldContexts?: ReturnType<typeof issueCustomFieldContextsService<TClient>>;
+  private _issueCustomFieldOptionsApps?: ReturnType<
+    typeof issueCustomFieldOptionsAppsService<TClient>
+  >;
+  private _issueCustomFieldOptions?: ReturnType<typeof issueCustomFieldOptionsService<TClient>>;
+  private _issueCustomFieldValuesApps?: ReturnType<
+    typeof issueCustomFieldValuesAppsService<TClient>
+  >;
+  private _issueFieldConfigurations?: ReturnType<typeof issueFieldConfigurationsService<TClient>>;
+  private _issueFields?: ReturnType<typeof issueFieldsService<TClient>>;
+  private _issueLinks?: ReturnType<typeof issueLinksService<TClient>>;
+  private _issueLinkTypes?: ReturnType<typeof issueLinkTypesService<TClient>>;
+  private _issueNavigatorSettings?: ReturnType<typeof issueNavigatorSettingsService<TClient>>;
+  private _issueNotificationSchemes?: ReturnType<typeof issueNotificationSchemesService<TClient>>;
+  private _issuePriorities?: ReturnType<typeof issuePrioritiesService<TClient>>;
+  private _issueProperties?: ReturnType<typeof issuePropertiesService<TClient>>;
+  private _issueRedaction?: ReturnType<typeof issueRedactionService<TClient>>;
+  private _issueRemoteLinks?: ReturnType<typeof issueRemoteLinksService<TClient>>;
+  private _issueResolutions?: ReturnType<typeof issueResolutionsService<TClient>>;
+  private _issueSearch?: ReturnType<typeof issueSearchService<TClient>>;
+  private _issueSecurityLevel?: ReturnType<typeof issueSecurityLevelService<TClient>>;
+  private _issueSecuritySchemes?: ReturnType<typeof issueSecuritySchemesService<TClient>>;
+  private _issueTypeProperties?: ReturnType<typeof issueTypePropertiesService<TClient>>;
+  private _issueTypeSchemes?: ReturnType<typeof issueTypeSchemesService<TClient>>;
+  private _issueTypeScreenSchemes?: ReturnType<typeof issueTypeScreenSchemesService<TClient>>;
+  private _issueTypes?: ReturnType<typeof issueTypesService<TClient>>;
+  private _issueVotes?: ReturnType<typeof issueVotesService<TClient>>;
+  private _issueWatchers?: ReturnType<typeof issueWatchersService<TClient>>;
+  private _issueWorklogProperties?: ReturnType<typeof issueWorklogPropertiesService<TClient>>;
+  private _issueWorklogs?: ReturnType<typeof issueWorklogsService<TClient>>;
+  private _issues?: ReturnType<typeof issuesService<TClient>>;
+  private _jiraExpressions?: ReturnType<typeof jiraExpressionsService<TClient>>;
+  private _jiraSettings?: ReturnType<typeof jiraSettingsService<TClient>>;
+  private _jqlFunctionsApps?: ReturnType<typeof jqlFunctionsAppsService<TClient>>;
+  private _jql?: ReturnType<typeof jqlService<TClient>>;
+  private _labels?: ReturnType<typeof labelsService<TClient>>;
+  private _licenseMetrics?: ReturnType<typeof licenseMetricsService<TClient>>;
+  private _myself?: ReturnType<typeof myselfService<TClient>>;
+  private _permissionSchemes?: ReturnType<typeof permissionSchemesService<TClient>>;
+  private _permissions?: ReturnType<typeof permissionsService<TClient>>;
+  private _plans?: ReturnType<typeof plansService<TClient>>;
+  private _prioritySchemes?: ReturnType<typeof prioritySchemesService<TClient>>;
+  private _projectAvatars?: ReturnType<typeof projectAvatarsService<TClient>>;
+  private _projectCategories?: ReturnType<typeof projectCategoriesService<TClient>>;
+  private _projectClassificationLevels?: ReturnType<
+    typeof projectClassificationLevelsService<TClient>
+  >;
+  private _projectComponents?: ReturnType<typeof projectComponentsService<TClient>>;
+  private _projectEmail?: ReturnType<typeof projectEmailService<TClient>>;
+  private _projectFeatures?: ReturnType<typeof projectFeaturesService<TClient>>;
+  private _projectKeyAndNameValidation?: ReturnType<
+    typeof projectKeyAndNameValidationService<TClient>
+  >;
+  private _projectPermissionSchemes?: ReturnType<typeof projectPermissionSchemesService<TClient>>;
+  private _projectProperties?: ReturnType<typeof projectPropertiesService<TClient>>;
+  private _projectRoleActors?: ReturnType<typeof projectRoleActorsService<TClient>>;
+  private _projectRoles?: ReturnType<typeof projectRolesService<TClient>>;
+  private _projectTemplates?: ReturnType<typeof projectTemplatesService<TClient>>;
+  private _projectTypes?: ReturnType<typeof projectTypesService<TClient>>;
+  private _projectVersions?: ReturnType<typeof projectVersionsService<TClient>>;
+  private _projects?: ReturnType<typeof projectsService<TClient>>;
+  private _screenSchemes?: ReturnType<typeof screenSchemesService<TClient>>;
+  private _screenTabFields?: ReturnType<typeof screenTabFieldsService<TClient>>;
+  private _screenTabs?: ReturnType<typeof screenTabsService<TClient>>;
+  private _screens?: ReturnType<typeof screensService<TClient>>;
+  private _serverInfo?: ReturnType<typeof serverInfoService<TClient>>;
+  private _serviceRegistry?: ReturnType<typeof serviceRegistryService<TClient>>;
+  private _status?: ReturnType<typeof statusService<TClient>>;
+  private _tasks?: ReturnType<typeof tasksService<TClient>>;
+  private _teamsInPlan?: ReturnType<typeof teamsInPlanService<TClient>>;
+  private _timeTracking?: ReturnType<typeof timeTrackingService<TClient>>;
+  private _uiModificationsApps?: ReturnType<typeof uiModificationsAppsService<TClient>>;
+  private _userProperties?: ReturnType<typeof userPropertiesService<TClient>>;
+  private _userSearch?: ReturnType<typeof userSearchService<TClient>>;
+  private _usernavproperties?: ReturnType<typeof usernavpropertiesService<TClient>>;
+  private _users?: ReturnType<typeof usersService<TClient>>;
+  private _webhooks?: ReturnType<typeof webhooksService<TClient>>;
+  private _workflowSchemeDrafts?: ReturnType<typeof workflowSchemeDraftsService<TClient>>;
+  private _workflowSchemeProjectAssociations?: ReturnType<
+    typeof workflowSchemeProjectAssociationsService<TClient>
+  >;
+  private _workflowSchemes?: ReturnType<typeof workflowSchemesService<TClient>>;
+  private _workflowStatusCategories?: ReturnType<typeof workflowStatusCategoriesService<TClient>>;
+  private _workflowStatuses?: ReturnType<typeof workflowStatusesService<TClient>>;
+  private _workflowTransitionProperties?: ReturnType<
+    typeof workflowTransitionPropertiesService<TClient>
+  >;
+  private _workflowTransitionRules?: ReturnType<typeof workflowTransitionRulesService<TClient>>;
+  private _workflows?: ReturnType<typeof workflowsService<TClient>>;
+
+  constructor(config: DefaultJiraConfig | ForgeJiraConfig) {
+    // Validate config has required properties
+    validateJiraConfig(config);
+
+    this.config = config;
+  }
+
   /**
    * This resource represents an announcement banner. Use it to retrieve and update
    * banner configuration.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-announcement-banner
    */
-  public announcementBanner: ReturnType<typeof announcementBannerService<TClient>>;
+  get announcementBanner() {
+    if (!this._announcementBanner) {
+      this._announcementBanner = announcementBannerService(this.config);
+    }
+    return this._announcementBanner;
+  }
 
   /**
    * This resource represents app access rule data policies.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-app-data-policies
    */
-  public appDataPolicies: ReturnType<typeof appDataPoliciesService<TClient>>;
+  get appDataPolicies() {
+    if (!this._appDataPolicies) {
+      this._appDataPolicies = appDataPoliciesService(this.config);
+    }
+    return this._appDataPolicies;
+  }
+
   /**
    * This resource represents application roles. Use it to get details of an
    * application role or all application roles.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-application-roles
    */
-  public applicationRoles: ReturnType<typeof applicationRolesService<TClient>>;
+  get applicationRoles() {
+    if (!this._applicationRoles) {
+      this._applicationRoles = applicationRolesService(this.config);
+    }
+    return this._applicationRoles;
+  }
+
   /**
    * This resource supports [app
    * migrations](https://developer.atlassian.com/platform/app-migration/). Use it to:
@@ -132,7 +271,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-app-migration
    */
-  public appMigration: ReturnType<typeof appMigrationService<TClient>>;
+  get appMigration() {
+    if (!this._appMigration) {
+      this._appMigration = appMigrationService(this.config);
+    }
+    return this._appMigration;
+  }
+
   /**
    * This resource represents app properties. Use it to store arbitrary data for your
    * [Connect
@@ -140,14 +285,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-app-properties
    */
-  public appProperties: ReturnType<typeof appPropertiesService<TClient>>;
+  get appProperties() {
+    if (!this._appProperties) {
+      this._appProperties = appPropertiesService(this.config);
+    }
+    return this._appProperties;
+  }
+
   /**
    * This resource represents audits that record activities undertaken in Jira. Use
    * it to get a list of audit records.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-audit-records
    */
-  public auditRecords: ReturnType<typeof auditRecordsService<TClient>>;
+  get auditRecords() {
+    if (!this._auditRecords) {
+      this._auditRecords = auditRecordsService(this.config);
+    }
+    return this._auditRecords;
+  }
+
   /**
    * This resource represents system and custom avatars. Use it to obtain the
    * details of system or custom avatars, add and remove avatars from a project,
@@ -155,13 +312,25 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-avatars
    */
-  public avatars: ReturnType<typeof avatarsService<TClient>>;
+  get avatars() {
+    if (!this._avatars) {
+      this._avatars = avatarsService(this.config);
+    }
+    return this._avatars;
+  }
+
   /**
    * This resource represents classification levels.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-classification-levels
    */
-  public classificationLevels: ReturnType<typeof classificationLevelsService<TClient>>;
+  get classificationLevels() {
+    if (!this._classificationLevels) {
+      this._classificationLevels = classificationLevelsService(this.config);
+    }
+    return this._classificationLevels;
+  }
+
   /**
    * This resource represents dashboards. Use it to obtain the details of dashboards
    * as well as get, create, update, or remove item properties and gadgets from
@@ -169,7 +338,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-dashboards
    */
-  public dashboards: ReturnType<typeof dashboardsService<TClient>>;
+  get dashboards() {
+    if (!this._dashboards) {
+      this._dashboards = dashboardsService(this.config);
+    }
+    return this._dashboards;
+  }
+
   /**
    * This resource represents [modules registered
    * dynamically](https://developer.atlassian.com/cloud/jira/platform/dynamic-modules/)
@@ -178,14 +353,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-dynamic-modules
    */
-  public dynamicModules: ReturnType<typeof dynamicModulesService<TClient>>;
+  get dynamicModules() {
+    if (!this._dynamicModules) {
+      this._dynamicModules = dynamicModulesService(this.config);
+    }
+    return this._dynamicModules;
+  }
+
   /**
    * This resource represents options for sharing [filters](#api-group-Filters). Use
    * it to get share scopes as well as add and remove share scopes from filters.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-filter-sharing
    */
-  public filterSharing: ReturnType<typeof filterSharingService<TClient>>;
+  get filterSharing() {
+    if (!this._filterSharing) {
+      this._filterSharing = filterSharingService(this.config);
+    }
+    return this._filterSharing;
+  }
+
   /**
    * This resource represents [filters](https://confluence.atlassian.com/x/eQiiLQ).
    * Use it to get, create, update, or delete filters. Also use it to configure the
@@ -193,14 +380,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-filters
    */
-  public filters: ReturnType<typeof filtersService<TClient>>;
+  get filters() {
+    if (!this._filters) {
+      this._filters = filtersService(this.config);
+    }
+    return this._filters;
+  }
+
   /**
    * This resource represents a list of users and a list of groups. Use it to obtain
    * the details to populate user and group picker suggestions list.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-group-and-user-picker
    */
-  public groupAndUserPicker: ReturnType<typeof groupAndUserPickerService<TClient>>;
+  get groupAndUserPicker() {
+    if (!this._groupAndUserPicker) {
+      this._groupAndUserPicker = groupAndUserPickerService(this.config);
+    }
+    return this._groupAndUserPicker;
+  }
+
   /**
    * This resource represents groups of users. Use it to get, create, find, and
    * delete groups as well as add and remove users from groups. (\[WARNING\] The
@@ -212,7 +411,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-groups
    */
-  public groups: ReturnType<typeof groupsService<TClient>>;
+  get groups() {
+    if (!this._groups) {
+      this._groups = groupsService(this.config);
+    }
+    return this._groups;
+  }
+
   /**
    * This resource represents issue attachments and the attachment settings for
    * Jira. Use it to get the metadata for an attachment, delete an attachment, and
@@ -221,7 +426,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-attachments
    */
-  public issueAttachments: ReturnType<typeof issueAttachmentsService<TClient>>;
+  get issueAttachments() {
+    if (!this._issueAttachments) {
+      this._issueAttachments = issueAttachmentsService(this.config);
+    }
+    return this._issueAttachments;
+  }
+
   /**
    * This resource represents the issue bulk operations. Use it to move multiple
    * issues from one project to another project or edit fields of multiple issues in
@@ -249,7 +460,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-bulk-operations
    */
-  public issueBulkOperations: ReturnType<typeof issueBulkOperationsService<TClient>>;
+  get issueBulkOperations() {
+    if (!this._issueBulkOperations) {
+      this._issueBulkOperations = issueBulkOperationsService(this.config);
+    }
+    return this._issueBulkOperations;
+  }
+
   /**
    * This resource represents [issue comment](#api-group-Issue-comments) properties,
    * which provides for storing custom data against an issue comment. Use is to get,
@@ -259,7 +476,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-comment-properties
    */
-  public issueCommentProperties: ReturnType<typeof issueCommentPropertiesService<TClient>>;
+  get issueCommentProperties() {
+    if (!this._issueCommentProperties) {
+      this._issueCommentProperties = issueCommentPropertiesService(this.config);
+    }
+    return this._issueCommentProperties;
+  }
+
   /**
    * This resource represents issue comments. Use it to:
    *
@@ -269,7 +492,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-comments
    */
-  public issueComments: ReturnType<typeof issueCommentsService<TClient>>;
+  get issueComments() {
+    if (!this._issueComments) {
+      this._issueComments = issueCommentsService(this.config);
+    }
+    return this._issueComments;
+  }
+
   /**
    * This resource represents the fields associated to project and issue type
    * contexts. Use it to:
@@ -278,9 +507,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-associations
    */
-  public issueCustomFieldAssociations: ReturnType<
-    typeof issueCustomFieldAssociationsService<TClient>
-  >;
+  get issueCustomFieldAssociations() {
+    if (!this._issueCustomFieldAssociations) {
+      this._issueCustomFieldAssociations = issueCustomFieldAssociationsService(this.config);
+    }
+    return this._issueCustomFieldAssociations;
+  }
+
   /**
    * This resource represents configurations stored against a custom field context
    * by a [Forge app](https://developer.atlassian.com/platform/forge/).
@@ -290,9 +523,15 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-configuration-apps-
    */
-  public issueCustomFieldConfigurationApps: ReturnType<
-    typeof issueCustomFieldConfigurationAppsService<TClient>
-  >;
+  get issueCustomFieldConfigurationApps() {
+    if (!this._issueCustomFieldConfigurationApps) {
+      this._issueCustomFieldConfigurationApps = issueCustomFieldConfigurationAppsService(
+        this.config
+      );
+    }
+    return this._issueCustomFieldConfigurationApps;
+  }
+
   /**
    * This resource represents issue custom field contexts. Use it to:
    *
@@ -305,7 +544,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-contexts
    */
-  public issueCustomFieldContexts: ReturnType<typeof issueCustomFieldContextsService<TClient>>;
+  get issueCustomFieldContexts() {
+    if (!this._issueCustomFieldContexts) {
+      this._issueCustomFieldContexts = issueCustomFieldContextsService(this.config);
+    }
+    return this._issueCustomFieldContexts;
+  }
+
   /**
    * This resource represents custom issue field select list options created by a
    * Connect app. See [Issue custom field
@@ -319,9 +564,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-options-apps-
    */
-  public issueCustomFieldOptionsApps: ReturnType<
-    typeof issueCustomFieldOptionsAppsService<TClient>
-  >;
+  get issueCustomFieldOptionsApps() {
+    if (!this._issueCustomFieldOptionsApps) {
+      this._issueCustomFieldOptionsApps = issueCustomFieldOptionsAppsService(this.config);
+    }
+    return this._issueCustomFieldOptionsApps;
+  }
+
   /**
    * This resource represents custom issue field select list options created in Jira
    * or using the REST API. This resource supports the following field types:
@@ -340,7 +589,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-options
    */
-  public issueCustomFieldOptions: ReturnType<typeof issueCustomFieldOptionsService<TClient>>;
+  get issueCustomFieldOptions() {
+    if (!this._issueCustomFieldOptions) {
+      this._issueCustomFieldOptions = issueCustomFieldOptionsService(this.config);
+    }
+    return this._issueCustomFieldOptions;
+  }
+
   /**
    * This resource represents the values of custom fields added by [Forge
    * apps](https://developer.atlassian.com/platform/forge/). Use it to update the
@@ -348,21 +603,39 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-custom-field-values-apps-
    */
-  public issueCustomFieldValuesApps: ReturnType<typeof issueCustomFieldValuesAppsService<TClient>>;
+  get issueCustomFieldValuesApps() {
+    if (!this._issueCustomFieldValuesApps) {
+      this._issueCustomFieldValuesApps = issueCustomFieldValuesAppsService(this.config);
+    }
+    return this._issueCustomFieldValuesApps;
+  }
+
   /**
    * This resource represents issue field configurations. Use it to get, set, and
    * delete field configurations and field configuration schemes.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-field-configurations
    */
-  public issueFieldConfigurations: ReturnType<typeof issueFieldConfigurationsService<TClient>>;
+  get issueFieldConfigurations() {
+    if (!this._issueFieldConfigurations) {
+      this._issueFieldConfigurations = issueFieldConfigurationsService(this.config);
+    }
+    return this._issueFieldConfigurations;
+  }
+
   /**
    * This resource represents issue fields, both system and custom fields. Use it to
    * get fields, field configurations, and create custom fields.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-fields
    */
-  public issueFields: ReturnType<typeof issueFieldsService<TClient>>;
+  get issueFields() {
+    if (!this._issueFields) {
+      this._issueFields = issueFieldsService(this.config);
+    }
+    return this._issueFields;
+  }
+
   /**
    * This resource represents links between issues. Use it to get, create, and
    * delete links between issues.
@@ -372,7 +645,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-links
    */
-  public issueLinks: ReturnType<typeof issueLinksService<TClient>>;
+  get issueLinks() {
+    if (!this._issueLinks) {
+      this._issueLinks = issueLinksService(this.config);
+    }
+    return this._issueLinks;
+  }
+
   /**
    * This resource represents [issue link](#api-group-Issue-links) types. Use it to
    * get, create, update, and delete link issue types as well as get lists of all
@@ -383,14 +662,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-link-types
    */
-  public issueLinkTypes: ReturnType<typeof issueLinkTypesService<TClient>>;
+  get issueLinkTypes() {
+    if (!this._issueLinkTypes) {
+      this._issueLinkTypes = issueLinkTypesService(this.config);
+    }
+    return this._issueLinkTypes;
+  }
+
   /**
    * This resource represents issue navigator settings. Use it to get and set issue
    * navigator default columns.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-navigator-settings
    */
-  public issueNavigatorSettings: ReturnType<typeof issueNavigatorSettingsService<TClient>>;
+  get issueNavigatorSettings() {
+    if (!this._issueNavigatorSettings) {
+      this._issueNavigatorSettings = issueNavigatorSettingsService(this.config);
+    }
+    return this._issueNavigatorSettings;
+  }
+
   /**
    * This resource represents notification schemes, lists of events and the
    * recipients who will receive notifications for those events. Use it to get
@@ -426,14 +717,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-notification-schemes
    */
-  public issueNotificationSchemes: ReturnType<typeof issueNotificationSchemesService<TClient>>;
+  get issueNotificationSchemes() {
+    if (!this._issueNotificationSchemes) {
+      this._issueNotificationSchemes = issueNotificationSchemesService(this.config);
+    }
+    return this._issueNotificationSchemes;
+  }
+
   /**
    * This resource represents issue priorities. Use it to get, create and update
    * issue priorities and details for individual issue priorities.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-priorities
    */
-  public issuePriorities: ReturnType<typeof issuePrioritiesService<TClient>>;
+  get issuePriorities() {
+    if (!this._issuePriorities) {
+      this._issuePriorities = issuePrioritiesService(this.config);
+    }
+    return this._issuePriorities;
+  }
+
   /**
    * This resource represents [issue](#api-group-Issues) properties, which provides
    * for storing custom data against an issue. Use it to get, set, and delete issue
@@ -444,13 +747,25 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-properties
    */
-  public issueProperties: ReturnType<typeof issuePropertiesService<TClient>>;
+  get issueProperties() {
+    if (!this._issueProperties) {
+      this._issueProperties = issuePropertiesService(this.config);
+    }
+    return this._issueProperties;
+  }
+
   /**
    * This resource represents Issue Redaction. Provides APIs to redact issue data.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-redaction
    */
-  public issueRedaction: ReturnType<typeof issueRedactionService<TClient>>;
+  get issueRedaction() {
+    if (!this._issueRedaction) {
+      this._issueRedaction = issueRedactionService(this.config);
+    }
+    return this._issueRedaction;
+  }
+
   /**
    * This resource represents remote issue links, a way of linking Jira to
    * information in other systems. Use it to get, create, update, and delete remote
@@ -460,21 +775,39 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-remote-links
    */
-  public issueRemoteLinks: ReturnType<typeof issueRemoteLinksService<TClient>>;
+  get issueRemoteLinks() {
+    if (!this._issueRemoteLinks) {
+      this._issueRemoteLinks = issueRemoteLinksService(this.config);
+    }
+    return this._issueRemoteLinks;
+  }
+
   /**
    * This resource represents issue resolution values. Use it to obtain a list of
    * all issue resolution values and the details of individual resolution values.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-resolutions
    */
-  public issueResolutions: ReturnType<typeof issueResolutionsService<TClient>>;
+  get issueResolutions() {
+    if (!this._issueResolutions) {
+      this._issueResolutions = issueResolutionsService(this.config);
+    }
+    return this._issueResolutions;
+  }
+
   /**
    * This resource represents various ways to search for issues. Use it to search
    * for issues with a JQL query and find issues to populate an issue picker.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search
    */
-  public issueSearch: ReturnType<typeof issueSearchService<TClient>>;
+  get issueSearch() {
+    if (!this._issueSearch) {
+      this._issueSearch = issueSearchService(this.config);
+    }
+    return this._issueSearch;
+  }
+
   /**
    * This resource represents issue security levels. Use it to obtain the details of
    * any issue security level. For more information about issue security levels, see
@@ -482,7 +815,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-security-level
    */
-  public issueSecurityLevel: ReturnType<typeof issueSecurityLevelService<TClient>>;
+  get issueSecurityLevel() {
+    if (!this._issueSecurityLevel) {
+      this._issueSecurityLevel = issueSecurityLevelService(this.config);
+    }
+    return this._issueSecurityLevel;
+  }
+
   /**
    * This resource represents issue security schemes. Use it to get an issue
    * security scheme or a list of issue security schemes.
@@ -494,7 +833,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-security-schemes
    */
-  public issueSecuritySchemes: ReturnType<typeof issueSecuritySchemesService<TClient>>;
+  get issueSecuritySchemes() {
+    if (!this._issueSecuritySchemes) {
+      this._issueSecuritySchemes = issueSecuritySchemesService(this.config);
+    }
+    return this._issueSecuritySchemes;
+  }
+
   /**
    * This resource represents Jira issues. Use it to:
    *
@@ -512,7 +857,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issues
    */
-  public issues: ReturnType<typeof issuesService<TClient>>;
+  get issues() {
+    if (!this._issues) {
+      this._issues = issuesService(this.config);
+    }
+    return this._issues;
+  }
+
   /**
    * This resource represents [issue type](#api-group-Issue-types) properties, which
    * provides for storing custom data against an issue type. Use it to get, create,
@@ -522,7 +873,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-properties
    */
-  public issueTypeProperties: ReturnType<typeof issueTypePropertiesService<TClient>>;
+  get issueTypeProperties() {
+    if (!this._issueTypeProperties) {
+      this._issueTypeProperties = issueTypePropertiesService(this.config);
+    }
+    return this._issueTypeProperties;
+  }
+
   /**
    * This resource represents issue type schemes in classic projects. Use it to:
    *
@@ -535,7 +892,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-schemes
    */
-  public issueTypeSchemes: ReturnType<typeof issueTypeSchemesService<TClient>>;
+  get issueTypeSchemes() {
+    if (!this._issueTypeSchemes) {
+      this._issueTypeSchemes = issueTypeSchemesService(this.config);
+    }
+    return this._issueTypeSchemes;
+  }
+
   /**
    * This resource represents issue type screen schemes. Use it to:
    *
@@ -550,7 +913,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-type-screen-schemes
    */
-  public issueTypeScreenSchemes: ReturnType<typeof issueTypeScreenSchemesService<TClient>>;
+  get issueTypeScreenSchemes() {
+    if (!this._issueTypeScreenSchemes) {
+      this._issueTypeScreenSchemes = issueTypeScreenSchemesService(this.config);
+    }
+    return this._issueTypeScreenSchemes;
+  }
+
   /**
    * This resource represents issues types. Use it to:
    *
@@ -561,21 +930,39 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-types
    */
-  public issueTypes: ReturnType<typeof issueTypesService<TClient>>;
+  get issueTypes() {
+    if (!this._issueTypes) {
+      this._issueTypes = issueTypesService(this.config);
+    }
+    return this._issueTypes;
+  }
+
   /**
    * This resource represents votes cast by users on an issue. Use it to get details
    * of votes on an issue as well as cast and withdrawal votes.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-votes
    */
-  public issueVotes: ReturnType<typeof issueVotesService<TClient>>;
+  get issueVotes() {
+    if (!this._issueVotes) {
+      this._issueVotes = issueVotesService(this.config);
+    }
+    return this._issueVotes;
+  }
+
   /**
    * This resource represents users watching an issue. Use it to get details of
    * users watching an issue as well as start and stop a user watching an issue.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-watchers
    */
-  public issueWatchers: ReturnType<typeof issueWatchersService<TClient>>;
+  get issueWatchers() {
+    if (!this._issueWatchers) {
+      this._issueWatchers = issueWatchersService(this.config);
+    }
+    return this._issueWatchers;
+  }
+
   /**
    * This resource represents [issue worklog](#api-group-Issue-worklogs) properties,
    * which provides for storing custom data against an issue worklog. Use it to get,
@@ -585,7 +972,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklog-properties
    */
-  public issueWorklogProperties: ReturnType<typeof issueWorklogPropertiesService<TClient>>;
+  get issueWorklogProperties() {
+    if (!this._issueWorklogProperties) {
+      this._issueWorklogProperties = issueWorklogPropertiesService(this.config);
+    }
+    return this._issueWorklogProperties;
+  }
+
   /**
    * This resource represents issue worklogs. Use it to:
    *
@@ -594,21 +987,39 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-worklogs
    */
-  public issueWorklogs: ReturnType<typeof issueWorklogsService<TClient>>;
+  get issueWorklogs() {
+    if (!this._issueWorklogs) {
+      this._issueWorklogs = issueWorklogsService(this.config);
+    }
+    return this._issueWorklogs;
+  }
+
   /**
    * This resource is a collection of operations for [Jira
    * expressions](https://developer.atlassian.com/cloud/jira/platform/jira-expressions/).
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-jira-expressions
    */
-  public jiraExpressions: ReturnType<typeof jiraExpressionsService<TClient>>;
+  get jiraExpressions() {
+    if (!this._jiraExpressions) {
+      this._jiraExpressions = jiraExpressionsService(this.config);
+    }
+    return this._jiraExpressions;
+  }
+
   /**
    * This resource represents various settings in Jira. Use it to get and update
    * Jira settings and properties.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-jira-settings
    */
-  public jiraSettings: ReturnType<typeof jiraSettingsService<TClient>>;
+  get jiraSettings() {
+    if (!this._jiraSettings) {
+      this._jiraSettings = jiraSettingsService(this.config);
+    }
+    return this._jiraSettings;
+  }
+
   /**
    * This resource represents JQL function's precomputations. Precomputation is a
    * mapping between custom function call and JQL fragment returned by this
@@ -616,7 +1027,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-jql-functions-apps-
    */
-  public jqlFunctionsApps: ReturnType<typeof jqlFunctionsAppsService<TClient>>;
+  get jqlFunctionsApps() {
+    if (!this._jqlFunctionsApps) {
+      this._jqlFunctionsApps = jqlFunctionsAppsService(this.config);
+    }
+    return this._jqlFunctionsApps;
+  }
+
   /**
    * This resource represents JQL search auto-complete details. Use it to obtain JQL
    * search auto-complete data and suggestions for use in programmatic construction
@@ -629,21 +1046,39 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-jql
    */
-  public jql: ReturnType<typeof jqlService<TClient>>;
+  get jql() {
+    if (!this._jql) {
+      this._jql = jqlService(this.config);
+    }
+    return this._jql;
+  }
+
   /**
    * This resource represents available labels. Use it to get available labels for
    * the global label field.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-labels
    */
-  public labels: ReturnType<typeof labelsService<TClient>>;
+  get labels() {
+    if (!this._labels) {
+      this._labels = labelsService(this.config);
+    }
+    return this._labels;
+  }
+
   /**
    * This resource represents license metrics. Use it to get available metrics for
    * Jira licences.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-license-metrics
    */
-  public licenseMetrics: ReturnType<typeof licenseMetricsService<TClient>>;
+  get licenseMetrics() {
+    if (!this._licenseMetrics) {
+      this._licenseMetrics = licenseMetricsService(this.config);
+    }
+    return this._licenseMetrics;
+  }
+
   /**
    * This resource represents information about the current user, such as basic
    * details, group membership, application roles, preferences, and locale. Use it
@@ -652,7 +1087,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-myself
    */
-  public myself: ReturnType<typeof myselfService<TClient>>;
+  get myself() {
+    if (!this._myself) {
+      this._myself = myselfService(this.config);
+    }
+    return this._myself;
+  }
+
   /**
    * This resource represents permission schemes. Use it to get, create, update, and
    * delete permission schemes as well as get, create, update, and delete details of
@@ -660,35 +1101,65 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-permission-schemes
    */
-  public permissionSchemes: ReturnType<typeof permissionSchemesService<TClient>>;
+  get permissionSchemes() {
+    if (!this._permissionSchemes) {
+      this._permissionSchemes = permissionSchemesService(this.config);
+    }
+    return this._permissionSchemes;
+  }
+
   /**
    * This resource represents permissions. Use it to obtain details of all
    * permissions and determine whether the user has certain permissions.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-permissions
    */
-  public permissions: ReturnType<typeof permissionsService<TClient>>;
+  get permissions() {
+    if (!this._permissions) {
+      this._permissions = permissionsService(this.config);
+    }
+    return this._permissions;
+  }
+
   /**
    * This resource represents plans. Use it to get, create, duplicate, update, trash
    * and archive plans.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-plans
    */
-  public plans: ReturnType<typeof plansService<TClient>>;
+  get plans() {
+    if (!this._plans) {
+      this._plans = plansService(this.config);
+    }
+    return this._plans;
+  }
+
   /**
    * This resource represents issue priority schemes. Use it to get priority schemes
    * and related information, and to create, update and delete priority schemes.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-priority-schemes
    */
-  public prioritySchemes: ReturnType<typeof prioritySchemesService<TClient>>;
+  get prioritySchemes() {
+    if (!this._prioritySchemes) {
+      this._prioritySchemes = prioritySchemesService(this.config);
+    }
+    return this._prioritySchemes;
+  }
+
   /**
    * This resource represents avatars associated with a project. Use it to get,
    * load, set, and remove project avatars.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-avatars
    */
-  public projectAvatars: ReturnType<typeof projectAvatarsService<TClient>>;
+  get projectAvatars() {
+    if (!this._projectAvatars) {
+      this._projectAvatars = projectAvatarsService(this.config);
+    }
+    return this._projectAvatars;
+  }
+
   /**
    * This resource represents project categories. Use it to create, update, and
    * delete project categories as well as obtain a list of all project categories
@@ -698,16 +1169,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-categories
    */
-  public projectCategories: ReturnType<typeof projectCategoriesService<TClient>>;
+  get projectCategories() {
+    if (!this._projectCategories) {
+      this._projectCategories = projectCategoriesService(this.config);
+    }
+    return this._projectCategories;
+  }
+
   /**
    * This resource represents classification levels used in a project. Use it to
    * view and manage classification levels in your projects.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-classification-levels
    */
-  public projectClassificationLevels: ReturnType<
-    typeof projectClassificationLevelsService<TClient>
-  >;
+  get projectClassificationLevels() {
+    if (!this._projectClassificationLevels) {
+      this._projectClassificationLevels = projectClassificationLevelsService(this.config);
+    }
+    return this._projectClassificationLevels;
+  }
+
   /**
    * This resource represents project components. Use it to get, create, update, and
    * delete project components. Also get components for project and get a count of
@@ -715,7 +1196,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-components
    */
-  public projectComponents: ReturnType<typeof projectComponentsService<TClient>>;
+  get projectComponents() {
+    if (!this._projectComponents) {
+      this._projectComponents = projectComponentsService(this.config);
+    }
+    return this._projectComponents;
+  }
+
   /**
    * This resource represents the email address used to send a project's
    * notifications. Use it to get and set the [project's sender email
@@ -723,7 +1210,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-email
    */
-  public projectEmail: ReturnType<typeof projectEmailService<TClient>>;
+  get projectEmail() {
+    if (!this._projectEmail) {
+      this._projectEmail = projectEmailService(this.config);
+    }
+    return this._projectEmail;
+  }
+
   /**
    * This resource represents project features. Use it to get the list of features
    * for a project and modify the state of a feature. The project feature endpoint
@@ -732,15 +1225,25 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-features
    */
-  public projectFeatures: ReturnType<typeof projectFeaturesService<TClient>>;
+  get projectFeatures() {
+    if (!this._projectFeatures) {
+      this._projectFeatures = projectFeaturesService(this.config);
+    }
+    return this._projectFeatures;
+  }
+
   /**
    * This resource provides validation for project keys and names.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-key-and-name-validation
    */
-  public projectKeyAndNameValidation: ReturnType<
-    typeof projectKeyAndNameValidationService<TClient>
-  >;
+  get projectKeyAndNameValidation() {
+    if (!this._projectKeyAndNameValidation) {
+      this._projectKeyAndNameValidation = projectKeyAndNameValidationService(this.config);
+    }
+    return this._projectKeyAndNameValidation;
+  }
+
   /**
    * This resource represents permission schemes for a project. Use this resource to:
    *
@@ -755,7 +1258,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-permission-schemes
    */
-  public projectPermissionSchemes: ReturnType<typeof projectPermissionSchemesService<TClient>>;
+  get projectPermissionSchemes() {
+    if (!this._projectPermissionSchemes) {
+      this._projectPermissionSchemes = projectPermissionSchemesService(this.config);
+    }
+    return this._projectPermissionSchemes;
+  }
+
   /**
    * This resource represents [project](#api-group-Projects) properties, which
    * provides for storing custom data against a project. Use it to get, create, and
@@ -765,7 +1274,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-properties
    */
-  public projectProperties: ReturnType<typeof projectPropertiesService<TClient>>;
+  get projectProperties() {
+    if (!this._projectProperties) {
+      this._projectProperties = projectPropertiesService(this.config);
+    }
+    return this._projectProperties;
+  }
+
   /**
    * This resource represents the users assigned to [project
    * roles](#api-group-Issue-comments). Use it to get, add, and remove default users
@@ -774,14 +1289,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-role-actors
    */
-  public projectRoleActors: ReturnType<typeof projectRoleActorsService<TClient>>;
+  get projectRoleActors() {
+    if (!this._projectRoleActors) {
+      this._projectRoleActors = projectRoleActorsService(this.config);
+    }
+    return this._projectRoleActors;
+  }
+
   /**
    * This resource represents the roles that users can play in projects. Use this
    * resource to get, create, update, and delete project roles.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-roles
    */
-  public projectRoles: ReturnType<typeof projectRolesService<TClient>>;
+  get projectRoles() {
+    if (!this._projectRoles) {
+      this._projectRoles = projectRolesService(this.config);
+    }
+    return this._projectRoles;
+  }
+
   /**
    * This resource represents projects. Use it to get, create, update, and delete
    * projects. Also get statuses available to a project, a project's notification
@@ -789,14 +1316,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-projects
    */
-  public projects: ReturnType<typeof projectsService<TClient>>;
+  get projects() {
+    if (!this._projects) {
+      this._projects = projectsService(this.config);
+    }
+    return this._projects;
+  }
+
   /**
    * This resource represents project templates. Use it to create a new project from
    * a custom template.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-templates
    */
-  public projectTemplates: ReturnType<typeof projectTemplatesService<TClient>>;
+  get projectTemplates() {
+    if (!this._projectTemplates) {
+      this._projectTemplates = projectTemplatesService(this.config);
+    }
+    return this._projectTemplates;
+  }
+
   /**
    * This resource represents project types. Use it to obtain a list of all project
    * types, a list of project types accessible to the calling user, and details of a
@@ -804,7 +1343,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-types
    */
-  public projectTypes: ReturnType<typeof projectTypesService<TClient>>;
+  get projectTypes() {
+    if (!this._projectTypes) {
+      this._projectTypes = projectTypesService(this.config);
+    }
+    return this._projectTypes;
+  }
+
   /**
    * This resource represents project versions. Use it to get, get lists of, create,
    * update, move, merge, and delete project versions. This resource also provides
@@ -812,14 +1357,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-project-versions
    */
-  public projectVersions: ReturnType<typeof projectVersionsService<TClient>>;
+  get projectVersions() {
+    if (!this._projectVersions) {
+      this._projectVersions = projectVersionsService(this.config);
+    }
+    return this._projectVersions;
+  }
+
   /**
    * This resource represents screen schemes in classic projects. Use it to get,
    * create, update, and delete screen schemes.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-screen-schemes
    */
-  public screenSchemes: ReturnType<typeof screenSchemesService<TClient>>;
+  get screenSchemes() {
+    if (!this._screenSchemes) {
+      this._screenSchemes = screenSchemesService(this.config);
+    }
+    return this._screenSchemes;
+  }
+
   /**
    * This resource represents the screens used to record issue details. Use it to:
    *
@@ -832,27 +1389,51 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-screens
    */
-  public screens: ReturnType<typeof screensService<TClient>>;
+  get screens() {
+    if (!this._screens) {
+      this._screens = screensService(this.config);
+    }
+    return this._screens;
+  }
+
   /**
    * This resource represents the screen tab fields used to record issue details.
    * Use it to get, add, move, and remove fields from screen tabs.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-screen-tab-fields
    */
-  public screenTabFields: ReturnType<typeof screenTabFieldsService<TClient>>;
+  get screenTabFields() {
+    if (!this._screenTabFields) {
+      this._screenTabFields = screenTabFieldsService(this.config);
+    }
+    return this._screenTabFields;
+  }
+
   /**
    * This resource represents the screen tabs used to record issue details. Use it
    * to get, create, update, move, and delete screen tabs.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-screen-tabs
    */
-  public screenTabs: ReturnType<typeof screenTabsService<TClient>>;
+  get screenTabs() {
+    if (!this._screenTabs) {
+      this._screenTabs = screenTabsService(this.config);
+    }
+    return this._screenTabs;
+  }
+
   /**
    * This resource provides information about the Jira instance.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-server-info
    */
-  public serverInfo: ReturnType<typeof serverInfoService<TClient>>;
+  get serverInfo() {
+    if (!this._serverInfo) {
+      this._serverInfo = serverInfoService(this.config);
+    }
+    return this._serverInfo;
+  }
+
   /**
    * This resource represents a service registry. Use it to retrieve attributes
    * related to a [service
@@ -861,14 +1442,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-service-registry
    */
-  public serviceRegistry: ReturnType<typeof serviceRegistryService<TClient>>;
+  get serviceRegistry() {
+    if (!this._serviceRegistry) {
+      this._serviceRegistry = serviceRegistryService(this.config);
+    }
+    return this._serviceRegistry;
+  }
+
   /**
    * This resource represents statuses. Use it to search, get, create, delete, and
    * change statuses.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-status
    */
-  public status: ReturnType<typeof statusService<TClient>>;
+  get status() {
+    if (!this._status) {
+      this._status = statusService(this.config);
+    }
+    return this._status;
+  }
+
   /**
    * This resource represents a [long-running asynchronous
    * tasks](#async-operations). Use it to obtain details about the progress of a
@@ -876,14 +1469,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-tasks
    */
-  public tasks: ReturnType<typeof tasksService<TClient>>;
+  get tasks() {
+    if (!this._tasks) {
+      this._tasks = tasksService(this.config);
+    }
+    return this._tasks;
+  }
+
   /**
    * This resource represents planning settings for plan-only and Atlassian teams in
    * a plan. Use it to get, create, update and delete planning settings.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-teams-in-plan
    */
-  public teamsInPlan: ReturnType<typeof teamsInPlanService<TClient>>;
+  get teamsInPlan() {
+    if (!this._teamsInPlan) {
+      this._teamsInPlan = teamsInPlanService(this.config);
+    }
+    return this._teamsInPlan;
+  }
+
   /**
    * This resource represents time tracking and time tracking providers. Use it to
    * get and set the time tracking provider, get and set the time tracking options,
@@ -891,7 +1496,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-time-tracking
    */
-  public timeTracking: ReturnType<typeof timeTrackingService<TClient>>;
+  get timeTracking() {
+    if (!this._timeTracking) {
+      this._timeTracking = timeTrackingService(this.config);
+    }
+    return this._timeTracking;
+  }
+
   /**
    * UI modifications is a feature available for **Forge apps only**. It enables
    * Forge apps to control how selected Jira fields behave on the following views:
@@ -900,11 +1511,23 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-ui-modifications-apps-
    */
-  public uiModificationsApps: ReturnType<typeof uiModificationsAppsService<TClient>>;
+  get uiModificationsApps() {
+    if (!this._uiModificationsApps) {
+      this._uiModificationsApps = uiModificationsAppsService(this.config);
+    }
+    return this._uiModificationsApps;
+  }
+
   /**
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-usernavproperties
    */
-  public usernavproperties: ReturnType<typeof usernavpropertiesService<TClient>>;
+  get usernavproperties() {
+    if (!this._usernavproperties) {
+      this._usernavproperties = usernavpropertiesService(this.config);
+    }
+    return this._usernavproperties;
+  }
+
   /**
    * This resource represents [user](#api-group-Users) properties and provides for
    * storing custom data against a user. Use it to get, create, and delete user
@@ -920,7 +1543,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-user-properties
    */
-  public userProperties: ReturnType<typeof userPropertiesService<TClient>>;
+  get userProperties() {
+    if (!this._userProperties) {
+      this._userProperties = userPropertiesService(this.config);
+    }
+    return this._userProperties;
+  }
+
   /**
    * This resource represents various ways to search for and find users. Use it to
    * obtain list of users including users assignable to projects and issues, users
@@ -930,7 +1559,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-user-search
    */
-  public userSearch: ReturnType<typeof userSearchService<TClient>>;
+  get userSearch() {
+    if (!this._userSearch) {
+      this._userSearch = userSearchService(this.config);
+    }
+    return this._userSearch;
+  }
+
   /**
    * This resource represent users. Use it to:
    *
@@ -941,7 +1576,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-users
    */
-  public users: ReturnType<typeof usersService<TClient>>;
+  get users() {
+    if (!this._users) {
+      this._users = usersService(this.config);
+    }
+    return this._users;
+  }
+
   /**
    * This resource represents webhooks. Webhooks are calls sent to a URL when an
    * event occurs in Jira for issues specified by a JQL query. Only Connect and
@@ -950,7 +1591,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-webhooks
    */
-  public webhooks: ReturnType<typeof webhooksService<TClient>>;
+  get webhooks() {
+    if (!this._webhooks) {
+      this._webhooks = webhooksService(this.config);
+    }
+    return this._webhooks;
+  }
+
   /**
    * This resource represents draft workflow schemes. Use it to manage drafts of
    * workflow schemes.
@@ -969,7 +1616,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-scheme-drafts
    */
-  public workflowSchemeDrafts: ReturnType<typeof workflowSchemeDraftsService<TClient>>;
+  get workflowSchemeDrafts() {
+    if (!this._workflowSchemeDrafts) {
+      this._workflowSchemeDrafts = workflowSchemeDraftsService(this.config);
+    }
+    return this._workflowSchemeDrafts;
+  }
+
   /**
    * This resource represents the associations between workflow schemes and projects.
    *
@@ -978,9 +1631,15 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-scheme-project-associations
    */
-  public workflowSchemeProjectAssociations: ReturnType<
-    typeof workflowSchemeProjectAssociationsService<TClient>
-  >;
+  get workflowSchemeProjectAssociations() {
+    if (!this._workflowSchemeProjectAssociations) {
+      this._workflowSchemeProjectAssociations = workflowSchemeProjectAssociationsService(
+        this.config
+      );
+    }
+    return this._workflowSchemeProjectAssociations;
+  }
+
   /**
    * This resource represents workflow schemes. Use it to manage workflow schemes
    * and the workflow scheme's workflows and issue types.
@@ -999,7 +1658,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-schemes
    */
-  public workflowSchemes: ReturnType<typeof workflowSchemesService<TClient>>;
+  get workflowSchemes() {
+    if (!this._workflowSchemes) {
+      this._workflowSchemes = workflowSchemesService(this.config);
+    }
+    return this._workflowSchemes;
+  }
+
   /**
    * This resource represents workflows. Use it to:
    *
@@ -1011,7 +1676,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflows
    */
-  public workflows: ReturnType<typeof workflowsService<TClient>>;
+  get workflows() {
+    if (!this._workflows) {
+      this._workflows = workflowsService(this.config);
+    }
+    return this._workflows;
+  }
+
   /**
    * This resource represents status categories. Use it to obtain a list of all
    * status categories and the details of a category. Status categories provided a
@@ -1019,14 +1690,26 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-status-categories
    */
-  public workflowStatusCategories: ReturnType<typeof workflowStatusCategoriesService<TClient>>;
+  get workflowStatusCategories() {
+    if (!this._workflowStatusCategories) {
+      this._workflowStatusCategories = workflowStatusCategoriesService(this.config);
+    }
+    return this._workflowStatusCategories;
+  }
+
   /**
    * This resource represents issue workflow statuses. Use it to obtain a list of
    * all statuses associated with workflows and the details of a status.
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-statuses
    */
-  public workflowStatuses: ReturnType<typeof workflowStatusesService<TClient>>;
+  get workflowStatuses() {
+    if (!this._workflowStatuses) {
+      this._workflowStatuses = workflowStatusesService(this.config);
+    }
+    return this._workflowStatuses;
+  }
+
   /**
    * This resource represents workflow transition properties, which provides for
    * storing custom data against a workflow transition. Use it to get, create, and
@@ -1037,9 +1720,13 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    * @deprecated
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-transition-properties
    */
-  public workflowTransitionProperties: ReturnType<
-    typeof workflowTransitionPropertiesService<TClient>
-  >;
+  get workflowTransitionProperties() {
+    if (!this._workflowTransitionProperties) {
+      this._workflowTransitionProperties = workflowTransitionPropertiesService(this.config);
+    }
+    return this._workflowTransitionProperties;
+  }
+
   /**
    * This resource represents workflow transition rules. Workflow transition rules
    * define a Connect or a Forge app routine, such as a [workflow post
@@ -1049,108 +1736,10 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
    *
    * @see https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-workflow-transition-rules
    */
-  public workflowTransitionRules: ReturnType<typeof workflowTransitionRulesService<TClient>>;
-
-  constructor(config: DefaultJiraConfig | ForgeJiraConfig) {
-    // Validate config has required properties
-    validateJiraConfig(config);
-
-    this.announcementBanner = announcementBannerService(config);
-    this.appDataPolicies = appDataPoliciesService(config);
-    this.applicationRoles = applicationRolesService(config);
-    this.appMigration = appMigrationService(config);
-    this.appProperties = appPropertiesService(config);
-    this.auditRecords = auditRecordsService(config);
-    this.avatars = avatarsService(config);
-    this.classificationLevels = classificationLevelsService(config);
-    this.dashboards = dashboardsService(config);
-    this.dynamicModules = dynamicModulesService(config);
-    this.filterSharing = filterSharingService(config);
-    this.filters = filtersService(config);
-    this.groupAndUserPicker = groupAndUserPickerService(config);
-    this.groups = groupsService(config);
-    this.issueAttachments = issueAttachmentsService(config);
-    this.issueBulkOperations = issueBulkOperationsService(config);
-    this.issueCommentProperties = issueCommentPropertiesService(config);
-    this.issueComments = issueCommentsService(config);
-    this.issueCustomFieldAssociations = issueCustomFieldAssociationsService(config);
-    this.issueCustomFieldConfigurationApps = issueCustomFieldConfigurationAppsService(config);
-    this.issueCustomFieldContexts = issueCustomFieldContextsService(config);
-    this.issueCustomFieldOptionsApps = issueCustomFieldOptionsAppsService(config);
-    this.issueCustomFieldOptions = issueCustomFieldOptionsService(config);
-    this.issueCustomFieldValuesApps = issueCustomFieldValuesAppsService(config);
-    this.issueFieldConfigurations = issueFieldConfigurationsService(config);
-    this.issueFields = issueFieldsService(config);
-    this.issueLinks = issueLinksService(config);
-    this.issueLinkTypes = issueLinkTypesService(config);
-    this.issueNavigatorSettings = issueNavigatorSettingsService(config);
-    this.issueNotificationSchemes = issueNotificationSchemesService(config);
-    this.issuePriorities = issuePrioritiesService(config);
-    this.issueProperties = issuePropertiesService(config);
-    this.issueRedaction = issueRedactionService(config);
-    this.issueRemoteLinks = issueRemoteLinksService(config);
-    this.issueResolutions = issueResolutionsService(config);
-    this.issueSearch = issueSearchService(config);
-    this.issueSecurityLevel = issueSecurityLevelService(config);
-    this.issueSecuritySchemes = issueSecuritySchemesService(config);
-    this.issues = issuesService(config);
-    this.issueTypeProperties = issueTypePropertiesService(config);
-    this.issueTypeSchemes = issueTypeSchemesService(config);
-    this.issueTypeScreenSchemes = issueTypeScreenSchemesService(config);
-    this.issueTypes = issueTypesService(config);
-    this.issueVotes = issueVotesService(config);
-    this.issueWatchers = issueWatchersService(config);
-    this.issueWorklogProperties = issueWorklogPropertiesService(config);
-    this.issueWorklogs = issueWorklogsService(config);
-    this.jiraExpressions = jiraExpressionsService(config);
-    this.jiraSettings = jiraSettingsService(config);
-    this.jqlFunctionsApps = jqlFunctionsAppsService(config);
-    this.jql = jqlService(config);
-    this.labels = labelsService(config);
-    this.licenseMetrics = licenseMetricsService(config);
-    this.myself = myselfService(config);
-    this.permissionSchemes = permissionSchemesService(config);
-    this.permissions = permissionsService(config);
-    this.plans = plansService(config);
-    this.prioritySchemes = prioritySchemesService(config);
-    this.projectAvatars = projectAvatarsService(config);
-    this.projectCategories = projectCategoriesService(config);
-    this.projectClassificationLevels = projectClassificationLevelsService(config);
-    this.projectComponents = projectComponentsService(config);
-    this.projectEmail = projectEmailService(config);
-    this.projectFeatures = projectFeaturesService(config);
-    this.projectKeyAndNameValidation = projectKeyAndNameValidationService(config);
-    this.projectPermissionSchemes = projectPermissionSchemesService(config);
-    this.projectProperties = projectPropertiesService(config);
-    this.projectRoleActors = projectRoleActorsService(config);
-    this.projectRoles = projectRolesService(config);
-    this.projects = projectsService(config);
-    this.projectTemplates = projectTemplatesService(config);
-    this.projectTypes = projectTypesService(config);
-    this.projectVersions = projectVersionsService(config);
-    this.screenSchemes = screenSchemesService(config);
-    this.screens = screensService(config);
-    this.screenTabFields = screenTabFieldsService(config);
-    this.screenTabs = screenTabsService(config);
-    this.serverInfo = serverInfoService(config);
-    this.serviceRegistry = serviceRegistryService(config);
-    this.status = statusService(config);
-    this.tasks = tasksService(config);
-    this.teamsInPlan = teamsInPlanService(config);
-    this.timeTracking = timeTrackingService(config);
-    this.uiModificationsApps = uiModificationsAppsService(config);
-    this.usernavproperties = usernavpropertiesService(config);
-    this.userProperties = userPropertiesService(config);
-    this.userSearch = userSearchService(config);
-    this.users = usersService(config);
-    this.webhooks = webhooksService(config);
-    this.workflowSchemeDrafts = workflowSchemeDraftsService(config);
-    this.workflowSchemeProjectAssociations = workflowSchemeProjectAssociationsService(config);
-    this.workflowSchemes = workflowSchemesService(config);
-    this.workflows = workflowsService(config);
-    this.workflowStatusCategories = workflowStatusCategoriesService(config);
-    this.workflowStatuses = workflowStatusesService(config);
-    this.workflowTransitionProperties = workflowTransitionPropertiesService(config);
-    this.workflowTransitionRules = workflowTransitionRulesService(config);
+  get workflowTransitionRules() {
+    if (!this._workflowTransitionRules) {
+      this._workflowTransitionRules = workflowTransitionRulesService(this.config);
+    }
+    return this._workflowTransitionRules;
   }
 }

@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.1
+
+### Patch Changes
+
+- 6c7dfd3: Flattened parameters in searchAndReconsileIssuesUsingJqlPost
+
 ## 0.2.0
 
 ### Minor Changes

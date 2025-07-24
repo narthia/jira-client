@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.2
+
+### Patch Changes
+
+- 644b886: Updated Readme
+
 ## 0.2.1
 
 ### Patch Changes

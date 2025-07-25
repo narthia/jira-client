@@ -187,6 +187,19 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
 
+## Security
+
+For detailed security information, vulnerability reporting, and security best practices, please see our [SECURITY.md](SECURITY.md) file.
+
+### Network Access Disclosure
+
+This package makes network requests to:
+
+- Your configured Jira instance (via HTTPS)
+- Atlassian Forge API (when used in Forge applications)
+
+All network requests are made to authenticate with and interact with Jira APIs as intended.
+
 ## Support
 
 - 📧 Email: jeevanreddy1999@gmail.com

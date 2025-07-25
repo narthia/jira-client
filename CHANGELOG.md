@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.4
+
+### Patch Changes
+
+- 5b601b0: Fixed some jira type issues
+
 ## 0.2.3
 
 ### Patch Changes

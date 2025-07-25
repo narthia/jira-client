@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.7
+
+### Patch Changes
+
+- db788ea: Updated dependecies to latest version.
+
 ## 0.2.6
 
 ### Patch Changes

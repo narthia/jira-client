@@ -4,7 +4,7 @@ import type {
   Priority,
   StatusDetails,
   IssueLinkType,
-  Comment,
+  Comment
 } from "./common";
 /** Priority schemes associated with the issue priority. */
 export interface ExpandPrioritySchemePage extends Record<string, unknown> {

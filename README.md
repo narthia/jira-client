@@ -31,8 +31,8 @@ export const client = new JiraClient({
   auth: {
     email: "your-email@example.com",
     apiToken: "your-api-token",
-    baseUrl: "https://your-domain.atlassian.net",
-  },
+    baseUrl: "https://your-domain.atlassian.net"
+  }
 });
 
 // some-file-name.ts
@@ -40,7 +40,7 @@ import { client } from "./jiraClient.ts";
 
 const issue = await client.issues.getIssue({
   issueKeyOrId: "PROJ-123",
-  fields: ["summary", "description", "status"],
+  fields: ["summary", "description", "status"]
 });
 
 if (issue.success) {
@@ -58,13 +58,13 @@ import api from "@forge/api";
 // Initialize the client once and reuse across your application
 export const client = new JiraClient({
   type: "forge",
-  auth: { api },
+  auth: { api }
 });
 
 // some-file-name.ts
 const issue = await client.issues.getIssue({
   issueKeyOrId: "PROJ-123",
-  opts: { as: "app" }, // by default its user
+  opts: { as: "app" } // by default its user
 });
 
 if (issue.success) {
@@ -78,7 +78,7 @@ The client provides comprehensive error handling with strongly typed responses:
 
 ```typescript
 const issue = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
+  issueKeyOrId: "PROJ-123"
 });
 
 if (issue.success) {
@@ -107,7 +107,7 @@ All client methods accept a structured options object with the following paramet
 // Get an issue with path and query parameters
 const issue = await client.issues.getIssue({
   issueKeyOrId: "PROJ-123",
-  fields: ["summary", "description", "status"],
+  fields: ["summary", "description", "status"]
 });
 
 // Use 'as' in opts for Forge-specific options
@@ -117,7 +117,7 @@ const issue = await client.issues.getIssue({
 // This is particularly useful for operations requiring elevated permissions or automated processes.
 const issueForge = await client.issues.getIssue({
   issueKeyOrId: "PROJ-123",
-  opts: { as: "app" },
+  opts: { as: "app" }
 });
 
 // Add custom headers using opts.headers
@@ -125,9 +125,9 @@ const issueWithHeaders = await client.issues.getIssue({
   issueKeyOrId: "PROJ-123",
   opts: {
     headers: {
-      "X-Custom-Header": "my-value",
-    },
-  },
+      "X-Custom-Header": "my-value"
+    }
+  }
 });
 ```
 

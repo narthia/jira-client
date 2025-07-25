@@ -11,17 +11,17 @@ export default [
       parser: typescriptParser,
       parserOptions: {
         ecmaVersion: 2022,
-        sourceType: "module",
+        sourceType: "module"
       },
       globals: {
         console: "readonly",
         setTimeout: "readonly",
         clearTimeout: "readonly",
-        Promise: "readonly",
-      },
+        Promise: "readonly"
+      }
     },
     plugins: {
-      "@typescript-eslint": typescript,
+      "@typescript-eslint": typescript
     },
     rules: {
       "no-unused-vars": "off",
@@ -31,8 +31,8 @@ export default [
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
-        },
+          caughtErrorsIgnorePattern: "^_"
+        }
       ],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/explicit-function-return-type": "off",
@@ -42,11 +42,11 @@ export default [
       "no-var": "error",
       "no-console": "warn",
       "no-prototype-builtins": "off",
-      "no-undef": "off",
-    },
+      "no-undef": "off"
+    }
   },
   prettier,
   {
-    ignores: ["dist/", "node_modules/", "*.js"],
-  },
+    ignores: ["dist/", "node_modules/", "*.js"]
+  }
 ];

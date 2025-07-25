@@ -3,7 +3,7 @@ import type { DefaultJiraConfig, ForgeJiraConfig } from "../types";
 /**
  * Validates a Jira configuration object to ensure it has all required properties
  * based on the configuration type.
- * 
+ *
  * @param config - The configuration object to validate
  * @throws {Error} If the configuration is invalid or missing required properties
  */
@@ -43,4 +43,4 @@ export function validateJiraConfig(config: DefaultJiraConfig | ForgeJiraConfig):
       `Invalid config type: ${(config as unknown as { type: string }).type}. Must be 'default' or 'forge'`
     );
   }
-} 
+}

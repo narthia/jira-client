@@ -32,7 +32,8 @@
     "prepublishOnly": "bun run clean && bun run build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "format": "prettier --write ."
   },
   "keywords": [
     "jira",
@@ -78,14 +79,14 @@
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
     "@eslint/js": "^9.31.0",
-    "@forge/api": "^6.0.1",
-    "@types/node": "^24.0.15",
-    "@typescript-eslint/eslint-plugin": "^8.37.0",
-    "@typescript-eslint/parser": "^8.37.0",
+    "@forge/api": "^6.0.2",
+    "@types/node": "^24.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
-    "jiti": "^2.4.2",
+    "jiti": "^2.5.1",
     "prettier": "^3.6.2",
     "tsup": "^8.5.0",
     "typescript": "^5.8.3",

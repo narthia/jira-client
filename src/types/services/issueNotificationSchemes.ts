@@ -3,7 +3,7 @@ import type {
   GroupName,
   ProjectRole,
   UserDetails,
-  NotificationScheme,
+  NotificationScheme
 } from "./common";
 /** Details of notifications which should be added to the notification scheme. */
 export interface AddNotificationsDetails extends Record<string, unknown> {

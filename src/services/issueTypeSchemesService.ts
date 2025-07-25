@@ -18,7 +18,7 @@ import jiraRequest from "../utils/jiraRequest";
 
 /**
  * This resource represents issue type schemes in classic projects. Use it to:
- * 
+ *
  *  *  get issue type schemes and a list of the projects that use them.
  *  *  associate issue type schemes with projects.
  *  *  add issue types to issue type schemes.
@@ -32,15 +32,15 @@ export default function issueTypeSchemes<TClient extends ClientType>(
   return {
     /**
      * Adds issue types to an issue type scheme.
-     * 
+     *
      * The added issue types are appended to the issue types list.
-     * 
+     *
      * If any of the issue types exist in the issue type scheme, the operation fails
      * and no issue types are added.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     addIssueTypesToIssueTypeScheme: async ({
@@ -77,16 +77,16 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Assigns an issue type scheme to a project.
-     * 
+     *
      * If any issues in the project are assigned issue types not present in the new
      * scheme, the operation will fail. To complete the assignment those issues must
      * be updated to use issue types in the new scheme.
-     * 
+     *
      * Issue type schemes can only be assigned to classic projects.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     assignIssueTypeSchemeToProject: async ({
@@ -114,12 +114,12 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Creates an issue type scheme.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -158,15 +158,15 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Deletes an issue type scheme.
-     * 
+     *
      * Only issue type schemes used in classic projects can be deleted.
-     * 
+     *
      * Any projects assigned to the scheme are reassigned to the default issue type
      * scheme.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the issue type scheme is deleted.
      */
     deleteIssueTypeScheme: async ({
@@ -190,14 +190,14 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Returns a [paginated](#pagination) list of issue type schemes.
-     * 
+     *
      * Only issue type schemes used in classic projects are returned.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -291,7 +291,7 @@ export default function issueTypeSchemes<TClient extends ClientType>(
       id?: number[];
       /**
        * [Order](#ordering) the results by a field:
-       * 
+       *
        *  *  `name` Sorts by issue type scheme name.
        *  *  `id` Sorts by issue type scheme ID.
        */
@@ -299,7 +299,7 @@ export default function issueTypeSchemes<TClient extends ClientType>(
       /**
        * Use [expand](#expansion) to include additional information in the response.
        * This parameter accepts a comma-separated list. Expand options include:
-       * 
+       *
        *  *  `projects` For each issue type schemes, returns information about the
        * projects the issue type scheme is assigned to.
        *  *  `issueTypes` For each issue type schemes, returns information about the
@@ -332,14 +332,14 @@ export default function issueTypeSchemes<TClient extends ClientType>(
     /**
      * Returns a [paginated](#pagination) list of issue type schemes and, for each
      * issue type scheme, a list of the projects that use it.
-     * 
+     *
      * Only issue type schemes used in classic projects are returned.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -436,14 +436,14 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Returns a [paginated](#pagination) list of issue type scheme items.
-     * 
+     *
      * Only issue type scheme items used in classic projects are returned.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -505,16 +505,16 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Removes an issue type from an issue type scheme.
-     * 
+     *
      * This operation cannot remove:
-     * 
+     *
      *  *  any issue type used by issues.
      *  *  any issue types from the default issue type scheme.
      *  *  the last standard issue type from an issue type scheme.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     removeIssueTypeFromIssueTypeScheme: async ({
@@ -542,16 +542,16 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Changes the order of issue types in an issue type scheme.
-     * 
+     *
      * The request body parameters must meet the following requirements:
-     * 
+     *
      *  *  all of the issue types must belong to the issue type scheme.
      *  *  either `after` or `position` must be provided.
      *  *  the issue type in `after` must not be in the issue type list.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     reorderIssueTypesInIssueTypeScheme: async ({
@@ -589,10 +589,10 @@ export default function issueTypeSchemes<TClient extends ClientType>(
 
     /**
      * Updates an issue type scheme.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg).
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     updateIssueTypeScheme: async ({

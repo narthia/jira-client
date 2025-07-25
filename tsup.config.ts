@@ -14,5 +14,5 @@ export default defineConfig({
   target: "node18",
   platform: "node",
   outDir: "dist",
-  onSuccess: "tsc --emitDeclarationOnly --declaration",
+  onSuccess: "tsc --emitDeclarationOnly --declaration"
 });

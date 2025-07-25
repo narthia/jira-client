@@ -1,7 +1,7 @@
 {
   "name": "@narthia/jira-client",
   "version": "0.2.5",
-  "description": "A Jira API client with dual ESM/CJS support, designed for both standard Jira REST API and Atlassian Forge applications. **This project is 100% written in TypeScript** with comprehensive type definitions and zero runtime dependencies for standard usage.",
+  "description": "A TypeScript Jira API client with dual ESM/CJS support for Jira REST API and Atlassian Forge applications. Zero runtime dependencies.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.cjs",
@@ -9,15 +9,16 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.cjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -51,6 +52,9 @@
     "jira-rest-client",
     "atlassian-client",
     "jira-rest-api",
+    "secure",
+    "zero-dependencies",
+    "type-safe",
     "narthia",
     "narthia-jira",
     "narthia-rest"
@@ -97,5 +101,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "security": {
+    "policy": "https://github.com/narthia/jira-client/blob/main/SECURITY.md"
   }
 }

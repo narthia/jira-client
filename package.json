@@ -1,6 +1,6 @@
 {
   "name": "@narthia/jira-client",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "A TypeScript Jira API client with dual ESM/CJS support for Jira REST API and Atlassian Forge applications. Zero runtime dependencies.",
   "type": "module",
   "main": "./dist/index.cjs",

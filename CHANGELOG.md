@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.5
+
+### Patch Changes
+
+- 5f3d13e: Added jsdoc to jiraclient class
+
 ## 0.2.4
 
 ### Patch Changes

@@ -4,7 +4,7 @@ import type {
   ProjectIssueTypes,
   DocumentVersion,
   ProjectDetails,
-  ProjectUsagePage,
+  ProjectUsagePage
 } from "./common";
 /**
  * The approval configuration of a status within a workflow. Applies only to Jira

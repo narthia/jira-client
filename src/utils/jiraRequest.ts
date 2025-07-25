@@ -4,6 +4,13 @@ import callAndHandleError from "./callAndHandleError";
 import { getForgeRoute } from "./forgeUtils";
 import { paramBuilder } from "./params";
 
+const createHttpClient = () => {
+  const httpClient = (url: string, options: RequestInit): Promise<Response> => {
+    return fetch(url, options);
+  };
+  return httpClient;
+};
+
 const jiraRequest = async <TResponse>(requestParams: RequestParams) => {
   const {
     config,
@@ -22,9 +29,17 @@ const jiraRequest = async <TResponse>(requestParams: RequestParams) => {
 
   if (config.type === "default") {
     const { auth } = config;
-    apiCall = fetch(`${auth.baseUrl}${url}`, {
+    const headers = createHeaders({
+      type: config.type,
+      auth,
+      isExperimental,
+      headers: opts?.headers
+    });
+
+    const httpClient = createHttpClient();
+    apiCall = httpClient(`${auth.baseUrl}${url}`, {
       method,
-      headers: createHeaders({ type: config.type, auth, isExperimental, headers: opts?.headers }),
+      headers,
       ...(body && { body })
     });
   } else if (config.type === "forge") {

@@ -13,7 +13,7 @@ import type {
   ForgeJiraConfig,
   WithRequestOpts,
   JiraResult,
-  IssueFieldKeys,
+  IssueFieldKeys
 } from "../types";
 import jiraRequest from "../utils/jiraRequest";
 
@@ -53,7 +53,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     countIssues: async ({
       jqlCountRequestBean,
-      opts,
+      opts
     }: {
       /**
        * A JSON object containing the search request.
@@ -71,7 +71,7 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(jqlCountRequestBean),
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -100,7 +100,7 @@ export default function issueSearch<TClient extends ClientType>(
       currentProjectId,
       showSubTasks,
       showSubTaskParent,
-      opts,
+      opts
     }: {
       /**
        * A string to match against text fields in the issue such as title, description,
@@ -137,11 +137,11 @@ export default function issueSearch<TClient extends ClientType>(
           currentIssueKey,
           currentProjectId,
           showSubTasks,
-          showSubTaskParent,
+          showSubTaskParent
         },
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -194,7 +194,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     matchIssues: async ({
       issuesAndJqlQueries,
-      opts,
+      opts
     }: {
       /**
        * @example
@@ -219,7 +219,7 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(issuesAndJqlQueries),
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -456,7 +456,7 @@ export default function issueSearch<TClient extends ClientType>(
       fieldsByKeys,
       failFast,
       reconcileIssues,
-      opts,
+      opts
     }: {
       /**
        * A [JQL](https://confluence.atlassian.com/x/egORLQ) expression. For performance
@@ -557,11 +557,11 @@ export default function issueSearch<TClient extends ClientType>(
           properties,
           fieldsByKeys,
           failFast,
-          reconcileIssues,
+          reconcileIssues
         },
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -794,7 +794,7 @@ export default function issueSearch<TClient extends ClientType>(
       nextPageToken,
       properties,
       reconcileIssues,
-      opts,
+      opts
     }: SearchAndReconcileRequestBean & WithRequestOpts<TClient>): Promise<
       JiraResult<SearchAndReconcileResults>
     > => {
@@ -809,11 +809,11 @@ export default function issueSearch<TClient extends ClientType>(
           maxResults,
           nextPageToken,
           properties,
-          reconcileIssues,
+          reconcileIssues
         }),
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -1100,7 +1100,7 @@ export default function issueSearch<TClient extends ClientType>(
       properties,
       fieldsByKeys,
       failFast,
-      opts,
+      opts
     }: {
       /**
        * The [JQL](https://confluence.atlassian.com/x/egORLQ) that defines the search.
@@ -1205,11 +1205,11 @@ export default function issueSearch<TClient extends ClientType>(
           expand,
           properties,
           fieldsByKeys,
-          failFast,
+          failFast
         },
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
     },
 
@@ -1488,7 +1488,7 @@ export default function issueSearch<TClient extends ClientType>(
      */
     searchForIssuesUsingJqlPost: async ({
       searchRequestBean,
-      opts,
+      opts
     }: {
       /**
        * A JSON object containing the search request.
@@ -1519,8 +1519,8 @@ export default function issueSearch<TClient extends ClientType>(
         body: JSON.stringify(searchRequestBean),
         config,
         opts,
-        isResponseAvailable: true,
+        isResponseAvailable: true
       });
-    },
+    }
   };
 }

@@ -16,8 +16,8 @@ export default defineConfig({
         "**/*.test.ts",
         "**/*.spec.ts",
         "**/__tests__/**",
-        "**/__mocks__/**",
-      ],
-    },
-  },
+        "**/__mocks__/**"
+      ]
+    }
+  }
 });

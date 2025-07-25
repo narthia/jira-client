@@ -27,22 +27,22 @@ export default function issueCustomFieldConfigurationApps<TClient extends Client
      * a
      * [type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field-type/)
      * created by a [Forge app](https://developer.atlassian.com/platform/forge/).
-     * 
+     *
      * The result can be filtered by one of these criteria:
-     * 
+     *
      *  *  `id`.
      *  *  `fieldContextId`.
      *  *  `issueId`.
      *  *  `projectKeyOrId` and `issueTypeId`.
-     * 
+     *
      * Otherwise, all configurations are returned.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are
      * not required for the Forge app that provided the custom field type.
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -152,23 +152,23 @@ export default function issueCustomFieldConfigurationApps<TClient extends Client
      * fields of a
      * [type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field-type/)
      * created by a [Forge app](https://developer.atlassian.com/platform/forge/).
-     * 
+     *
      * The result can be filtered by one of these criteria:
-     * 
+     *
      *  *  `id`.
      *  *  `fieldContextId`.
      *  *  `issueId`.
      *  *  `projectKeyOrId` and `issueTypeId`.
-     * 
+     *
      * Otherwise, all configurations for the provided list of custom fields are
      * returned.
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are
      * not required for the Forge app that provided the custom field type.
-     * 
+     *
      * @returns Returned if the request is successful.
-     * 
+     *
      * example:
      * ```
      * {
@@ -285,11 +285,11 @@ export default function issueCustomFieldConfigurationApps<TClient extends Client
      * Update the configuration for contexts of a custom field of a
      * [type](https://developer.atlassian.com/platform/forge/manifest-reference/modules/jira-custom-field-type/)
      * created by a [Forge app](https://developer.atlassian.com/platform/forge/).
-     * 
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global
      * permission](https://confluence.atlassian.com/x/x4dKLg). Jira permissions are
      * not required for the Forge app that created the custom field type.
-     * 
+     *
      * @returns Returned if the request is successful.
      */
     updateCustomFieldConfiguration: async ({

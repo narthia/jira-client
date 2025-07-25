@@ -12,7 +12,7 @@ type HeadersParams<T extends ClientType> = {
 export const createHeaders = <T extends ClientType>(headersParams: HeadersParams<T>) => {
   let defaultHeaders: Record<string, string> = {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    Accept: "application/json"
   };
 
   if (headersParams.type === "default") {

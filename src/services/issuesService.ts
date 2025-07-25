@@ -1346,8 +1346,8 @@ export default function issues<TClient extends ClientType>(
        * }
        */
       issueUpdateDetails: IssueUpdateDetails;
-    } & WithRequestOpts<TClient>): Promise<JiraResult<IssueBean | void>> => {
-      return jiraRequest<IssueBean | void>({
+    } & WithRequestOpts<TClient>): Promise<JiraResult<IssueBean | undefined>> => {
+      return jiraRequest<IssueBean | undefined>({
         path: "/rest/api/3/issue/{issueIdOrKey}",
         method: "PUT",
         pathParams: {

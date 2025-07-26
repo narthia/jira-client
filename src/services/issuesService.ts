@@ -1539,19 +1539,23 @@ export default function issues<TClient extends ClientType>(
      * ```
      */
     getBulkChangelogs: async ({
-      bulkChangelogRequestBean,
+      issueIdsOrKeys,
+      fieldIds,
+      maxResults,
+      nextPageToken,
       opts
-    }: {
-      /**
-       * A JSON object containing the bulk fetch changelog request filters such as issue
-       * IDs and field IDs.
-       */
-      bulkChangelogRequestBean: BulkChangelogRequestBean;
-    } & WithRequestOpts<TClient>): Promise<JiraResult<BulkChangelogResponseBean>> => {
+    }: BulkChangelogRequestBean & WithRequestOpts<TClient>): Promise<
+      JiraResult<BulkChangelogResponseBean>
+    > => {
       return jiraRequest<BulkChangelogResponseBean>({
         path: "/rest/api/3/changelog/bulkfetch",
         method: "POST",
-        body: JSON.stringify(bulkChangelogRequestBean),
+        body: JSON.stringify({
+          issueIdsOrKeys,
+          fieldIds,
+          maxResults,
+          nextPageToken
+        }),
         config,
         opts,
         isResponseAvailable: true

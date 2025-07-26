@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.8
+
+### Patch Changes
+
+- f37927f: updated getBulkChangelogs method to accept individual parameters
+
 ## 0.2.7
 
 ### Patch Changes

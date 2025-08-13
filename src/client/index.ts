@@ -51,3 +51,5 @@ export interface JiraClient {
  * ```
  */
 export const JiraClient: JiraClient = JiraClientImpl;
+export type DefaultJiraClientType = JiraClientImpl<"default">;
+export type ForgeJiraClientType = JiraClientImpl<"forge">;

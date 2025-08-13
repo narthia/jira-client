@@ -3,4 +3,4 @@ export * from "./types";
 export * from "./client";
 
 // Default export for convenience
-export { JiraClient } from "./client";
+export { JiraClient, type DefaultJiraClientType, type ForgeJiraClientType } from "./client";

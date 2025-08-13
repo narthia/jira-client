@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.2.9
+
+### Patch Changes
+
+- b389ac4: Exported default and forge jira client types
+
 ## 0.2.8
 
 ### Patch Changes

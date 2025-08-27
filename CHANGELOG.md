@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.3.0
+
+### Minor Changes
+
+- 9ad2184: Added Jira Service Management rest api
+
 ## 0.2.9
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.3.1
+
+### Patch Changes
+
+- 9d4afb5: Added JSM services in main method
+
 ## 0.3.0
 
 ### Minor Changes

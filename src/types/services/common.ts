@@ -30,6 +30,10 @@ import type {
 import type { PermissionGrant } from "./permissionSchemes";
 import type { AppWorkflowTransitionRule, WorkflowId } from "./workflowTransitionRules";
 import type { ProjectUsage } from "./workflows";
+import type { I18nErrorMessage } from "./assets";
+import type { UserLinkDto } from "./customer";
+import type { ArticleDto } from "./knowledgebase";
+import type { RequestTypeFieldDto, RequestTypeIconDto } from "./request";
 /** Details of an application role. */
 export interface ApplicationRole {
   /**
@@ -501,6 +505,7 @@ export interface IssueTypeWorkflowMapping {
   /** The name of the workflow. */
   workflow?: string;
 }
+/** Answer in Atlassian Document Format (ADF) */
 export interface JsonNode {
   array?: boolean;
   bigDecimal?: boolean;
@@ -1603,4 +1608,231 @@ export interface WorkflowTransitionRules {
   validators?: AppWorkflowTransitionRule[];
   /** Properties that identify a workflow. */
   workflowId: WorkflowId;
+}
+
+/** Fields and additional metadata for creating a request that uses the request type */
+export interface CustomerRequestCreateMetaDto {
+  /** Flag indicating if participants can be added to a request (true) or not. */
+  canAddRequestParticipants?: boolean;
+  /**
+   * Flag indicating if a request can be raised on behalf of another user (true) or
+   * not.
+   */
+  canRaiseOnBehalfOf?: boolean;
+  /** List of the fields included in this request. */
+  requestTypeFields?: RequestTypeFieldDto[];
+}
+/** Date of the current build. */
+export interface DateDto {
+  /**
+   * Date as the number of milliseconds that have elapsed since 00:00:00 Coordinated
+   * Universal Time (UTC), 1 January 1970.
+   */
+  epochMillis?: number;
+  /** Date in a user-friendly text format. */
+  friendly?: string;
+  /** Date in ISO8601 format. */
+  iso8601?: string;
+  /**
+   * Date in the format used in the Jira REST APIs, which is ISO8601 format but
+   * extended with milliseconds. For example, 2016-09-28T23:08:32.097+1000.
+   */
+  jira?: string;
+}
+/**
+ * An entity property, for more information see [Entity
+ * properties](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/).
+ */
+export interface EntityProperty {
+  /** The key of the property. Required on create and update. */
+  key?: string;
+  /** The value of the property. Required on create and update. */
+  value?: unknown;
+}
+export interface ErrorResponse {
+  errorMessage?: string;
+  i18nErrorMessage?: I18nErrorMessage;
+}
+/** The schema of a field. */
+export interface JsonTypeBean {
+  /** If the field is a custom field, the configuration of the field. */
+  configuration?: {
+    [key: string]: unknown;
+  };
+  /** If the field is a custom field, the URI of the field. */
+  custom?: string;
+  /** If the field is a custom field, the custom ID of the field. */
+  customId?: number;
+  /** When the data type is an array, the name of the field items within the array. */
+  items?: string;
+  /** If the field is a system field, the name of the field. */
+  system?: string;
+  /** The data type of the field. */
+  type: string;
+}
+export interface PagedDtoArticleDto {
+  _expands?: string[];
+  /** List of the links relating to the page. */
+  _links?: PagedLinkDto;
+  /** Indicates if this is the last page of records (true) or not (false). */
+  isLastPage?: boolean;
+  /**
+   * Number of items to be returned per page, up to the maximum set for these
+   * objects in the current implementation.
+   */
+  limit?: number;
+  /** Number of items returned in the page. */
+  size?: number;
+  /** Index of the first item returned in the page. */
+  start?: number;
+  /** Details of the items included in the page. */
+  values?: ArticleDto[];
+}
+export interface PagedDtoRequestTypeDto {
+  _expands?: string[];
+  /** List of the links relating to the page. */
+  _links?: PagedLinkDto;
+  /** Indicates if this is the last page of records (true) or not (false). */
+  isLastPage?: boolean;
+  /**
+   * Number of items to be returned per page, up to the maximum set for these
+   * objects in the current implementation.
+   */
+  limit?: number;
+  /** Number of items returned in the page. */
+  size?: number;
+  /** Index of the first item returned in the page. */
+  start?: number;
+  /** Details of the items included in the page. */
+  values?: RequestTypeDto[];
+}
+export interface PagedDtoUserDto {
+  _expands?: string[];
+  /** List of the links relating to the page. */
+  _links?: PagedLinkDto;
+  /** Indicates if this is the last page of records (true) or not (false). */
+  isLastPage?: boolean;
+  /**
+   * Number of items to be returned per page, up to the maximum set for these
+   * objects in the current implementation.
+   */
+  limit?: number;
+  /** Number of items returned in the page. */
+  size?: number;
+  /** Index of the first item returned in the page. */
+  start?: number;
+  /** Details of the items included in the page. */
+  values?: UserDto[];
+}
+/** List of the links relating to the page. */
+export interface PagedLinkDto {
+  /** Base URL for the REST API calls. */
+  base?: string;
+  context?: string;
+  /** REST API URL for the next page, if there is one. */
+  next?: string;
+  /** REST API URL for the previous page, if there is one. */
+  prev?: string;
+  /** REST API URL for the current page. */
+  self?: string;
+}
+/** List of property keys. */
+export interface PropertyKeys {
+  /** Property key details. */
+  keys?: PropertyKey[];
+}
+/** Expandable details of the request type. */
+export interface RequestTypeDto {
+  /**
+   * List of items that can be expanded in the response by specifying the expand
+   * query parameter.
+   */
+  _expands?: string[];
+  /** REST API URL for the request type. */
+  _links?: SelfLinkDto;
+  /** Whether the user has permission to create a request with this request type. */
+  canCreateRequest?: boolean;
+  /** Description of the request type. */
+  description?: string;
+  /** Fields and additional metadata for creating a request that uses the request type */
+  fields?: CustomerRequestCreateMetaDto;
+  /** List of the request type groups the request type belongs to. */
+  groupIds?: string[];
+  /** Help text for the request type. */
+  helpText?: string;
+  /** Links to the request type's icons. */
+  icon?: RequestTypeIconDto;
+  /** ID for the request type. */
+  id?: string;
+  /** ID of the issue type the request type is based upon. */
+  issueTypeId?: string;
+  /** Short name for the request type. */
+  name?: string;
+  /** ID of the customer portal associated with the service desk project. */
+  portalId?: string;
+  /** The request type's practice */
+  practice?: string;
+  /** Whether request type is restricted or not. */
+  restrictionStatus?: "OPEN" | "RESTRICTED";
+  /** ID of the service desk the request type belongs to. */
+  serviceDeskId?: string;
+}
+/** REST API URL of the instance. */
+export interface SelfLinkDto {
+  self?: string;
+}
+/** Expandable details of the service desk. */
+export interface ServiceDeskDto {
+  /** REST API URL to the service desk. */
+  _links?: SelfLinkDto;
+  /** ID of the service desk. */
+  id?: string;
+  /** ID of the peer project for the service desk. */
+  projectId?: string;
+  /** Key of the peer project of the service desk. */
+  projectKey?: string;
+  /** Name of the project and service desk. */
+  projectName?: string;
+  /** Key of the project type. */
+  projectTypeKey?: string;
+}
+export interface UserDto {
+  /** URLs for the customer record and related items. */
+  _links?: UserLinkDto;
+  /**
+   * The accountId of the user, which uniquely identifies the user across all
+   * Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*.
+   */
+  accountId?: string;
+  /** Indicates if the customer is active (true) or inactive (false) */
+  active?: boolean;
+  /**
+   * Customer's name for display in a UI. Depending on the customer’s privacy
+   * settings, this may return an alternative value.
+   */
+  displayName?: string;
+  /**
+   * Customer's email address. Depending on the customer’s privacy settings, this
+   * may be returned as null.
+   */
+  emailAddress?: string;
+  /**
+   * This property is no longer available and will be removed from the documentation
+   * soon. See the [deprecation
+   * notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/)
+   * for details.
+   */
+  key?: string;
+  /**
+   * This property is no longer available and will be removed from the documentation
+   * soon. See the [deprecation
+   * notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/)
+   * for details.
+   */
+  name?: string;
+  /**
+   * Customer time zone. Depending on the customer’s privacy settings, this may be
+   * returned as null.
+   */
+  timeZone?: string;
 }

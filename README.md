@@ -173,11 +173,11 @@ The package exports comprehensive TypeScript definitions for all Jira entities:
 #### Completed Features
 
 - ✅ **Jira Platform APIs** - Comprehensive implementation of core Jira platform APIs with complete TypeScript support and type safety.
+- ✅ **Jira Service Management APIs** - Comprehensive implementation of core Jira service management APIs with complete TypeScript support and type safety.
 
 #### Features Under Development
 
 - 🔄 **Jira Software APIs** - Ongoing development of Jira Software-specific endpoints and advanced features
-- 🔄 **Jira Service Management APIs** - Implementation of comprehensive service desk and ITSM functionality
 
 ## License
 

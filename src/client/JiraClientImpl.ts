@@ -97,6 +97,14 @@ import workflowStatusesService from "../services/workflowStatusesService";
 import workflowTransitionPropertiesService from "../services/workflowTransitionPropertiesService";
 import workflowTransitionRulesService from "../services/workflowTransitionRulesService";
 import workflowsService from "../services/workflowsService";
+import requestService from "../services/requestService";
+import assetsService from "../services/assetsService";
+import servicedeskService from "../services/servicedeskService";
+import customerService from "../services/customerService";
+import infoService from "../services/infoService";
+import knowledgebaseService from "../services/knowledgebaseService";
+import organizationService from "../services/organizationService";
+import requestTypeService from "../services/requesttypeService";
 
 export default class JiraClientImpl<TClient extends ClientType = ClientType> {
   private config: DefaultJiraConfig | ForgeJiraConfig;
@@ -213,6 +221,14 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
   >;
   private _workflowTransitionRules?: ReturnType<typeof workflowTransitionRulesService<TClient>>;
   private _workflows?: ReturnType<typeof workflowsService<TClient>>;
+  private _servicedesk?: ReturnType<typeof servicedeskService<TClient>>;
+  private _request?: ReturnType<typeof requestService<TClient>>;
+  private _customer?: ReturnType<typeof customerService<TClient>>;
+  private _assets?: ReturnType<typeof assetsService<TClient>>;
+  private _info?: ReturnType<typeof infoService<TClient>>;
+  private _knowledgebase?: ReturnType<typeof knowledgebaseService<TClient>>;
+  private _organization?: ReturnType<typeof organizationService<TClient>>;
+  private _requestType?: ReturnType<typeof requestTypeService<TClient>>;
 
   constructor(config: DefaultJiraConfig | ForgeJiraConfig) {
     // Validate config has required properties
@@ -1741,5 +1757,61 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
       this._workflowTransitionRules = workflowTransitionRulesService(this.config);
     }
     return this._workflowTransitionRules;
+  }
+
+  get servicedesk() {
+    if (!this._servicedesk) {
+      this._servicedesk = servicedeskService(this.config);
+    }
+    return this._servicedesk;
+  }
+
+  get request() {
+    if (!this._request) {
+      this._request = requestService(this.config);
+    }
+    return this._request;
+  }
+
+  get customer() {
+    if (!this._customer) {
+      this._customer = customerService(this.config);
+    }
+    return this._customer;
+  }
+
+  get assets() {
+    if (!this._assets) {
+      this._assets = assetsService(this.config);
+    }
+    return this._assets;
+  }
+
+  get info() {
+    if (!this._info) {
+      this._info = infoService(this.config);
+    }
+    return this._info;
+  }
+
+  get knowledgebase() {
+    if (!this._knowledgebase) {
+      this._knowledgebase = knowledgebaseService(this.config);
+    }
+    return this._knowledgebase;
+  }
+
+  get organization() {
+    if (!this._organization) {
+      this._organization = organizationService(this.config);
+    }
+    return this._organization;
+  }
+
+  get requestType() {
+    if (!this._requestType) {
+      this._requestType = requestTypeService(this.config);
+    }
+    return this._requestType;
   }
 }

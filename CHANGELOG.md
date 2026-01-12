@@ -1,5 +1,11 @@
 # @narthia/jira-client
 
+## 0.4.0
+
+### Minor Changes
+
+- 8ce07e3: Added Jira Software APIs
+
 ## 0.3.1
 
 ### Patch Changes

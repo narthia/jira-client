@@ -91,3 +91,4 @@ export * from "./knowledgebase";
 export * from "./request";
 export * from "./servicedesk";
 export * from "./info";
+export * from "./remoteLink";

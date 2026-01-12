@@ -1836,3 +1836,32 @@ export interface UserDto {
    */
   timeZone?: string;
 }
+
+/**
+ * An association type referencing issues in Jira.
+ *
+ * @example
+ * {
+ *   "associationType": "issueIdOrKeys",
+ *   "values": [
+ *     "ABC-123",
+ *     "ABC-456"
+ *   ]
+ * }
+ */
+export interface IssueIdOrKeysAssociation extends Record<string, unknown> {
+  /**
+   * Defines the association type.
+   *
+   * @example
+   * issueIdOrKeys
+   */
+  associationType: "issueKeys" | "issueIdOrKeys";
+  /**
+   * The Jira issue keys or IDs to associate the entity with.
+   *
+   * The number of values counted across all associationTypes must not exceed a
+   * limit of 500.
+   */
+  values: string[];
+}

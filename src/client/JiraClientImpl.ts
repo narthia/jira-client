@@ -105,6 +105,19 @@ import infoService from "../services/infoService";
 import knowledgebaseService from "../services/knowledgebaseService";
 import organizationService from "../services/organizationService";
 import requestTypeService from "../services/requesttypeService";
+import backlogService from "../services/backlogService";
+import boardIssueService from "../services/boardIssueService";
+import boardService from "../services/boardService";
+import buildsService from "../services/buildsService";
+import deploymentsService from "../services/deploymentsService";
+import developmentInformationService from "../services/developmentInformationService";
+import devOpsComponentsService from "../services/devOpsComponentsService";
+import epicService from "../services/epicService";
+import featureFlagsService from "../services/featureFlagsService";
+import operationsService from "../services/operationsService";
+import remoteLinksService from "../services/remoteLinksService";
+import securityInformationService from "../services/securityInformationService";
+import sprintService from "../services/sprintService";
 
 export default class JiraClientImpl<TClient extends ClientType = ClientType> {
   private config: DefaultJiraConfig | ForgeJiraConfig;
@@ -229,6 +242,19 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
   private _knowledgebase?: ReturnType<typeof knowledgebaseService<TClient>>;
   private _organization?: ReturnType<typeof organizationService<TClient>>;
   private _requestType?: ReturnType<typeof requestTypeService<TClient>>;
+  private _backlog?: ReturnType<typeof backlogService<TClient>>;
+  private _boardIssue?: ReturnType<typeof boardIssueService<TClient>>;
+  private _board?: ReturnType<typeof boardService<TClient>>;
+  private _builds?: ReturnType<typeof buildsService<TClient>>;
+  private _deployments?: ReturnType<typeof deploymentsService<TClient>>;
+  private _developmentInformation?: ReturnType<typeof developmentInformationService<TClient>>;
+  private _devOpsComponents?: ReturnType<typeof devOpsComponentsService<TClient>>;
+  private _epic?: ReturnType<typeof epicService<TClient>>;
+  private _featureFlags?: ReturnType<typeof featureFlagsService<TClient>>;
+  private _operations?: ReturnType<typeof operationsService<TClient>>;
+  private _remoteLinks?: ReturnType<typeof remoteLinksService<TClient>>;
+  private _securityInformation?: ReturnType<typeof securityInformationService<TClient>>;
+  private _sprint?: ReturnType<typeof sprintService<TClient>>;
 
   constructor(config: DefaultJiraConfig | ForgeJiraConfig) {
     // Validate config has required properties
@@ -1813,5 +1839,96 @@ export default class JiraClientImpl<TClient extends ClientType = ClientType> {
       this._requestType = requestTypeService(this.config);
     }
     return this._requestType;
+  }
+
+  get backlog() {
+    if (!this._backlog) {
+      this._backlog = backlogService(this.config);
+    }
+    return this._backlog;
+  }
+
+  get boardIssue() {
+    if (!this._boardIssue) {
+      this._boardIssue = boardIssueService(this.config);
+    }
+    return this._boardIssue;
+  }
+
+  get board() {
+    if (!this._board) {
+      this._board = boardService(this.config);
+    }
+    return this._board;
+  }
+
+  get builds() {
+    if (!this._builds) {
+      this._builds = buildsService(this.config);
+    }
+    return this._builds;
+  }
+
+  get deployments() {
+    if (!this._deployments) {
+      this._deployments = deploymentsService(this.config);
+    }
+    return this._deployments;
+  }
+
+  get developmentInformation() {
+    if (!this._developmentInformation) {
+      this._developmentInformation = developmentInformationService(this.config);
+    }
+    return this._developmentInformation;
+  }
+
+  get devOpsComponents() {
+    if (!this._devOpsComponents) {
+      this._devOpsComponents = devOpsComponentsService(this.config);
+    }
+    return this._devOpsComponents;
+  }
+
+  get epic() {
+    if (!this._epic) {
+      this._epic = epicService(this.config);
+    }
+    return this._epic;
+  }
+
+  get featureFlags() {
+    if (!this._featureFlags) {
+      this._featureFlags = featureFlagsService(this.config);
+    }
+    return this._featureFlags;
+  }
+
+  get operations() {
+    if (!this._operations) {
+      this._operations = operationsService(this.config);
+    }
+    return this._operations;
+  }
+
+  get remoteLinks() {
+    if (!this._remoteLinks) {
+      this._remoteLinks = remoteLinksService(this.config);
+    }
+    return this._remoteLinks;
+  }
+
+  get securityInformation() {
+    if (!this._securityInformation) {
+      this._securityInformation = securityInformationService(this.config);
+    }
+    return this._securityInformation;
+  }
+
+  get sprint() {
+    if (!this._sprint) {
+      this._sprint = sprintService(this.config);
+    }
+    return this._sprint;
   }
 }

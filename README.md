@@ -1,15 +1,15 @@
 # @narthia/jira-client
 
-A Jira API client with dual ESM/CJS support, designed for both standard Jira REST API and Atlassian Forge applications. **This project is 100% written in TypeScript** with comprehensive type definitions and zero runtime dependencies for standard usage.
+A fully typed Jira API client for TypeScript, generated from Atlassian's official OpenAPI specs. Zero runtime dependencies, ESM-only, and built so you can import a single endpoint without pulling in the rest.
 
 ## Features
 
-- 🚀 **TypeScript First**: Full TypeScript support with comprehensive type definitions
-- 🔄 **Dual Client Support**: Works with both standard Jira REST API and Atlassian Forge
-- 📦 **Modern Packaging**: ESM and CommonJS dual support
-- 🛡️ **Type Safe**: Fully typed API responses and requests
-- 📚 **OpenAPI Generated**: Type definitions and documentation are automatically generated from Jira's OpenAPI Schema to ensure accuracy and completeness
-- ⚡ **Zero Dependencies**: No runtime dependencies for standard Jira REST API usage. `@forge/api` is an optional peer dependency required only for Forge applications
+- 📚 **Generated from Atlassian's OpenAPI specs** - types and docs stay accurate to the real API
+- 🔄 **Tracks upstream closely** - when Atlassian publishes a spec change, a matching release follows within 12-16 hours
+- 🌲 **Tree-shakeable** - import one operation and ship ~0.2 KB instead of ~171 KB
+- 🛡️ **Fully typed** - every request and response, with JSDoc carried over from the spec
+- ⚡ **Zero runtime dependencies**
+- 🔌 **Pluggable transport** - swap `fetch` for anything that can move a request
 
 ## Installation
 
@@ -17,188 +17,232 @@ A Jira API client with dual ESM/CJS support, designed for both standard Jira RES
 npm install @narthia/jira-client
 ```
 
-## Quick Start
+Requires Node.js 18 or later. The package is **ESM-only**.
 
-### Standard Jira REST API Client
+## The four SDKs
+
+Each Atlassian API is a separate subpath, so you only load the ones you use.
+
+| Subpath                                  | Factory                | Covers                                                                                                                 | Service groups |
+| ---------------------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `@narthia/jira-client/jira-platform-v2`  | `createPlatformV2Sdk`  | [Jira Platform v2](https://developer.atlassian.com/cloud/jira/platform/rest/v2/intro) · `/rest/api/2`                  | 98             |
+| `@narthia/jira-client/jira-platform-v3`  | `createPlatformV3Sdk`  | [Jira Platform v3](https://developer.atlassian.com/cloud/jira/platform/rest/v3/intro) · `/rest/api/3`                  | 99             |
+| `@narthia/jira-client/jira-service-desk` | `createServiceDeskSdk` | [Jira Service Management](https://developer.atlassian.com/cloud/jira/service-desk/rest/intro) · `/rest/servicedeskapi` | 9              |
+| `@narthia/jira-client/jira-software`     | `createSoftwareSdk`    | [Jira Software](https://developer.atlassian.com/cloud/jira/software/rest/intro) · `/rest/agile/1.0`                    | 13             |
+
+Each link goes to Atlassian's reference for that API - the operation names in this client match the operation IDs there. Those specs are the source this client is generated from, and a matching release follows within 12-16 hours of Atlassian publishing a change, so what you see in their docs is what you get here.
+
+Use **v3** for new work - it's the current platform API and returns rich text in ADF. **v2** is the same surface with plain-text bodies.
+
+## Quick start
 
 ```typescript
-// jiraClient.ts
-import { JiraClient } from "@narthia/jira-client";
+// jira.ts - create once, reuse everywhere
+import { createPlatformV3Sdk } from "@narthia/jira-client/jira-platform-v3";
 
-// Initialize the client once and reuse across your application
-export const client = new JiraClient({
-  type: "default",
+export const jira = createPlatformV3Sdk({
+  baseUrl: "https://your-domain.atlassian.net",
   auth: {
-    email: "your-email@example.com",
-    apiToken: "your-api-token",
-    baseUrl: "https://your-domain.atlassian.net"
+    email: "you@example.com",
+    apiToken: process.env.JIRA_API_TOKEN!,
+  },
+});
+```
+
+```typescript
+// anywhere.ts
+import { jira } from "./jira.ts";
+
+const issue = await jira.issues.getIssue({
+  issueIdOrKey: "PROJ-123",
+  fields: ["summary", "status"],
+});
+
+console.log(issue.fields?.summary);
+```
+
+Operations are grouped by resource - `jira.issues`, `jira.projects`, `jira.issueComments`, and so on. Your editor's autocomplete on `jira.` is the fastest way to browse them.
+
+## Error handling
+
+Methods **return the response data directly** and **throw `ApiError`** on any non-2xx status. There is no `success` flag to check - a returned value is always a successful one.
+
+```typescript
+import { ApiError } from "@narthia/jira-client/jira-platform-v3";
+
+try {
+  const issue = await jira.issues.getIssue({ issueIdOrKey: "PROJ-123" });
+  console.log(issue.fields?.summary);
+} catch (error) {
+  if (error instanceof ApiError) {
+    console.error(error.status); // 404
+    console.error(error.body); // parsed JSON error payload from Jira
+    console.error(error.request); // { method: "get", path: "/rest/api/3/issue/PROJ-123" }
+  } else {
+    throw error; // network failure, abort, etc.
   }
-});
-
-// some-file-name.ts
-import { client } from "./jiraClient.ts";
-
-const issue = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
-  fields: ["summary", "description", "status"]
-});
-
-if (issue.success) {
-  console.log(issue.data.fields.summary);
 }
 ```
 
-### Atlassian Forge Client
+`ApiError` carries `status`, `statusText`, `headers`, `body`, and `request`.
+
+## Tree-shaking: import one operation
+
+Every operation also ships as a standalone function under a `services/*` subpath. These take a client context as their first argument instead of being bound to an SDK object.
 
 ```typescript
-// jiraClient.ts
-import { JiraClient } from "@narthia/jira-client";
-import api from "@forge/api";
+import { createClient } from "@narthia/jira-client/client";
+import { getIssue } from "@narthia/jira-client/jira-platform-v3/services/issues";
 
-// Initialize the client once and reuse across your application
-export const client = new JiraClient({
-  type: "forge",
-  auth: { api }
+const ctx = createClient({
+  baseUrl: "https://your-domain.atlassian.net",
+  auth: { type: "basic", username: "you@example.com", password: process.env.JIRA_API_TOKEN! },
 });
 
-// some-file-name.ts
-const issue = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
-  opts: { as: "app" } // by default its user
-});
+const issue = await getIssue(ctx, { issueIdOrKey: "PROJ-123" });
+```
 
-if (issue.success) {
-  console.log(issue.data.fields.summary);
+Note the auth shape differs here: `createClient` takes the runtime `{ type: "basic", username, password }` form, while the SDK factories accept the friendlier `{ email, apiToken }`.
+
+**Why bother:** bundling `createPlatformV3Sdk` pulls in every service it wires up - about **171 KB** minified. Importing `getIssue` on its own is about **0.2 KB**. If you only touch a handful of endpoints, deep imports are worth it.
+
+Each service module also exports a factory if you want a bound group without the whole SDK:
+
+```typescript
+import { createIssuesService } from "@narthia/jira-client/jira-platform-v3/services/issues";
+
+const issues = createIssuesService(ctx);
+await issues.getIssue({ issueIdOrKey: "PROJ-123" });
+```
+
+## Types
+
+Every request and response type is re-exported from its SDK subpath:
+
+```typescript
+import type { IssueBean, Project, User } from "@narthia/jira-client/jira-platform-v3";
+import type { CustomerRequestDto } from "@narthia/jira-client/jira-service-desk";
+import type { SprintBean } from "@narthia/jira-client/jira-software";
+```
+
+Two things to know:
+
+- Types live on the **SDK subpath**, not the service subpath. Pull types from `.../jira-platform-v3` and functions from `.../jira-platform-v3/services/issues`. Since `import type` is erased at compile time, this costs nothing at runtime.
+- Acronyms are normalized to PascalCase - it's `CustomerRequestDto`, not `CustomerRequestDTO`.
+
+## Configuration
+
+```typescript
+interface SdkConfig {
+  /** Your Jira site, e.g. https://your-domain.atlassian.net */
+  baseUrl?: string;
+  /** Basic auth via Atlassian API token. */
+  auth?: { email: string; apiToken: string };
+  /** Default headers merged into every request; per-operation headers win. */
+  headers?: Record<string, string>;
+  /** Swap the request executor. Defaults to a fetch-based HTTP transport. */
+  transport?: Transport;
+  /** Inspect or replace the prepared request before it is sent. */
+  onRequest?: (req: TransportRequest) => TransportRequest | void | Promise<TransportRequest | void>;
+  /** Observe the raw response before it is decoded. */
+  onResponse?: (res: TransportResponse, req: TransportRequest) => void | Promise<void>;
 }
 ```
 
-## Error Handling
+Create an API token at [id.atlassian.com/manage-profile/security/api-tokens](https://id.atlassian.com/manage-profile/security/api-tokens). Keep it in an environment variable - never commit it.
 
-The client provides comprehensive error handling with strongly typed responses:
+### Per-request options
 
-```typescript
-const issue = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123"
-});
-
-if (issue.success) {
-  // Handle successful response - data is type-safe and available when success is true
-  console.log(issue.data.fields.summary);
-} else {
-  // Handle error
-  console.error("Error:", issue.error);
-  console.log("Status:", issue.status);
-}
-```
-
-## API Reference
-
-### Method Parameters
-
-All client methods accept a structured options object with the following parameters:
-
-- **`opts`**: Additional configuration options for the request, including:
-  - **`as`**: For Forge applications, requests are executed as the `"user"` by default. Set to `"app"` to execute requests with application-level permissions instead of user-level permissions.
-  - **`headers`**: An object containing custom HTTP headers to include in the request. All required authentication and content-type headers are automatically managed by the client. Use this option to add additional headers or override default headers for specific requests (e.g., `{ "X-Custom-Header": "value", "Accept": "application/json" }`).
-
-#### Example Usage
+Every method takes an optional second argument for request-level concerns:
 
 ```typescript
-// Get an issue with path and query parameters
-const issue = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
-  fields: ["summary", "description", "status"]
-});
+const controller = new AbortController();
 
-// Use 'as' in opts for Forge-specific options
-// In Atlassian Forge applications, requests are executed as the user by default.
-// To execute requests with application-level permissions instead of user-level permissions,
-// pass opts: { as: "app" }.
-// This is particularly useful for operations requiring elevated permissions or automated processes.
-const issueForge = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
-  opts: { as: "app" }
-});
-
-// Add custom headers using opts.headers
-const issueWithHeaders = await client.issues.getIssue({
-  issueKeyOrId: "PROJ-123",
-  opts: {
-    headers: {
-      "X-Custom-Header": "my-value"
-    }
+const issue = await jira.issues.getIssue(
+  { issueIdOrKey: "PROJ-123" },
+  {
+    headers: { "X-Custom-Header": "value" },
+    signal: controller.signal,
   }
+);
+```
+
+### Hooks
+
+```typescript
+const jira = createPlatformV3Sdk({
+  baseUrl: "https://your-domain.atlassian.net",
+  auth: { email, apiToken },
+  onRequest: (req) => {
+    console.log(`→ ${req.method.toUpperCase()} ${req.path}`);
+  },
+  onResponse: (res, req) => {
+    console.log(`← ${res.status} ${req.path}`);
+  },
 });
 ```
 
-### Client Configuration
+`onRequest` may return a modified request to replace the original, or nothing to leave it alone.
 
-#### Default Jira Config
+### Transports
+
+Requests are executed by a transport. The default is a `fetch`-based HTTP transport, applied automatically - you only need to touch this to customize `fetch` behavior or to target a non-HTTP backend.
+
+Import it to pass options through to `fetch`:
 
 ```typescript
-interface DefaultJiraConfig {
-  type: "default";
-  auth: {
-    email: string;
-    apiToken: string;
-    baseUrl: string;
-  };
+import { httpTransport } from "@narthia/jira-client/transports/http";
+
+const jira = createPlatformV3Sdk({
+  baseUrl: "https://your-domain.atlassian.net",
+  auth: { email, apiToken },
+  transport: httpTransport({
+    // custom fetch implementation - polyfill, mock, or instrumented
+    fetch: myFetch,
+    // merged into every request
+    fetchOptions: { credentials: "include", cache: "no-store" },
+  }),
+});
+```
+
+The client core does all the OpenAPI work - path interpolation, query serialization, body encoding, auth, response decoding. A transport just moves a prepared request and returns a response:
+
+```typescript
+interface Transport {
+  request: (req: TransportRequest) => Promise<TransportResponse>;
 }
 ```
 
-#### Forge Jira Config
+That small surface makes non-HTTP backends drop-in: implement `request` and pass it as `transport`.
 
-```typescript
-interface ForgeJiraConfig {
-  type: "forge";
-  auth: {
-    api: ForgeAPI;
-  };
-}
-```
+## Subpath reference
 
-### Type Definitions
-
-The package exports comprehensive TypeScript definitions for all Jira entities:
-
-- `Issue` - Complete issue object with comprehensive field definitions
-- `User` - User profile and account information
-- `Project` - Project configuration and metadata
-- `Status` - Workflow status and transition information
-- `IssueType` - Issue type definitions and configurations
-- And many more entity types...
-
-### Development Roadmap
-
-#### Completed Features
-
-- ✅ **Jira Platform APIs** - Comprehensive implementation of core Jira platform APIs with complete TypeScript support and type safety.
-- ✅ **Jira Service Management APIs** - Comprehensive implementation of core Jira service management APIs with complete TypeScript support and type safety.
-- ✅ **Jira Software APIs** - Comprehensive implementation of Jira Software-specific endpoints and advanced features with complete TypeScript support and type safety.
+| Subpath                                 | Contents                                            |
+| --------------------------------------- | --------------------------------------------------- |
+| `@narthia/jira-client`                  | Package metadata (`packageName`, `subpaths`)        |
+| `@narthia/jira-client/client`           | `createClient`, `ApiError`, core runtime types      |
+| `@narthia/jira-client/<sdk>`            | SDK factory, `ApiError`, and all types for that API |
+| `@narthia/jira-client/<sdk>/services/*` | Standalone operations and service factories         |
+| `@narthia/jira-client/transports/*`     | Transports; `transports/http` is the default        |
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT - see [LICENSE](LICENSE).
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for a list of changes and version history.
+See [CHANGELOG.md](CHANGELOG.md).
 
 ## Security
 
-For detailed security information, vulnerability reporting, and security best practices, please see our [SECURITY.md](SECURITY.md) file.
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and security practices.
 
-### Network Access Disclosure
+### Network access disclosure
 
-This package makes network requests to:
-
-- Your configured Jira instance (via HTTPS)
-- Atlassian Forge API (when used in Forge applications)
-
-All network requests are made to authenticate with and interact with Jira APIs as intended.
+This package makes HTTPS requests only to the Jira instance you configure via `baseUrl`.
 
 ## Support
 
 - 📧 Email: jeevanreddy1999@gmail.com
 - 🐛 Issues: [GitHub Issues](https://github.com/narthia/jira-client/issues)
-- 📖 Documentation: [GitHub Repository](https://github.com/narthia/jira-client)
+- 📖 Repository: [GitHub](https://github.com/narthia/jira-client)

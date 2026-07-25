@@ -50,9 +50,13 @@
     ".": "./dist/index.mjs",
     "./client": "./dist/client/index.mjs",
     "./jira-platform-v2": "./dist/jira-platform-v2/index.mjs",
+    "./jira-platform-v2/config": "./dist/jira-platform-v2/config.mjs",
     "./jira-platform-v3": "./dist/jira-platform-v3/index.mjs",
+    "./jira-platform-v3/config": "./dist/jira-platform-v3/config.mjs",
     "./jira-service-desk": "./dist/jira-service-desk/index.mjs",
+    "./jira-service-desk/config": "./dist/jira-service-desk/config.mjs",
     "./jira-software": "./dist/jira-software/index.mjs",
+    "./jira-software/config": "./dist/jira-software/config.mjs",
     "./package.json": "./package.json",
     "./jira-platform-v2/services/*": {
       "types": "./dist/jira-platform-v2/services/*.d.mts",

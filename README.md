@@ -90,19 +90,24 @@ try {
 
 Every operation also ships as a standalone function under a `services/*` subpath. These take a client context as their first argument instead of being bound to an SDK object.
 
+Build the context with `createClient` from that SDK's own `config` subpath, so it takes the same `{ email, apiToken }` auth the SDK factory does:
+
 ```typescript
-import { createClient } from "@narthia/jira-client/client";
+import { createClient } from "@narthia/jira-client/jira-platform-v3/config";
 import { getIssue } from "@narthia/jira-client/jira-platform-v3/services/issues";
 
 const ctx = createClient({
   baseUrl: "https://your-domain.atlassian.net",
-  auth: { type: "basic", username: "you@example.com", password: process.env.JIRA_API_TOKEN! },
+  auth: {
+    email: "you@example.com",
+    apiToken: process.env.JIRA_API_TOKEN!,
+  },
 });
 
 const issue = await getIssue(ctx, { issueIdOrKey: "PROJ-123" });
 ```
 
-Note the auth shape differs here: `createClient` takes the runtime `{ type: "basic", username, password }` form, while the SDK factories accept the friendlier `{ email, apiToken }`.
+Each `<sdk>/config` subpath also exports `ApiError` and that SDK's `SdkConfig` and `ClientContext` types. Use the `config` subpath belonging to the same SDK as the service you are importing.
 
 **Why bother:** bundling `createPlatformV3Sdk` pulls in every service it wires up - about **171 KB** minified. Importing `getIssue` on its own is about **0.2 KB**. If you only touch a handful of endpoints, deep imports are worth it.
 
@@ -217,13 +222,14 @@ That small surface makes non-HTTP backends drop-in: implement `request` and pass
 
 ## Subpath reference
 
-| Subpath                                 | Contents                                            |
-| --------------------------------------- | --------------------------------------------------- |
-| `@narthia/jira-client`                  | Package metadata (`packageName`, `subpaths`)        |
-| `@narthia/jira-client/client`           | `createClient`, `ApiError`, core runtime types      |
-| `@narthia/jira-client/<sdk>`            | SDK factory, `ApiError`, and all types for that API |
-| `@narthia/jira-client/<sdk>/services/*` | Standalone operations and service factories         |
-| `@narthia/jira-client/transports/*`     | Transports; `transports/http` is the default        |
+| Subpath                                 | Contents                                                |
+| --------------------------------------- | ------------------------------------------------------- |
+| `@narthia/jira-client`                  | Package metadata (`packageName`, `subpaths`)            |
+| `@narthia/jira-client/<sdk>`            | SDK factory, `ApiError`, and all types for that API     |
+| `@narthia/jira-client/<sdk>/config`     | `createClient` for that SDK, `ApiError`, `SdkConfig`    |
+| `@narthia/jira-client/<sdk>/services/*` | Standalone operations and service factories             |
+| `@narthia/jira-client/transports/*`     | Transports; `transports/http` is the default            |
+| `@narthia/jira-client/client`           | Core runtime: generic `createClient`, `ApiError`, types |
 
 ## License
 

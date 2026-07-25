@@ -9,10 +9,18 @@ export default defineConfig({
   pack: {
     // Emit each service as its own module so consumers can deep-import a
     // single service and tree-shake the rest away.
+    // `src/*/config.ts` gives each SDK a public `config` subpath, so deep-import
+    // users can build a context with that SDK's own auth shape.
     // `src/transport/*.ts` is listed so each transport becomes a real entry
     // with its own `.d.mts`; otherwise it ships in dist as an untyped,
     // unreachable file. The public subpath comes from the wildcard below.
-    entry: ["src/index.ts", "src/*/index.ts", "src/*/services/*.ts", "src/transport/*.ts"],
+    entry: [
+      "src/index.ts",
+      "src/*/index.ts",
+      "src/*/config.ts",
+      "src/*/services/*.ts",
+      "src/transport/*.ts",
+    ],
     // Mirror the source tree in dist. Without this, types shared between a
     // module's index and its services get hoisted into hash-named chunks at
     // the dist root (185 of them). Bundle output is byte-identical either way.

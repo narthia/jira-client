@@ -91,11 +91,14 @@
     "check:fix": "vp check --fix",
     "dev": "vp pack --watch",
     "generate": "openapi-sdk-generator -c ./narthia.config.ts",
-    "prepublishOnly": "vp run check && vp run build"
+    "prepublishOnly": "vp run check && vp run build",
+    "spec-sync": "node spec-sync/sync.ts",
+    "spec-sync:baseline": "node spec-sync/sync.ts --write-baseline",
+    "spec-sync:dry-run": "node spec-sync/sync.ts --dry-run"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
-    "@narthia/openapi-sdk-generator": "^0.4.0",
+    "@narthia/openapi-sdk-generator": "^0.5.0",
     "@narthia/toolkit": "^0.0.4",
     "@types/node": "^26.1.1",
     "eslint-plugin-check-file": "^3.3.2",

@@ -1,21 +1,42 @@
 name: Publish package
 
+# Single npm publisher for the package. Two entry points, one trusted publisher
+# (npm allows only one per package, matched by this workflow filename), so both
+# paths publish via OIDC with no long-lived token:
+#   - push to main   -> human path: changesets "Version Packages" PR / publish
+#   - schedule       -> bot path: spec-sync detects upstream spec changes,
+#     workflow_dispatch  regenerates, derives the bump, and releases (major held
+#                        for review). See spec-sync/README.md.
 on:
   push:
     branches: [main]
-
-permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+  schedule:
+    # Daily at 06:00 UTC. GitHub cron is best-effort and may run late.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Spec-sync: detect and report the bump without publishing or pushing."
+        type: boolean
+        default: false
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # One group across both paths so a scheduled release and a human release never
+  # race. No cancel-in-progress: never interrupt a release mid-publish.
+  group: ${{ github.workflow }}
 
 jobs:
+  # ---- Human path: someone landed a changeset on main -------------------------
   release:
     name: Version and publish
+    if: >-
+      github.event_name == 'push' &&
+      !contains(github.event.head_commit.message, '[spec-sync]')
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -41,3 +62,107 @@ jobs:
           version: vp run changeset:version
           publish: vp run changeset:publish
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # ---- Bot path: keep the SDK in sync with upstream Atlassian specs -----------
+  spec-sync:
+    name: Sync, gate, release
+    # Scheduled runs require the kill-switch variable; manual runs always allowed.
+    if: >-
+      (github.event_name == 'schedule' && vars.SPEC_SYNC_ENABLED == 'true') ||
+      github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "24"
+          cache: true
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: Detect changes and regenerate
+        id: sync
+        run: node spec-sync/sync.ts ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+
+      - name: Gate - check and build generated code
+        if: steps.sync.outputs.action == 'release' || steps.sync.outputs.action == 'major'
+        run: |
+          vp check
+          vp run build
+
+      - name: Configure git identity
+        if: >-
+          github.event.inputs.dry_run != 'true' &&
+          (steps.sync.outputs.action == 'lock' ||
+           steps.sync.outputs.action == 'release' ||
+           steps.sync.outputs.action == 'major')
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Advance spec lock (no output change)
+        if: steps.sync.outputs.action == 'lock' && github.event.inputs.dry_run != 'true'
+        run: |
+          # The spec changed but regenerated output did not; record the new hash so
+          # it is not re-detected every run. No version, no publish.
+          git add -A
+          git commit -m "chore(spec-sync): advance spec lock, no output change [spec-sync]"
+          git push origin HEAD:main
+
+      - name: Release (minor / patch)
+        if: steps.sync.outputs.action == 'release' && github.event.inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          vp run changeset:version
+          git add -A
+          git commit -m "chore(spec-sync): release [spec-sync]"
+          # Push the commit before publishing: changeset publish tags after this,
+          # assuming HEAD is already pushed (so tag pushes can't race a merge).
+          # The push uses GITHUB_TOKEN, which does not retrigger the push-path job.
+          git push origin HEAD:main
+          vp run changeset:publish
+          git push --tags
+
+      - name: Open or refresh gated-major PR
+        if: steps.sync.outputs.action == 'major' && github.event.inputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="spec-sync/pending-major"
+          git checkout -B "$branch"
+          git add -A
+          git commit -m "chore(spec-sync): pending MAJOR release for review [spec-sync]"
+          git push -f origin "$branch"
+          title="Spec sync: major release pending review"
+          body=$'A spec change removed exports, so this needs a **major** bump - held for review.\n\nCheck and build already passed in the spec-sync job. Merge to release, or reconcile the removals first.\n\nChanged specs: `'"${{ steps.sync.outputs.changedSpecs }}"$'`\nRemoved exports: `'"${{ steps.sync.outputs.removed }}"$'`, added: `'"${{ steps.sync.outputs.added }}"$'`'
+          if gh pr view "$branch" --json state --jq .state 2>/dev/null | grep -q OPEN; then
+            gh pr edit "$branch" --title "$title" --body "$body"
+          else
+            gh pr create --base main --head "$branch" --title "$title" --body "$body"
+          fi
+
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          title="Spec sync failed"
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Another spec-sync run failed: $run_url"
+          else
+            gh issue create --title "$title" --body "The spec-sync workflow failed. See $run_url"
+          fi

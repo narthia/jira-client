@@ -1,6 +1,8 @@
 // Hand-written. Unlike the rest of `src/`, this file is NOT emitted by
-// @narthia/openapi-sdk-generator - it survives `bun run generate` because the
-// generator config sets `clean: false`.
+// @narthia/openapi-sdk-generator. The config sets `clean: "generated"`, which
+// prunes only files that begin with the generator's header line; this file has
+// no such header, so it survives `bun run generate`. Do not let it start with
+// that header line, or a generate run would delete it.
 
 export const packageName = "@narthia/jira-client" as const;
 

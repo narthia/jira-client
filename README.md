@@ -5,7 +5,7 @@ A fully typed Jira API client for TypeScript, generated from Atlassian's officia
 ## Features
 
 - 📚 **Generated from Atlassian's OpenAPI specs** - types and docs stay accurate to the real API
-- 🔄 **Tracks upstream closely** - when Atlassian publishes a spec change, a matching release follows within 12-16 hours
+- 🔄 **Tracks upstream closely** - when Atlassian publishes a spec change, a matching release follows within 24 hours
 - 🌲 **Tree-shakeable** - import one operation and ship ~0.2 KB instead of ~171 KB
 - 🛡️ **Fully typed** - every request and response, with JSDoc carried over from the spec
 - ⚡ **Zero runtime dependencies**
@@ -30,7 +30,7 @@ Each Atlassian API is a separate subpath, so you only load the ones you use.
 | `@narthia/jira-client/jira-service-desk` | `createServiceDeskSdk` | [Jira Service Management](https://developer.atlassian.com/cloud/jira/service-desk/rest/intro) · `/rest/servicedeskapi` | 9              |
 | `@narthia/jira-client/jira-software`     | `createSoftwareSdk`    | [Jira Software](https://developer.atlassian.com/cloud/jira/software/rest/intro) · `/rest/agile/1.0`                    | 13             |
 
-Each link goes to Atlassian's reference for that API - the operation names in this client match the operation IDs there. Those specs are the source this client is generated from, and a matching release follows within 12-16 hours of Atlassian publishing a change, so what you see in their docs is what you get here.
+Each link goes to Atlassian's reference for that API - the operation names in this client match the operation IDs there. Those specs are the source this client is generated from, and a matching release follows within 24 hours of Atlassian publishing a change, so what you see in their docs is what you get here.
 
 Use **v3** for new work - it's the current platform API and returns rich text in ADF. **v2** is the same surface with plain-text bodies.
 

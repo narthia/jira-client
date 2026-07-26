@@ -6,7 +6,7 @@
       "name": "@narthia/jira-client",
       "devDependencies": {
         "@changesets/cli": "^2.31.1",
-        "@narthia/openapi-sdk-generator": "^0.4.0",
+        "@narthia/openapi-sdk-generator": "^0.5.0",
         "@narthia/toolkit": "^0.0.4",
         "@types/node": "^26.1.1",
         "eslint-plugin-check-file": "^3.3.2",
@@ -101,7 +101,7 @@
 
     "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.1.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1", "@emnapi/runtime": "^1.7.1" } }, "sha512-ZLv/JdUfkvOy9eCnnBaGfiO+XimbjebAeO+MRQqD/B+FR1tnRN0tpKSJHRbE8sFfS6aqsXZ67TQjfwfsxULVbg=="],
 
-    "@narthia/openapi-sdk-generator": ["@narthia/openapi-sdk-generator@0.4.0", "", { "bin": { "openapi-sdk-generator": "dist/cli/index.mjs" } }, "sha512-r/Mu3duaW+hZfUU7fFNI8AFWqCZ/2lhCWjxx9kg5oUscejy3iSwU71tiq7K1Z4+acw9PMrw++s6YtvX9/ZCfAA=="],
+    "@narthia/openapi-sdk-generator": ["@narthia/openapi-sdk-generator@0.5.0", "", { "bin": { "openapi-sdk-generator": "dist/cli/index.mjs" } }, "sha512-ME+BzMzKjYVIDwq9usqQrv3ztbb6Micj0Zllpjfn0ztDHxRjn2svV6YO/1aNgGOmeia82cEG+35ISogfL0NBig=="],
 
     "@narthia/toolkit": ["@narthia/toolkit@0.0.4", "", {}, "sha512-/ItGP7Q2l0Zp8nS2zaTLeW4Sleoi8rh95kazBZ3NbbqVrB7C/zmoIi/opNrLKmEqevb9R3aaVvu55qwcFvDVIw=="],
 

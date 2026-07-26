@@ -40,5 +40,5 @@ export default defineConfig({
   runtime: "generate",
   transports: ["http"],
   importExtension: "ts",
-  clean: false,
+  clean: "generated",
 });

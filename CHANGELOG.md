@@ -1,5 +1,16 @@
 # @narthia/jira-client
 
+## 1.1.1
+
+### Patch Changes
+
+- d4f2546: Docs: state the release cadence as "within 24 hours" of an upstream spec change.
+
+  This accompanies a new automated spec-sync pipeline (repo tooling, not shipped in
+  the package) that fetches the four Atlassian OpenAPI specs daily, regenerates the
+  SDK when they change, derives the semver bump from the package's own exported API
+  surface, and publishes - holding major bumps for human review.
+
 ## 1.1.0
 
 ### Minor Changes

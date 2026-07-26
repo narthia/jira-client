@@ -1,6 +1,6 @@
 {
   "name": "@narthia/jira-client",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A fully typed, tree-shakeable Jira REST API client generated from Atlassian's OpenAPI specs. Covers the Jira platform (v2/v3), Jira Software, and Jira Service Management. ESM-only with zero runtime dependencies.",
   "keywords": [
     "api",

@@ -1,9 +1,9 @@
 {
   "jira-platform-v2": {
     "url": "https://dac-static.atlassian.com/cloud/jira/platform/swagger.v3.json",
-    "sha256": "93bf60c012e635da574c3288a16501d7a9a5cba523dfac2ebc6f018469827837",
+    "sha256": "53c68b8bb67306f7448981bc7a53f55178b5a5180d5b6de2dcf521a8f372c630",
     "pathCount": 413,
-    "infoVersion": "1001.0.0-SNAPSHOT-f37a74f776196442c72678fccdddc78eac807782"
+    "infoVersion": "1001.0.0-SNAPSHOT-b5920d1eaef179a2bd7f107d8da95822cab568b5"
   },
   "jira-platform-v3": {
     "url": "https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",

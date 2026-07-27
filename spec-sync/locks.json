@@ -1,21 +1,21 @@
 {
   "jira-platform-v2": {
     "url": "https://dac-static.atlassian.com/cloud/jira/platform/swagger.v3.json",
-    "sha256": "93bf60c012e635da574c3288a16501d7a9a5cba523dfac2ebc6f018469827837",
+    "sha256": "77a4ac5d247b96e2b18dc8c111b14c4b122a69d8a7572140973bbe6988475a4f",
     "pathCount": 413,
-    "infoVersion": "1001.0.0-SNAPSHOT-f37a74f776196442c72678fccdddc78eac807782"
+    "infoVersion": "1001.0.0-SNAPSHOT"
   },
   "jira-platform-v3": {
     "url": "https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",
-    "sha256": "25a377a1f482640eb7272052cbe51f9ddd6c20c3195257f36610cd8d408d8f27",
+    "sha256": "abd02ca9f182445980c2d7327298ac67aa9d1ad8e0c7ceb919d15ffa4fbfd54a",
     "pathCount": 420,
-    "infoVersion": "1001.0.0-SNAPSHOT-b5920d1eaef179a2bd7f107d8da95822cab568b5"
+    "infoVersion": "1001.0.0-SNAPSHOT"
   },
   "jira-service-desk": {
     "url": "https://dac-static.atlassian.com/cloud/jira/service-desk/swagger.v3.json",
-    "sha256": "89b548b745e4f30a84ea66532487768054392105d610662e1b1f0472ef2fd734",
+    "sha256": "d8c3882aed85231c41cdae598cf87eaa1d3795a61d69c9e4ba75d5f57618f840",
     "pathCount": 49,
-    "infoVersion": "1001.0.0-SNAPSHOT-b5920d1eaef179a2bd7f107d8da95822cab568b5"
+    "infoVersion": "1001.0.0-SNAPSHOT"
   },
   "jira-software": {
     "url": "https://dac-static.atlassian.com/cloud/jira/software/swagger.v3.json",

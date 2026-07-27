@@ -61,7 +61,6 @@ type Bump = "major" | "minor" | "patch";
 
 interface FetchedSpec {
   key: string;
-  text: string;
   sha256: string;
   pathCount: number;
   infoVersion: string | null;
@@ -70,6 +69,20 @@ interface FetchedSpec {
 // ---------------------------------------------------------------------------
 // Fetch + validate
 // ---------------------------------------------------------------------------
+
+/**
+ * Neutralize Atlassian's per-deploy build id.
+ *
+ * `info.version` is `1001.0.0-SNAPSHOT-<git-sha>`, where the `-SNAPSHOT-<sha>`
+ * suffix is a build identifier, not an API version. It changes on every deploy
+ * and different CDN edges serve different ones at the same moment, so hashing it
+ * raw makes detection fire (and cut a release) on pure build churn. Stripping it
+ * before hashing keeps detection sensitive to the real version core (`1001.0.0`)
+ * and to any path/schema change, but blind to build-id flips.
+ */
+function stripBuildId(text: string): string {
+  return text.replace(/-SNAPSHOT-[0-9a-f]{7,}/gi, "-SNAPSHOT");
+}
 
 async function fetchSpec(key: string, url: string): Promise<FetchedSpec> {
   let lastError: unknown;
@@ -89,10 +102,9 @@ async function fetchSpec(key: string, url: string): Promise<FetchedSpec> {
       }
       return {
         key,
-        text,
-        sha256: createHash("sha256").update(text).digest("hex"),
+        sha256: createHash("sha256").update(stripBuildId(text)).digest("hex"),
         pathCount: Object.keys(json.paths ?? {}).length,
-        infoVersion: json.info?.version ?? null,
+        infoVersion: json.info?.version ? stripBuildId(json.info.version) : null,
       };
     } catch (error) {
       lastError = error;

@@ -112,7 +112,7 @@ export { ApiError };
 export type { ClientConfig, ClientContext, CreatePlatformV2SdkAuthConfig, SdkConfig, Transport };
 
 /**
- * Create a `The Jira Cloud platform REST API` SDK client (API version 1001.0.0-SNAPSHOT-f37a74f776196442c72678fccdddc78eac807782).
+ * Create a `The Jira Cloud platform REST API` SDK client (API version 1001.0.0).
  *
  * Jira Cloud platform REST API documentation
  *

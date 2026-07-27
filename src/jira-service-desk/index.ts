@@ -23,7 +23,7 @@ export { ApiError };
 export type { ClientConfig, ClientContext, CreateServiceDeskSdkAuthConfig, SdkConfig, Transport };
 
 /**
- * Create a `Service Management Public REST API` SDK client (API version 1001.0.0-SNAPSHOT-b5920d1eaef179a2bd7f107d8da95822cab568b5).
+ * Create a `Service Management Public REST API` SDK client (API version 1001.0.0).
  *
  * Public REST API for Jira Service Management
  *

@@ -7,7 +7,7 @@
  * serialization, body encoding, auth injection, response decoding, error
  * normalization). A {@link Transport} is a dumb executor that moves a fully
  * prepared request to a backend and returns a minimal response — which is what
- * makes non-HTTP transports (AWS Lambda, Atlassian Forge, ...) drop-in.
+ * makes non-HTTP transports (serverless invokes, in-platform bridges, ...) drop-in.
  */
 
 export type HttpMethod = "get" | "put" | "post" | "delete" | "options" | "head" | "patch" | "trace";
@@ -50,7 +50,7 @@ export interface TransportResponse {
 /**
  * Moves a prepared {@link TransportRequest} to a backend and returns a
  * {@link TransportResponse}. Implement this interface to add new backends
- * (HTTP, AWS Lambda invoke, Atlassian Forge, ...) without touching generated code.
+ * (HTTP, serverless invokes, in-platform bridges, ...) without touching generated code.
  */
 export interface Transport {
   request: (req: TransportRequest) => Promise<TransportResponse>;

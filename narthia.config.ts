@@ -41,4 +41,7 @@ export default defineConfig({
   transports: ["http"],
   importExtension: "ts",
   clean: "generated",
+  // Drop Atlassian's volatile `-SNAPSHOT-<git-sha>` build id from the emitted
+  // API-version JSDoc, so regeneration is deterministic across their deploys.
+  normalizeVersion: true,
 });

@@ -1,5 +1,13 @@
 # @narthia/jira-client
 
+## 1.1.2
+
+### Patch Changes
+
+- Synced with upstream Atlassian OpenAPI specs (jira-platform-v2).
+
+  No public API changes - regenerated from updated spec content (descriptions, docs, or non-surface details).
+
 ## 1.1.1
 
 ### Patch Changes

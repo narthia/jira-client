@@ -11,18 +11,16 @@ export default defineConfig({
     // single service and tree-shake the rest away.
     // `src/*/config.ts` gives each SDK a public `config` subpath, so deep-import
     // users can build a context with that SDK's own auth shape.
-    // `src/*/transports/*.ts` is each SDK's typed transport (e.g. the `http`
-    // that takes that SDK's `{ email, apiToken }` auth) - the public transport
-    // subpath, exposed via the per-SDK wildcard below. `src/transports/*.ts` is
-    // the shared runtime transport (`_http`), listed so it becomes a real,
-    // typed entry rather than an untyped hoisted chunk; it stays internal (the
-    // typed per-SDK transports import it) and gets no public subpath.
+    // `src/transports/*.ts` is the single shared transport set for every SDK:
+    // the public typed transports (`http`, `forge`) plus the `_`-prefixed
+    // generic runtime they wrap (`_http`, `_forge`). All are listed so each
+    // becomes a real, typed entry rather than an untyped hoisted chunk; only
+    // the non-underscore ones get a public subpath (see `customExports`).
     entry: [
       "src/index.ts",
       "src/*/index.ts",
       "src/*/config.ts",
       "src/*/services/*.ts",
-      "src/*/transports/*.ts",
       "src/transports/*.ts",
     ],
     // Mirror the source tree in dist. Without this, types shared between a
@@ -37,12 +35,12 @@ export default defineConfig({
     },
     exports: {
       // Don't emit one explicit export per service or transport file; services
-      // are exposed via per-SDK wildcards below, the typed per-SDK transports
-      // via per-SDK `transports/*` wildcards, and the shared `transports/_http`
-      // runtime stays internal (no public subpath).
+      // are exposed via per-SDK wildcards below, the shared transports via
+      // explicit `./transports/<name>` subpaths, and the `_`-prefixed generic
+      // runtime (`_http`, `_forge`) stays internal (no public subpath).
       exclude: ["**/services/**", "**/transports/**"],
-      // The packer regenerates `exports` on every build, so wildcard subpaths
-      // have to be re-added here or they get stripped.
+      // The packer regenerates `exports` on every build, so these have to be
+      // re-added here or they get stripped.
       customExports(exports) {
         for (const mod of [
           "jira-platform-v2",
@@ -54,11 +52,15 @@ export default defineConfig({
             types: `./dist/${mod}/services/*.d.mts`,
             import: `./dist/${mod}/services/*.mjs`,
           };
-          // Each SDK's typed transports, e.g.
-          // `@narthia/jira-client/jira-platform-v3/transports/http`.
-          exports[`./${mod}/transports/*`] = {
-            types: `./dist/${mod}/transports/*.d.mts`,
-            import: `./dist/${mod}/transports/*.mjs`,
+        }
+        // Shared transports, used by every SDK, e.g.
+        // `@narthia/jira-client/transports/http`. Only the public typed
+        // transports get a subpath; the generic runtime they wrap (`_http`,
+        // `_forge`) is imported internally and stays unexported.
+        for (const transport of ["http", "forge"]) {
+          exports[`./transports/${transport}`] = {
+            types: `./dist/transports/${transport}.d.mts`,
+            import: `./dist/transports/${transport}.mjs`,
           };
         }
         return exports;
@@ -69,10 +71,11 @@ export default defineConfig({
     ...oxlintConfig,
     overrides: [
       {
-        // The generator emits its shared runtime transport as `_http.ts`; the
-        // leading underscore marks the file internal (the typed per-SDK
-        // transports import it) but trips the kebab-case filename rule. Scope
-        // the exception to these underscore-prefixed runtime files only.
+        // The generator emits its generic runtime transports with a leading
+        // underscore (`_http.ts`, `_forge.ts`) to mark them internal - the
+        // public typed transports (`http.ts`, `forge.ts`) wrap them. That
+        // underscore trips the kebab-case filename rule, so scope the exception
+        // to these underscore-prefixed runtime files only.
         files: ["src/transports/_*.ts"],
         rules: {
           "check-file/filename-naming-convention": "off",

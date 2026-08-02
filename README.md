@@ -39,7 +39,7 @@ Use **v3** for new work - it's the current platform API and returns rich text in
 ```typescript
 // jira.ts - create once, reuse everywhere
 import { createPlatformV3Sdk } from "@narthia/jira-client/jira-platform-v3";
-import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
+import { http } from "@narthia/jira-client/transports/http";
 
 export const jira = createPlatformV3Sdk({
   transport: http({
@@ -52,7 +52,7 @@ export const jira = createPlatformV3Sdk({
 });
 ```
 
-Where the request goes (`baseUrl`) and how it authenticates (`auth`) are configured **on the transport**, which you pass to the factory. The `http` transport is imported from that same SDK's `transports/http` subpath, so its `auth` is typed to Jira's `{ email, apiToken }` scheme.
+Where the request goes (`baseUrl`) and how it authenticates (`auth`) are configured **on the transport**, which you pass to the factory. The `http` transport is imported from the shared `transports/http` subpath, and its `auth` is typed to Jira's `{ email, apiToken }` scheme.
 
 ```typescript
 // anywhere.ts
@@ -99,7 +99,7 @@ Build the context with `createClient` from that SDK's own `config` subpath, pass
 
 ```typescript
 import { createClient } from "@narthia/jira-client/jira-platform-v3/config";
-import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
+import { http } from "@narthia/jira-client/transports/http";
 import { getIssue } from "@narthia/jira-client/jira-platform-v3/services/issues";
 
 const ctx = createClient({
@@ -214,12 +214,14 @@ const jira = createPlatformV3Sdk({
 
 ### Transports
 
-Requests are executed by a transport, and the transport is **required** - it owns `baseUrl` and `auth`, so passing it is how you configure the connection. Each SDK ships a typed `http` transport under its own `transports/http` subpath; its `auth` is typed to that API's scheme (Jira's `{ email, apiToken }`).
+Requests are executed by a transport, and the transport is **required** - it owns `baseUrl` and `auth`, so passing it is how you configure the connection. Transports are shared across all four SDKs and imported from the top-level `transports/*` subpath. Two ship today: `http` (the default) and `forge`.
 
-The same import point also lets you customize `fetch` or merge options into every request:
+#### `http` (default)
+
+The `fetch`-based transport. Its `auth` is typed to Jira's `{ email, apiToken }` scheme, and the same options let you customize `fetch` or merge options into every request:
 
 ```typescript
-import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
+import { http } from "@narthia/jira-client/transports/http";
 
 const jira = createPlatformV3Sdk({
   transport: http({
@@ -233,6 +235,39 @@ const jira = createPlatformV3Sdk({
 });
 ```
 
+#### `forge` (Atlassian Forge apps)
+
+Run the same SDKs inside an [Atlassian Forge](https://developer.atlassian.com/platform/forge/) app. Forge owns URL resolution and authentication (via `@forge/api`), so there's **no `baseUrl` or `auth`** - just the identity to run as (`"app"` by default, or `"user"`):
+
+```typescript
+import { forge } from "@narthia/jira-client/transports/forge";
+
+const jira = createPlatformV3Sdk({
+  transport: forge({ as: "app" }),
+});
+```
+
+`@forge/api` is an optional peer dependency - install it only if you use this transport.
+
+`forge({ as })` sets the **default** identity for every request. To override it for a single call, pass **`forgeAs`** as the method's second argument - it builds the per-request options (and also carries `headers`/`signal`):
+
+```typescript
+import { forge, forgeAs } from "@narthia/jira-client/transports/forge";
+
+const jira = createPlatformV3Sdk({ transport: forge({ as: "app" }) });
+
+// this call runs as the current user instead of the app
+await jira.issues.getIssue({ issueIdOrKey: "PROJ-123" }, forgeAs("user"));
+
+// with an abort signal
+await jira.issues.getIssue({ issueIdOrKey: "PROJ-123" }, forgeAs("app", { signal }));
+
+// offline user impersonation - requires `allowImpersonation: true` in the app manifest
+await jira.issues.getIssue({ issueIdOrKey: "PROJ-123" }, forgeAs("user", { accountId: "5b10..." }));
+```
+
+#### Custom transports
+
 The client core does all the OpenAPI work - path interpolation, query serialization, body encoding, auth, response decoding. A transport just moves a prepared request and returns a response:
 
 ```typescript
@@ -245,14 +280,15 @@ That small surface makes non-HTTP backends drop-in: implement `request` and pass
 
 ## Subpath reference
 
-| Subpath                                   | Contents                                                      |
-| ----------------------------------------- | ------------------------------------------------------------- |
-| `@narthia/jira-client`                    | Package metadata (`packageName`, `subpaths`)                  |
-| `@narthia/jira-client/<sdk>`              | SDK factory, `ApiError`, and all types for that API           |
-| `@narthia/jira-client/<sdk>/config`       | `createClient` for that SDK, `ApiError`, `SdkConfig`          |
-| `@narthia/jira-client/<sdk>/services/*`   | Standalone operations and service factories                   |
-| `@narthia/jira-client/<sdk>/transports/*` | That SDK's typed transports; `transports/http` is the default |
-| `@narthia/jira-client/client`             | Core runtime: generic `createClient`, `ApiError`, types       |
+| Subpath                                 | Contents                                                |
+| --------------------------------------- | ------------------------------------------------------- |
+| `@narthia/jira-client`                  | Package metadata (`packageName`, `subpaths`)            |
+| `@narthia/jira-client/<sdk>`            | SDK factory, `ApiError`, and all types for that API     |
+| `@narthia/jira-client/<sdk>/config`     | `createClient` for that SDK, `ApiError`, `SdkConfig`    |
+| `@narthia/jira-client/<sdk>/services/*` | Standalone operations and service factories             |
+| `@narthia/jira-client/transports/http`  | Shared `fetch` transport (the default); typed `auth`    |
+| `@narthia/jira-client/transports/forge` | Shared Atlassian Forge transport (needs `@forge/api`)   |
+| `@narthia/jira-client/client`           | Core runtime: generic `createClient`, `ApiError`, types |
 
 ## License
 
@@ -268,7 +304,7 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting and security practice
 
 ### Network access disclosure
 
-This package makes HTTPS requests only to the Jira instance you configure via `baseUrl`.
+With the default `http` transport, this package makes HTTPS requests only to the Jira instance you configure via `baseUrl`. With the `forge` transport, requests are dispatched by Atlassian's `@forge/api` inside your Forge app - this package opens no connections of its own.
 
 ## Support
 

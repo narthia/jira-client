@@ -13,32 +13,28 @@ export default defineConfig({
   inputs: {
     "jira-platform-v2": {
       input: JIRA_PLATFORM_V2_URL,
-      auth,
       collisionCase,
       name: "createPlatformV2Sdk",
     },
     "jira-platform-v3": {
       input: JIRA_PLATFORM_V3_URL,
-      auth,
       collisionCase,
       name: "createPlatformV3Sdk",
     },
     "jira-service-desk": {
       input: JIRA_SERVICE_DESK_URL,
-      auth,
       collisionCase,
       name: "createServiceDeskSdk",
     },
     "jira-software": {
       input: JIRA_SOFTWARE_URL,
-      auth,
       collisionCase,
       name: "createSoftwareSdk",
     },
   },
   output: "./src",
   runtime: "generate",
-  transports: ["http"],
+  transports: { http: { auth }, forge: { product: "jira", as: "app" } },
   importExtension: "ts",
   clean: "generated",
   // Drop Atlassian's volatile `-SNAPSHOT-<git-sha>` build id from the emitted

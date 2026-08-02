@@ -5,8 +5,8 @@
  *
  * The client core does the OpenAPI-aware, transport-agnostic work (path
  * interpolation, query serialization, body encoding, response decoding, error
- * normalization). Backend-specific concerns — where the request goes (`baseUrl`)
- * and how it authenticates — belong to the {@link Transport}, which is configured
+ * normalization). Backend-specific concerns - where the request goes (`baseUrl`)
+ * and how it authenticates - belong to the {@link Transport}, which is configured
  * with everything it needs at construction. This is what makes non-HTTP transports
  * (in-platform bridges like Forge, serverless invokes, ...) drop-in.
  */
@@ -55,7 +55,7 @@ export interface Transport {
   request: (req: TransportRequest) => Promise<TransportResponse>;
 }
 
-/** A static value or a (possibly async) factory — useful for rotating tokens. */
+/** A static value or a (possibly async) factory - useful for rotating tokens. */
 export type ValueOrFactory = string | (() => string | Promise<string>);
 
 /** Authentication a transport applies to every request (e.g. the HTTP transport injects a header/query param). */
@@ -83,7 +83,7 @@ export type AuthConfig =
  * Configuration for {@link createClient} (and generated `createSdk` factories).
  *
  * Only cross-cutting, transport-agnostic concerns live here. Everything
- * backend-specific — `baseUrl`, `auth`, Forge `as`, etc. — is configured on the
+ * backend-specific - `baseUrl`, `auth`, Forge `as`, etc. - is configured on the
  * {@link Transport} itself, e.g. `http({ baseUrl, auth })` or `forgeJira({ as })`.
  */
 export interface ClientConfig {

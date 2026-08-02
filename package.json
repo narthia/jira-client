@@ -62,33 +62,25 @@
       "types": "./dist/jira-platform-v2/services/*.d.mts",
       "import": "./dist/jira-platform-v2/services/*.mjs"
     },
-    "./jira-platform-v2/transports/*": {
-      "types": "./dist/jira-platform-v2/transports/*.d.mts",
-      "import": "./dist/jira-platform-v2/transports/*.mjs"
-    },
     "./jira-platform-v3/services/*": {
       "types": "./dist/jira-platform-v3/services/*.d.mts",
       "import": "./dist/jira-platform-v3/services/*.mjs"
-    },
-    "./jira-platform-v3/transports/*": {
-      "types": "./dist/jira-platform-v3/transports/*.d.mts",
-      "import": "./dist/jira-platform-v3/transports/*.mjs"
     },
     "./jira-service-desk/services/*": {
       "types": "./dist/jira-service-desk/services/*.d.mts",
       "import": "./dist/jira-service-desk/services/*.mjs"
     },
-    "./jira-service-desk/transports/*": {
-      "types": "./dist/jira-service-desk/transports/*.d.mts",
-      "import": "./dist/jira-service-desk/transports/*.mjs"
-    },
     "./jira-software/services/*": {
       "types": "./dist/jira-software/services/*.d.mts",
       "import": "./dist/jira-software/services/*.mjs"
     },
-    "./jira-software/transports/*": {
-      "types": "./dist/jira-software/transports/*.d.mts",
-      "import": "./dist/jira-software/transports/*.mjs"
+    "./transports/http": {
+      "types": "./dist/transports/http.d.mts",
+      "import": "./dist/transports/http.mjs"
+    },
+    "./transports/forge": {
+      "types": "./dist/transports/forge.d.mts",
+      "import": "./dist/transports/forge.mjs"
     }
   },
   "publishConfig": {
@@ -110,15 +102,24 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
-    "@narthia/openapi-sdk-generator": "^1.0.0",
+    "@forge/api": "^8.0.2",
+    "@narthia/openapi-sdk-generator": "^1.2.0",
     "@narthia/toolkit": "^0.0.4",
     "@types/node": "^26.1.1",
     "eslint-plugin-check-file": "^3.3.2",
-    "oxfmt": "^0.60.0",
-    "oxlint": "^1.75.0",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
     "typescript": "5.9.3",
-    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6",
-    "vite-plus": "^0.2.6"
+    "vite": "npm:@voidzero-dev/vite-plus-core@0.2.7",
+    "vite-plus": "^0.2.7"
+  },
+  "peerDependencies": {
+    "@forge/api": ">=6"
+  },
+  "peerDependenciesMeta": {
+    "@forge/api": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=18.0.0"

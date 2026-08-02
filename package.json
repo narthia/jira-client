@@ -62,21 +62,33 @@
       "types": "./dist/jira-platform-v2/services/*.d.mts",
       "import": "./dist/jira-platform-v2/services/*.mjs"
     },
+    "./jira-platform-v2/transports/*": {
+      "types": "./dist/jira-platform-v2/transports/*.d.mts",
+      "import": "./dist/jira-platform-v2/transports/*.mjs"
+    },
     "./jira-platform-v3/services/*": {
       "types": "./dist/jira-platform-v3/services/*.d.mts",
       "import": "./dist/jira-platform-v3/services/*.mjs"
+    },
+    "./jira-platform-v3/transports/*": {
+      "types": "./dist/jira-platform-v3/transports/*.d.mts",
+      "import": "./dist/jira-platform-v3/transports/*.mjs"
     },
     "./jira-service-desk/services/*": {
       "types": "./dist/jira-service-desk/services/*.d.mts",
       "import": "./dist/jira-service-desk/services/*.mjs"
     },
+    "./jira-service-desk/transports/*": {
+      "types": "./dist/jira-service-desk/transports/*.d.mts",
+      "import": "./dist/jira-service-desk/transports/*.mjs"
+    },
     "./jira-software/services/*": {
       "types": "./dist/jira-software/services/*.d.mts",
       "import": "./dist/jira-software/services/*.mjs"
     },
-    "./transports/*": {
-      "types": "./dist/transport/*.d.mts",
-      "import": "./dist/transport/*.mjs"
+    "./jira-software/transports/*": {
+      "types": "./dist/jira-software/transports/*.d.mts",
+      "import": "./dist/jira-software/transports/*.mjs"
     }
   },
   "publishConfig": {
@@ -98,7 +110,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
-    "@narthia/openapi-sdk-generator": "^0.6.0",
+    "@narthia/openapi-sdk-generator": "^1.0.0",
     "@narthia/toolkit": "^0.0.4",
     "@types/node": "^26.1.1",
     "eslint-plugin-check-file": "^3.3.2",

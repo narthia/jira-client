@@ -3,11 +3,12 @@
 /**
  * Core runtime types shared by the client, all transports, and generated SDK code.
  *
- * The client core does all OpenAPI-aware work (path interpolation, query
- * serialization, body encoding, auth injection, response decoding, error
- * normalization). A {@link Transport} is a dumb executor that moves a fully
- * prepared request to a backend and returns a minimal response — which is what
- * makes non-HTTP transports (serverless invokes, in-platform bridges, ...) drop-in.
+ * The client core does the OpenAPI-aware, transport-agnostic work (path
+ * interpolation, query serialization, body encoding, response decoding, error
+ * normalization). Backend-specific concerns — where the request goes (`baseUrl`)
+ * and how it authenticates — belong to the {@link Transport}, which is configured
+ * with everything it needs at construction. This is what makes non-HTTP transports
+ * (in-platform bridges like Forge, serverless invokes, ...) drop-in.
  */
 
 export type HttpMethod = "get" | "put" | "post" | "delete" | "options" | "head" | "patch" | "trace";
@@ -23,8 +24,6 @@ export interface TransportRequest {
   method: HttpMethod;
   /** Path with path params already interpolated, e.g. `/users/42`. No query string. */
   path: string;
-  /** Base URL from the client config (may be empty for transports that don't need one). */
-  baseUrl: string;
   /** Fully serialized query pairs (style/explode already applied). */
   query: URLSearchParams;
   headers: Record<string, string>;
@@ -59,7 +58,7 @@ export interface Transport {
 /** A static value or a (possibly async) factory — useful for rotating tokens. */
 export type ValueOrFactory = string | (() => string | Promise<string>);
 
-/** Authentication applied by the client core to every request. */
+/** Authentication a transport applies to every request (e.g. the HTTP transport injects a header/query param). */
 export type AuthConfig =
   | {
       /** `Authorization: Bearer <token>` */
@@ -80,14 +79,16 @@ export type AuthConfig =
       password: string;
     };
 
-/** Configuration for {@link createClient} (and generated `createSdk` factories). */
+/**
+ * Configuration for {@link createClient} (and generated `createSdk` factories).
+ *
+ * Only cross-cutting, transport-agnostic concerns live here. Everything
+ * backend-specific — `baseUrl`, `auth`, Forge `as`, etc. — is configured on the
+ * {@link Transport} itself, e.g. `http({ baseUrl, auth })` or `forgeJira({ as })`.
+ */
 export interface ClientConfig {
-  /** Base URL requests are resolved against, e.g. `https://api.example.com/v2`. */
-  baseUrl?: string;
-  /** Transport used to execute requests. Defaults to the fetch-based HTTP transport. */
-  transport?: Transport;
-  /** Authentication applied to every request. */
-  auth?: AuthConfig;
+  /** Transport used to execute requests, fully configured for its backend. */
+  transport: Transport;
   /** Default headers merged into every request (operation headers win). */
   headers?: Record<string, string>;
   /** Inspect or replace the prepared request before it is sent. */

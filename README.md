@@ -39,15 +39,20 @@ Use **v3** for new work - it's the current platform API and returns rich text in
 ```typescript
 // jira.ts - create once, reuse everywhere
 import { createPlatformV3Sdk } from "@narthia/jira-client/jira-platform-v3";
+import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
 
 export const jira = createPlatformV3Sdk({
-  baseUrl: "https://your-domain.atlassian.net",
-  auth: {
-    email: "you@example.com",
-    apiToken: process.env.JIRA_API_TOKEN!,
-  },
+  transport: http({
+    baseUrl: "https://your-domain.atlassian.net",
+    auth: {
+      email: "you@example.com",
+      apiToken: process.env.JIRA_API_TOKEN!,
+    },
+  }),
 });
 ```
+
+Where the request goes (`baseUrl`) and how it authenticates (`auth`) are configured **on the transport**, which you pass to the factory. The `http` transport is imported from that same SDK's `transports/http` subpath, so its `auth` is typed to Jira's `{ email, apiToken }` scheme.
 
 ```typescript
 // anywhere.ts
@@ -90,18 +95,21 @@ try {
 
 Every operation also ships as a standalone function under a `services/*` subpath. These take a client context as their first argument instead of being bound to an SDK object.
 
-Build the context with `createClient` from that SDK's own `config` subpath, so it takes the same `{ email, apiToken }` auth the SDK factory does:
+Build the context with `createClient` from that SDK's own `config` subpath, passing the same `http` transport the SDK factory takes:
 
 ```typescript
 import { createClient } from "@narthia/jira-client/jira-platform-v3/config";
+import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
 import { getIssue } from "@narthia/jira-client/jira-platform-v3/services/issues";
 
 const ctx = createClient({
-  baseUrl: "https://your-domain.atlassian.net",
-  auth: {
-    email: "you@example.com",
-    apiToken: process.env.JIRA_API_TOKEN!,
-  },
+  transport: http({
+    baseUrl: "https://your-domain.atlassian.net",
+    auth: {
+      email: "you@example.com",
+      apiToken: process.env.JIRA_API_TOKEN!,
+    },
+  }),
 });
 
 const issue = await getIssue(ctx, { issueIdOrKey: "PROJ-123" });
@@ -137,20 +145,33 @@ Two things to know:
 
 ## Configuration
 
+The factory config carries only cross-cutting concerns. Everything backend-specific - `baseUrl` and `auth` - lives on the transport (see [Transports](#transports)).
+
 ```typescript
 interface SdkConfig {
-  /** Your Jira site, e.g. https://your-domain.atlassian.net */
-  baseUrl?: string;
-  /** Basic auth via Atlassian API token. */
-  auth?: { email: string; apiToken: string };
+  /** Transport that executes requests, configured with its own baseUrl + auth. Required. */
+  transport: Transport;
   /** Default headers merged into every request; per-operation headers win. */
   headers?: Record<string, string>;
-  /** Swap the request executor. Defaults to a fetch-based HTTP transport. */
-  transport?: Transport;
   /** Inspect or replace the prepared request before it is sent. */
   onRequest?: (req: TransportRequest) => TransportRequest | void | Promise<TransportRequest | void>;
   /** Observe the raw response before it is decoded. */
   onResponse?: (res: TransportResponse, req: TransportRequest) => void | Promise<void>;
+}
+```
+
+The `http` transport takes the connection details:
+
+```typescript
+interface HttpOptions {
+  /** Your Jira site, e.g. https://your-domain.atlassian.net */
+  baseUrl: string;
+  /** Basic auth via Atlassian API token. */
+  auth?: { email: string; apiToken: string };
+  /** Custom fetch implementation (polyfill, mock, or instrumented). */
+  fetch?: typeof globalThis.fetch;
+  /** Extra fetch options merged into every request (e.g. `cache`, `credentials`). */
+  fetchOptions?: Omit<RequestInit, "method" | "headers" | "body" | "signal">;
 }
 ```
 
@@ -176,8 +197,10 @@ const issue = await jira.issues.getIssue(
 
 ```typescript
 const jira = createPlatformV3Sdk({
-  baseUrl: "https://your-domain.atlassian.net",
-  auth: { email, apiToken },
+  transport: http({
+    baseUrl: "https://your-domain.atlassian.net",
+    auth: { email, apiToken },
+  }),
   onRequest: (req) => {
     console.log(`→ ${req.method.toUpperCase()} ${req.path}`);
   },
@@ -191,17 +214,17 @@ const jira = createPlatformV3Sdk({
 
 ### Transports
 
-Requests are executed by a transport. The default is a `fetch`-based HTTP transport, applied automatically - you only need to touch this to customize `fetch` behavior or to target a non-HTTP backend.
+Requests are executed by a transport, and the transport is **required** - it owns `baseUrl` and `auth`, so passing it is how you configure the connection. Each SDK ships a typed `http` transport under its own `transports/http` subpath; its `auth` is typed to that API's scheme (Jira's `{ email, apiToken }`).
 
-Import it to pass options through to `fetch`:
+The same import point also lets you customize `fetch` or merge options into every request:
 
 ```typescript
-import { httpTransport } from "@narthia/jira-client/transports/http";
+import { http } from "@narthia/jira-client/jira-platform-v3/transports/http";
 
 const jira = createPlatformV3Sdk({
-  baseUrl: "https://your-domain.atlassian.net",
-  auth: { email, apiToken },
-  transport: httpTransport({
+  transport: http({
+    baseUrl: "https://your-domain.atlassian.net",
+    auth: { email, apiToken },
     // custom fetch implementation - polyfill, mock, or instrumented
     fetch: myFetch,
     // merged into every request
@@ -222,14 +245,14 @@ That small surface makes non-HTTP backends drop-in: implement `request` and pass
 
 ## Subpath reference
 
-| Subpath                                 | Contents                                                |
-| --------------------------------------- | ------------------------------------------------------- |
-| `@narthia/jira-client`                  | Package metadata (`packageName`, `subpaths`)            |
-| `@narthia/jira-client/<sdk>`            | SDK factory, `ApiError`, and all types for that API     |
-| `@narthia/jira-client/<sdk>/config`     | `createClient` for that SDK, `ApiError`, `SdkConfig`    |
-| `@narthia/jira-client/<sdk>/services/*` | Standalone operations and service factories             |
-| `@narthia/jira-client/transports/*`     | Transports; `transports/http` is the default            |
-| `@narthia/jira-client/client`           | Core runtime: generic `createClient`, `ApiError`, types |
+| Subpath                                   | Contents                                                      |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| `@narthia/jira-client`                    | Package metadata (`packageName`, `subpaths`)                  |
+| `@narthia/jira-client/<sdk>`              | SDK factory, `ApiError`, and all types for that API           |
+| `@narthia/jira-client/<sdk>/config`       | `createClient` for that SDK, `ApiError`, `SdkConfig`          |
+| `@narthia/jira-client/<sdk>/services/*`   | Standalone operations and service factories                   |
+| `@narthia/jira-client/<sdk>/transports/*` | That SDK's typed transports; `transports/http` is the default |
+| `@narthia/jira-client/client`             | Core runtime: generic `createClient`, `ApiError`, types       |
 
 ## License
 

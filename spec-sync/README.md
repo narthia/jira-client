@@ -25,9 +25,9 @@ This directory is **repo tooling** - it is not part of the published package
    the lock is advanced (so the change is not re-detected forever) and the run
    ends. No version, no publish.
 6. **Diff the public API surface** against [`api-surface.txt`](api-surface.txt):
-   - an export removed → **major**
-   - only additions → **minor**
-   - output changed but no surface change (e.g. JSDoc/descriptions) → **patch**
+   - export removed, or same export with a different TypeScript signature → **major**
+   - new export only (new service module or new service function) → **minor**
+   - output changed but surface identical (e.g. JSDoc/descriptions) → **patch**
 7. **Write a changeset**, and (for non-major bumps) advance `locks.json` +
    `api-surface.txt`.
 
@@ -42,8 +42,9 @@ resolves it.
 ### State files (committed)
 
 - **`locks.json`** - per-spec `{ url, sha256, pathCount, infoVersion }`.
-- **`api-surface.txt`** - sorted `<subpath>#<exportName>` for every published
-  subpath. Its git diff is the audit trail of what appeared or vanished.
+- **`api-surface.txt`** - sorted `<subpath>#<exportName>` lines, optionally followed
+  by a tab and a signature hash of the export's TypeScript type. Its git diff is
+  the audit trail of what appeared, vanished, or changed shape.
 
 Regenerate both from the current tree with:
 
@@ -51,11 +52,9 @@ Regenerate both from the current tree with:
 npm run spec-sync:baseline
 ```
 
-### Known limitation
-
-Diffing export **names** does not catch a type whose _shape_ changed without its
-name changing (e.g. a new required field). Such a change lands as minor/patch.
-Atlassian's changes are overwhelmingly additive, so this is rare in practice.
+Diffing export **signatures** catches most type-shape changes on existing exports.
+Renames still appear as a remove + add (major). Pure JSDoc/description churn does
+not affect signatures, so it correctly lands as **patch**.
 
 ## Local use
 

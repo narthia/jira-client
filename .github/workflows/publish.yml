@@ -98,7 +98,7 @@ jobs:
       - name: Gate - check and build generated code
         if: steps.sync.outputs.action == 'release' || steps.sync.outputs.action == 'major'
         run: |
-          vp check
+          vp check --fix
           vp run build
 
       - name: Configure git identity
@@ -146,7 +146,7 @@ jobs:
           git commit -m "chore(spec-sync): pending MAJOR release for review [spec-sync]"
           git push -f origin "$branch"
           title="Spec sync: major release pending review"
-          body=$'A spec change removed exports, so this needs a **major** bump - held for review.\n\nCheck and build already passed in the spec-sync job. Merge to release, or reconcile the removals first.\n\nChanged specs: `'"${{ steps.sync.outputs.changedSpecs }}"$'`\nRemoved exports: `'"${{ steps.sync.outputs.removed }}"$'`, added: `'"${{ steps.sync.outputs.added }}"$'`'
+          body=$'A spec change removed or changed existing exports, so this needs a **major** bump - held for review.\n\nCheck and build already passed in the spec-sync job. Merge to release, or reconcile the breaking changes first.\n\nChanged specs: `'"${{ steps.sync.outputs.changedSpecs }}"$'`\nRemoved exports: `'"${{ steps.sync.outputs.removed }}"$'`, changed: `'"${{ steps.sync.outputs.changed }}"$'`, added: `'"${{ steps.sync.outputs.added }}"$'`'
           if gh pr view "$branch" --json state --jq .state 2>/dev/null | grep -q OPEN; then
             gh pr edit "$branch" --title "$title" --body "$body"
           else

@@ -446,6 +446,59 @@ export function getCreateIssueMetaIssueTypeId(
 }
 
 /**
+ * Get issue adf limit report
+ *
+ * Returns all issues whose ADF (rich text) field data breaches the universal ADF size limit.
+ *
+ * Unlike the issue limit report, which reports issues breaching per-issue entity *count* limits, this endpoint reports issues whose ADF field *byte size* exceeds that limit. The reported ADF field types are `comment_adf`, `worklog_adf`, `customfield_adf`, `description_adf` and `environment_adf`. The reported value for each issue is the number of breaching entities for that field (always 1 for the single-value description and environment fields).
+ *
+ * **[Permissions](#permissions) required:**
+ *
+ *  *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) is required for the project the issues are in. Results may be incomplete otherwise
+ *  *  *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+ *
+ * @param params.isReturningKeys - Return issue keys instead of issue ids in the response. Usage: Add `?isReturningKeys=true` to the end of the path to request issue keys.
+ * @param params.fieldType - Restrict the report to the given ADF field types. Defaults to every ADF field type. For sites with a high issue volume, consider requesting field types individually to avoid timeouts. Usage: Add `?fieldType=comment_adf&fieldType=worklog_adf` to the end of the path to report on comments and worklogs only.
+ * @returns Returned if the request is successful.
+ */
+export function getIssueAdfLimitReport(
+  ctx: ClientContext,
+  params?: {
+    /**
+     * Return issue keys instead of issue ids in the response.
+     *
+     * Usage: Add `?isReturningKeys=true` to the end of the path to request issue keys.
+     *
+     * @default false
+     */
+    isReturningKeys?: boolean;
+    /**
+     * Restrict the report to the given ADF field types. Defaults to every ADF field type.
+     *
+     * For sites with a high issue volume, consider requesting field types individually to avoid timeouts.
+     *
+     * Usage: Add `?fieldType=comment_adf&fieldType=worklog_adf` to the end of the path to report on comments and worklogs only.
+     */
+    fieldType?: string[];
+  },
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<IssueLimitReportResponseBean> {
+  const { isReturningKeys, fieldType } = params ?? {};
+  return ctx.request({
+    method: "get",
+    path: "/rest/api/2/issue/limit/adf/report",
+    query: { isReturningKeys, fieldType },
+    headers: options?.headers,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
+
+/**
  * Get issue limit report
  *
  * Returns all issues breaching and approaching per-issue limits.
@@ -1526,6 +1579,50 @@ export function createIssuesService(ctx: ClientContext) {
       }
     ): Promise<PageOfCreateMetaIssueTypeWithField> {
       return getCreateIssueMetaIssueTypeId(ctx, params, options);
+    },
+
+    /**
+     * Get issue adf limit report
+     *
+     * Returns all issues whose ADF (rich text) field data breaches the universal ADF size limit.
+     *
+     * Unlike the issue limit report, which reports issues breaching per-issue entity *count* limits, this endpoint reports issues whose ADF field *byte size* exceeds that limit. The reported ADF field types are `comment_adf`, `worklog_adf`, `customfield_adf`, `description_adf` and `environment_adf`. The reported value for each issue is the number of breaching entities for that field (always 1 for the single-value description and environment fields).
+     *
+     * **[Permissions](#permissions) required:**
+     *
+     *  *  *Browse projects* [project permission](https://confluence.atlassian.com/x/yodKLg) is required for the project the issues are in. Results may be incomplete otherwise
+     *  *  *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+     *
+     * @param params.isReturningKeys - Return issue keys instead of issue ids in the response. Usage: Add `?isReturningKeys=true` to the end of the path to request issue keys.
+     * @param params.fieldType - Restrict the report to the given ADF field types. Defaults to every ADF field type. For sites with a high issue volume, consider requesting field types individually to avoid timeouts. Usage: Add `?fieldType=comment_adf&fieldType=worklog_adf` to the end of the path to report on comments and worklogs only.
+     * @returns Returned if the request is successful.
+     */
+    getIssueAdfLimitReport(
+      params?: {
+        /**
+         * Return issue keys instead of issue ids in the response.
+         *
+         * Usage: Add `?isReturningKeys=true` to the end of the path to request issue keys.
+         *
+         * @default false
+         */
+        isReturningKeys?: boolean;
+        /**
+         * Restrict the report to the given ADF field types. Defaults to every ADF field type.
+         *
+         * For sites with a high issue volume, consider requesting field types individually to avoid timeouts.
+         *
+         * Usage: Add `?fieldType=comment_adf&fieldType=worklog_adf` to the end of the path to report on comments and worklogs only.
+         */
+        fieldType?: string[];
+      },
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<IssueLimitReportResponseBean> {
+      return getIssueAdfLimitReport(ctx, params, options);
     },
 
     /**

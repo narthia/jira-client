@@ -9,8 +9,13 @@ import { execFileSync } from "node:child_process";
  *
  * Why the bump is derived from our surface and not from upstream: the specs'
  * `info.version` is a build snapshot (`1001.0.0-SNAPSHOT-<sha>`), useless for
- * semver. So we compare the set of exported names across every published
- * subpath against a committed baseline (`api-surface.txt`).
+ * semver. So we compare exported names and TypeScript signatures across every
+ * published subpath against a committed baseline (`api-surface.txt`).
+ *
+ * Bump rules (from the surface diff):
+ *   - export removed, or same export with a different signature → **major**
+ *   - new export (new service module or new service function) → **minor**
+ *   - generated output changed but surface identical → **patch** (docs only)
  *
  * Modes:
  *   (default)          detect -> regenerate -> diff -> changeset -> update state
@@ -163,8 +168,30 @@ function enumerateModules(): { subpath: string; file: string }[] {
   return modules;
 }
 
-/** Sorted `<subpath>#<exportName>` lines for the whole public surface. */
-function extractSurface(): string[] {
+interface SurfaceEntry {
+  key: string;
+  signature: string;
+}
+
+/** Stable hash of an export's public type/call signature (JSDoc is excluded). */
+function exportSignature(checker: ts.TypeChecker, symbol: ts.Symbol): string {
+  const decl = symbol.valueDeclaration ?? symbol.declarations?.[0];
+  if (!decl) return "";
+  const type = checker.getTypeOfSymbolAtLocation(symbol, decl);
+  const callSigs = type.getCallSignatures();
+  const text =
+    callSigs.length > 0
+      ? callSigs.map((sig) => checker.signatureToString(sig)).join(";")
+      : checker.typeToString(
+          type,
+          decl,
+          ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.InTypeAlias
+        );
+  return createHash("sha256").update(text).digest("hex").slice(0, 16);
+}
+
+/** Every published export as `{ key, signature }`, keyed by `<subpath>#<exportName>`. */
+function extractSurface(): SurfaceEntry[] {
   const modules = enumerateModules();
   const parsed = ts.parseJsonConfigFileContent(
     ts.readConfigFile(join(REPO_ROOT, "tsconfig.json"), (p) => ts.sys.readFile(p)).config,
@@ -177,17 +204,32 @@ function extractSurface(): string[] {
   );
   const checker = program.getTypeChecker();
 
-  const lines: string[] = [];
+  const byKey = new Map<string, SurfaceEntry>();
   for (const { subpath, file } of modules) {
     const source = program.getSourceFile(file);
     if (!source) throw new Error(`Source file not found in program: ${file}`);
     const symbol = checker.getSymbolAtLocation(source);
     if (!symbol) continue; // module with no exports
     for (const exp of checker.getExportsOfModule(symbol)) {
-      lines.push(`${subpath}#${exp.getName()}`);
+      const key = `${subpath}#${exp.getName()}`;
+      byKey.set(key, { key, signature: exportSignature(checker, exp) });
     }
   }
-  return [...new Set(lines)].sort();
+  return [...byKey.values()].sort((a, b) => a.key.localeCompare(b.key));
+}
+
+function parseSurfaceLine(line: string): SurfaceEntry {
+  const tab = line.indexOf("\t");
+  if (tab === -1) return { key: line, signature: "" };
+  return { key: line.slice(0, tab), signature: line.slice(tab + 1) };
+}
+
+function parseSurface(lines: string[]): SurfaceEntry[] {
+  return lines.map(parseSurfaceLine);
+}
+
+function serializeSurface(entries: SurfaceEntry[]): string {
+  return entries.map(({ key, signature }) => (signature ? `${key}\t${signature}` : key)).join("\n");
 }
 
 // ---------------------------------------------------------------------------
@@ -198,23 +240,40 @@ interface SurfaceDiff {
   bump: Bump;
   added: string[];
   removed: string[];
+  changed: string[];
   changedSdks: string[];
 }
 
-function diffSurface(baseline: string[], current: string[]): SurfaceDiff {
-  const base = new Set(baseline);
-  const curr = new Set(current);
-  const added = current.filter((l) => !base.has(l));
-  const removed = baseline.filter((l) => !curr.has(l));
-  const bump: Bump = removed.length > 0 ? "major" : added.length > 0 ? "minor" : "patch";
+function sdkFromSurfaceKey(key: string): string | undefined {
+  const subpath = key.split("#")[0] ?? "";
+  return subpath.replace(/^\.\/?/, "").split("/")[0];
+}
+
+function diffSurface(baseline: SurfaceEntry[], current: SurfaceEntry[]): SurfaceDiff {
+  const base = new Map(baseline.map((entry) => [entry.key, entry.signature]));
+  const curr = new Map(current.map((entry) => [entry.key, entry.signature]));
+
+  const added = current.filter((entry) => !base.has(entry.key)).map((entry) => entry.key);
+  const removed = baseline.filter((entry) => !curr.has(entry.key)).map((entry) => entry.key);
+  const changed = current
+    .filter((entry) => {
+      const baseSig = base.get(entry.key);
+      if (baseSig === undefined) return false;
+      // Legacy baselines (name-only lines) skip signature comparison until refreshed.
+      if (!baseSig || !entry.signature) return false;
+      return baseSig !== entry.signature;
+    })
+    .map((entry) => entry.key);
+
+  const bump: Bump =
+    removed.length > 0 || changed.length > 0 ? "major" : added.length > 0 ? "minor" : "patch";
 
   const sdks = new Set<string>();
-  for (const line of [...added, ...removed]) {
-    const subpath = line.split("#")[0] ?? "";
-    const seg = subpath.replace(/^\.\/?/, "").split("/")[0];
-    if (seg) sdks.add(seg);
+  for (const key of [...added, ...removed, ...changed]) {
+    const sdk = sdkFromSurfaceKey(key);
+    if (sdk) sdks.add(sdk);
   }
-  return { bump, added, removed, changedSdks: [...sdks].sort() };
+  return { bump, added, removed, changed, changedSdks: [...sdks].sort() };
 }
 
 function changesetBody(diff: SurfaceDiff, changedSpecKeys: string[]): string {
@@ -233,6 +292,9 @@ function changesetBody(diff: SurfaceDiff, changedSpecKeys: string[]): string {
     lines.push("");
     if (diff.added.length > 0) lines.push(`- Added ${diff.added.length} export(s).`);
     if (diff.removed.length > 0) lines.push(`- Removed ${diff.removed.length} export(s).`);
+    if (diff.changed.length > 0) {
+      lines.push(`- Changed ${diff.changed.length} existing export signature(s).`);
+    }
     const sample = (label: string, items: string[]) => {
       if (items.length === 0) return;
       lines.push("");
@@ -241,6 +303,7 @@ function changesetBody(diff: SurfaceDiff, changedSpecKeys: string[]): string {
       if (items.length > 20) lines.push(`- …and ${items.length - 20} more.`);
     };
     sample("Removed", diff.removed);
+    sample("Changed", diff.changed);
     sample("Added", diff.added);
   }
   return lines.join("\n");
@@ -248,7 +311,7 @@ function changesetBody(diff: SurfaceDiff, changedSpecKeys: string[]): string {
 
 function writeChangeset(diff: SurfaceDiff, changedSpecKeys: string[], stamp: string): string {
   const digest = createHash("sha256")
-    .update(diff.added.concat(diff.removed).join("\n"))
+    .update(diff.added.concat(diff.removed, diff.changed).join("\n"))
     .digest("hex");
   const name = `spec-sync-${stamp}-${digest.slice(0, 7)}.md`;
   const path = join(REPO_ROOT, ".changeset", name);
@@ -353,7 +416,7 @@ async function main(): Promise<number> {
 
   if (writeBaseline) {
     advanceLocks();
-    writeFileSync(SURFACE_PATH, `${extractSurface().join("\n")}\n`, "utf8");
+    writeFileSync(SURFACE_PATH, `${serializeSurface(extractSurface())}\n`, "utf8");
     emit({ action: "baseline" });
     return 0;
   }
@@ -382,7 +445,7 @@ async function main(): Promise<number> {
     return 0;
   }
 
-  const baseline = readFileSync(SURFACE_PATH, "utf8").split("\n").filter(Boolean);
+  const baseline = parseSurface(readFileSync(SURFACE_PATH, "utf8").split("\n").filter(Boolean));
   const current = extractSurface();
   const diff = diffSurface(baseline, current);
   const action = diff.bump === "major" ? "major" : "release";
@@ -394,6 +457,7 @@ async function main(): Promise<number> {
     changedSdks: diff.changedSdks.join(","),
     added: String(diff.added.length),
     removed: String(diff.removed.length),
+    changed: String(diff.changed.length),
   };
 
   if (dryRun) {
@@ -408,7 +472,7 @@ async function main(): Promise<number> {
   // the review lands, instead of being silently forgotten.
   if (diff.bump !== "major") {
     advanceLocks();
-    writeFileSync(SURFACE_PATH, `${current.join("\n")}\n`, "utf8");
+    writeFileSync(SURFACE_PATH, `${serializeSurface(current)}\n`, "utf8");
   }
 
   emit({ ...result, changeset });

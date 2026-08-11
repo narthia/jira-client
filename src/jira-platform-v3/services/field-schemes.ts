@@ -89,6 +89,10 @@ export function getFieldAssociationSchemes(
  *
  * Endpoint for creating a new field association scheme.
  *
+ * A new scheme is **not** copied from, or based on, any existing field association scheme. Instead, it is initialised with a minimal default set of critical fields sourced from the instance's own *system* and *product* fields (the fields returned by the product's field API), rather than from a scheme you specify.
+ *
+ * To create a scheme that is based on an existing one, use the *Clone field scheme* endpoint instead.
+ *
  * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
  *
  * @returns Returned if the creation was successful.
@@ -657,6 +661,10 @@ export function createFieldSchemesService(ctx: ClientContext) {
      * Create field scheme
      *
      * Endpoint for creating a new field association scheme.
+     *
+     * A new scheme is **not** copied from, or based on, any existing field association scheme. Instead, it is initialised with a minimal default set of critical fields sourced from the instance's own *system* and *product* fields (the fields returned by the product's field API), rather than from a scheme you specify.
+     *
+     * To create a scheme that is based on an existing one, use the *Clone field scheme* endpoint instead.
      *
      * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
      *

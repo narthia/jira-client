@@ -1,5 +1,18 @@
 # @narthia/jira-client
 
+## 2.2.0
+
+### Minor Changes
+
+- f20fd25: Synced jira-platform-v2, jira-platform-v3 with upstream Atlassian OpenAPI specs.
+
+  - Added 2 export(s).
+
+  Added:
+
+  - `./jira-platform-v2/services/issues#getIssueAdfLimitReport`
+  - `./jira-platform-v3/services/issues#getIssueAdfLimitReport`
+
 ## 2.1.0
 
 ### Minor Changes

@@ -22,6 +22,7 @@ import type {
   RequestCreateDto,
   RequestNotificationSubscriptionDto,
   RequestParticipantUpdateDto,
+  RequestValidationResultDto,
   SlaInformationDto,
 } from "../types/index.ts";
 
@@ -198,6 +199,38 @@ export function createCustomerRequest(
   return ctx.request({
     method: "post",
     path: "/rest/servicedeskapi/request",
+    headers: options?.headers,
+    body: params,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
+
+/**
+ * Validate customer request
+ *
+ * Validates a customer request payload without creating (persisting) a request.
+ *
+ * This endpoint runs exactly the same structural and semantic validations as [Create customer request](#api-request-post) \\u2014 including ProForma form validation \\u2014 but performs **no mutation**: no issue is created and no side effects (attachments, comments, analytics) run.
+ *
+ * The response is intentionally verbose and structured so that it can be consumed by automated agents (for example an LLM repairing an invalid payload): every failure carries a machine-readable location (field id / form entity) and a human-readable reason. A valid payload returns HTTP 200 with \{@code valid: true\}; an invalid payload returns HTTP 400 with \{@code valid: false\} together with the field, form and general validation errors.
+ *
+ * **[Permissions](#permissions) required**: Permission to create requests in the specified service desk.
+ *
+ * @returns Returned with the validation result. \{@code valid\} is true when the payload is valid.
+ */
+export function validateCustomerRequest(
+  ctx: ClientContext,
+  params: RequestCreateDto,
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<RequestValidationResultDto> {
+  return ctx.request({
+    method: "post",
+    path: "/rest/servicedeskapi/request/validate",
     headers: options?.headers,
     body: params,
     signal: options?.signal,
@@ -1463,6 +1496,30 @@ export function createRequestService(ctx: ClientContext) {
       }
     ): Promise<CustomerRequestDto> {
       return createCustomerRequest(ctx, params, options);
+    },
+
+    /**
+     * Validate customer request
+     *
+     * Validates a customer request payload without creating (persisting) a request.
+     *
+     * This endpoint runs exactly the same structural and semantic validations as [Create customer request](#api-request-post) \\u2014 including ProForma form validation \\u2014 but performs **no mutation**: no issue is created and no side effects (attachments, comments, analytics) run.
+     *
+     * The response is intentionally verbose and structured so that it can be consumed by automated agents (for example an LLM repairing an invalid payload): every failure carries a machine-readable location (field id / form entity) and a human-readable reason. A valid payload returns HTTP 200 with \{@code valid: true\}; an invalid payload returns HTTP 400 with \{@code valid: false\} together with the field, form and general validation errors.
+     *
+     * **[Permissions](#permissions) required**: Permission to create requests in the specified service desk.
+     *
+     * @returns Returned with the validation result. \{@code valid\} is true when the payload is valid.
+     */
+    validateCustomerRequest(
+      params: RequestCreateDto,
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<RequestValidationResultDto> {
+      return validateCustomerRequest(ctx, params, options);
     },
 
     /**

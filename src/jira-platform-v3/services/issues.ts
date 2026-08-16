@@ -254,7 +254,16 @@ export function createIssues(
 /**
  * Bulk fetch issues
  *
- * Returns the details for a set of requested issues. You can request up to 100 issues.
+ * Returns the details for a set of requested issues.
+ *
+ * By default you can request up to 100 issues in a single call. You can request up to 1000 issues in a single call when the request is shaped so that it can be served efficiently, that is, when *all* of the following are true:
+ *
+ *  *  the `fields` parameter explicitly names at least one field to include — a request that contains only exclusions is **not** eligible, and neither are the `*all` and `*navigable` wildcards or the default navigable field set, because the number of resolved fields depends on the site's configuration;
+ *  *  no more than 100 fields are explicitly included;
+ *  *  none of the included fields returns multiple values (for example `comment`, `worklog`, or `attachment`); and
+ *  *  the `expand` parameter does not include `changelog`, `editmeta`, `operations`, `renderedFields`, `transitions`, or `versionedRepresentations`.
+ *
+ * Requests that do not meet all of these conditions can include at most 100 issues; larger requests are rejected with a 400 error.
  *
  * Each issue is identified by its ID or key, however, if the identifier doesn't match an issue, a case-insensitive search and check for moved issues is performed. If a matching issue is found its details are returned, a 302 or other redirect is **not** returned.
  *
@@ -1429,7 +1438,16 @@ export function createIssuesService(ctx: ClientContext) {
     /**
      * Bulk fetch issues
      *
-     * Returns the details for a set of requested issues. You can request up to 100 issues.
+     * Returns the details for a set of requested issues.
+     *
+     * By default you can request up to 100 issues in a single call. You can request up to 1000 issues in a single call when the request is shaped so that it can be served efficiently, that is, when *all* of the following are true:
+     *
+     *  *  the `fields` parameter explicitly names at least one field to include — a request that contains only exclusions is **not** eligible, and neither are the `*all` and `*navigable` wildcards or the default navigable field set, because the number of resolved fields depends on the site's configuration;
+     *  *  no more than 100 fields are explicitly included;
+     *  *  none of the included fields returns multiple values (for example `comment`, `worklog`, or `attachment`); and
+     *  *  the `expand` parameter does not include `changelog`, `editmeta`, `operations`, `renderedFields`, `transitions`, or `versionedRepresentations`.
+     *
+     * Requests that do not meet all of these conditions can include at most 100 issues; larger requests are rejected with a 400 error.
      *
      * Each issue is identified by its ID or key, however, if the identifier doesn't match an issue, a case-insensitive search and check for moved issues is performed. If a matching issue is found its details are returned, a 302 or other redirect is **not** returned.
      *

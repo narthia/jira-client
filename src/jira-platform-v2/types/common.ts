@@ -985,6 +985,18 @@ export type LegacyJackson1ListVersion = Version[];
 
 export type LegacyJackson1ListWorklog = Worklog[];
 
+export interface LimitExceededResponseBean {
+  /** @format int32 */
+  current_count?: number;
+  entity_type?: string;
+  error_code?: string;
+  limit_type?: string;
+  /** @format int32 */
+  max_allowed_limit?: number;
+  message?: string;
+  scope_id?: string;
+}
+
 /** Details a link group, which defines issue operations. */
 export interface LinkGroup {
   groups?: LinkGroup[];

@@ -4,6 +4,7 @@ import type {
   AttachmentLinkDto,
   CustomerRequestLinkDto,
   DateDto,
+  FormValidationErrorDto,
   PagedDtoUserDto,
   PagedLinkDto,
   RequestTypeDto,
@@ -513,6 +514,13 @@ export interface RequestCreateDto {
   serviceDeskId?: string;
 }
 
+export interface RequestFieldValidationErrorDto {
+  /** The id of the request field that failed validation (matches a key in 'requestFieldValues'). */
+  field?: string;
+  /** A human-readable explanation of why this field failed validation. */
+  message?: string;
+}
+
 export interface RequestNotificationSubscriptionDto {
   /** Indicates whether the user is subscribed (true) or not (false) to the request's notifications. */
   subscribed?: boolean;
@@ -523,6 +531,21 @@ export interface RequestParticipantUpdateDto {
   accountIds?: string[];
   /** This property is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. Use `accountIds` instead. */
   usernames?: string[];
+}
+
+export interface RequestValidationResultDto {
+  /** A single, human-readable summary describing why validation failed. Null when valid. */
+  errorMessage?: string;
+  /** General validation errors that are not attributable to a single field. Empty when valid. */
+  errorMessages?: string[];
+  /** Field-level validation errors, keyed by the failing request field id. Empty when valid. */
+  fieldErrors?: RequestFieldValidationErrorDto[];
+  /** ProForma form validation errors, if a form was supplied. Empty when valid or no form was present. */
+  formErrors?: FormValidationErrorDto[];
+  /** A machine-readable reason key categorising the overall failure. Null when valid. */
+  reasonKey?: string;
+  /** True when the payload is both structurally and semantically valid and safe to create. */
+  valid?: boolean;
 }
 
 export interface SlaInformationCompletedCycleDto {

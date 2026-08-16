@@ -1,5 +1,27 @@
 # @narthia/jira-client
 
+## 3.0.0
+
+### Major Changes
+
+- 449db57: Synced client, jira-platform-v2, jira-platform-v3, jira-service-desk with upstream Atlassian OpenAPI specs.
+
+  - Added 5 export(s).
+  - Changed 2 existing export signature(s).
+
+  Changed:
+
+  - `./client#ApiError`
+  - `./jira-service-desk/services/request#createRequestService`
+
+  Added:
+
+  - `./jira-platform-v2#LimitExceededResponseBean`
+  - `./jira-platform-v3#LimitExceededResponseBean`
+  - `./jira-service-desk/services/request#validateCustomerRequest`
+  - `./jira-service-desk#RequestFieldValidationErrorDto`
+  - `./jira-service-desk#RequestValidationResultDto`
+
 ## 2.2.0
 
 ### Minor Changes

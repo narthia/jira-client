@@ -81,6 +81,11 @@ export function getUiModifications(
  *  *  **Jira Service Management contexts:** For Jira Service Management view types, use `portalId` and `requestTypeId`. Wildcards are not supported. Supported JSM views:
  *
  *      *  `JSMRequestCreate` \- Jira Service Management request create portal view
+ *  *  **Agent view contexts:** For Agent view types, use `projectId` and `issueTypeId` like Jira contexts, and optionally set `requestTypeId`. `portalId` must not be set. One of `projectId`, `issueTypeId`, or `viewType` can act as a wildcard. Supported Agent views:
+ *
+ *      *  `GICAgentView` \- Agent view variant of Jira global issue create
+ *      *  `IssueViewAgentView` \- Agent view variant of Jira issue view
+ *      *  `IssueTransitionAgentView` \- Agent view variant of Jira issue transition
  *
  * **[Permissions](#permissions) required:**
  *
@@ -127,6 +132,11 @@ export function createUiModification(
  *  *  **Jira Service Management contexts:** For Jira Service Management view types, use `portalId` and `requestTypeId`. Wildcards are not supported. Supported JSM views:
  *
  *      *  `JSMRequestCreate` \- Jira Service Management request create portal view
+ *  *  **Agent view contexts:** For Agent view types, use `projectId` and `issueTypeId` like Jira contexts, and optionally set `requestTypeId`. `portalId` must not be set. One of `projectId`, `issueTypeId`, or `viewType` can act as a wildcard. Supported Agent views:
+ *
+ *      *  `GICAgentView` \- Agent view variant of Jira global issue create
+ *      *  `IssueViewAgentView` \- Agent view variant of Jira issue view
+ *      *  `IssueTransitionAgentView` \- Agent view variant of Jira issue transition
  *
  * **[Permissions](#permissions) required:**
  *
@@ -273,6 +283,11 @@ export function createUiModificationsAppsService(ctx: ClientContext) {
      *  *  **Jira Service Management contexts:** For Jira Service Management view types, use `portalId` and `requestTypeId`. Wildcards are not supported. Supported JSM views:
      *
      *      *  `JSMRequestCreate` \- Jira Service Management request create portal view
+     *  *  **Agent view contexts:** For Agent view types, use `projectId` and `issueTypeId` like Jira contexts, and optionally set `requestTypeId`. `portalId` must not be set. One of `projectId`, `issueTypeId`, or `viewType` can act as a wildcard. Supported Agent views:
+     *
+     *      *  `GICAgentView` \- Agent view variant of Jira global issue create
+     *      *  `IssueViewAgentView` \- Agent view variant of Jira issue view
+     *      *  `IssueTransitionAgentView` \- Agent view variant of Jira issue transition
      *
      * **[Permissions](#permissions) required:**
      *
@@ -311,6 +326,11 @@ export function createUiModificationsAppsService(ctx: ClientContext) {
      *  *  **Jira Service Management contexts:** For Jira Service Management view types, use `portalId` and `requestTypeId`. Wildcards are not supported. Supported JSM views:
      *
      *      *  `JSMRequestCreate` \- Jira Service Management request create portal view
+     *  *  **Agent view contexts:** For Agent view types, use `projectId` and `issueTypeId` like Jira contexts, and optionally set `requestTypeId`. `portalId` must not be set. One of `projectId`, `issueTypeId`, or `viewType` can act as a wildcard. Supported Agent views:
+     *
+     *      *  `GICAgentView` \- Agent view variant of Jira global issue create
+     *      *  `IssueViewAgentView` \- Agent view variant of Jira issue view
+     *      *  `IssueTransitionAgentView` \- Agent view variant of Jira issue transition
      *
      * **[Permissions](#permissions) required:**
      *

@@ -75,11 +75,11 @@ export function getUser(
  *
  * **Note:** This API does not support Forge apps.
  *
- * If the user exists and has access to Jira, the operation returns a 201 status. If the user exists but does not have access to Jira, the operation returns a 400 status.
+ * If the user exists and has access to Jira, the operation returns a 201 status. If the user exists but does not have access to Jira & no new jira-products are requested, the operation returns a 400 status.
  *
  * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). The caller has to be an **organization admin**.
  *
- * @returns Returned if the request is successful.
+ * @returns Returned if the user already exists and already has the requested Jira product access.
  */
 export function createUser(
   ctx: ClientContext,
@@ -673,11 +673,11 @@ export function createUsersService(ctx: ClientContext) {
      *
      * **Note:** This API does not support Forge apps.
      *
-     * If the user exists and has access to Jira, the operation returns a 201 status. If the user exists but does not have access to Jira, the operation returns a 400 status.
+     * If the user exists and has access to Jira, the operation returns a 201 status. If the user exists but does not have access to Jira & no new jira-products are requested, the operation returns a 400 status.
      *
      * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). The caller has to be an **organization admin**.
      *
-     * @returns Returned if the request is successful.
+     * @returns Returned if the user already exists and already has the requested Jira product access.
      */
     createUser(
       params: NewUserDetails,

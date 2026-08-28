@@ -535,14 +535,16 @@ export function readWorkflows(
  *        "parameters": {
  *          "ruleType": "fieldMatchesRegularExpression",
  *          "regexp": "[0-9]{4}",
- *          "fieldKey": "description"
+ *          "fieldKey": "description",
+ *          "errorMessage": "Description must contain a 4-digit year"
  *        }
  *      }
  *
  * Parameters:
  *
- *  *  `regexp` the regular expression used to validate the field\\u2019s content.
+ *  *  `regexp` the regular expression used to validate the field's content.
  *  *  `fieldKey` the ID of the field to validate. For a custom field, it would look like `customfield_123`.
+ *  *  `errorMessage` the error message to display if the field value does not match the regular expression. A default error message will be shown if you don't provide one (Optional).
  *
  * ###### Date field comparison ######
  *
@@ -1689,14 +1691,16 @@ export function createWorkflowsService(ctx: ClientContext) {
      *        "parameters": {
      *          "ruleType": "fieldMatchesRegularExpression",
      *          "regexp": "[0-9]{4}",
-     *          "fieldKey": "description"
+     *          "fieldKey": "description",
+     *          "errorMessage": "Description must contain a 4-digit year"
      *        }
      *      }
      *
      * Parameters:
      *
-     *  *  `regexp` the regular expression used to validate the field\\u2019s content.
+     *  *  `regexp` the regular expression used to validate the field's content.
      *  *  `fieldKey` the ID of the field to validate. For a custom field, it would look like `customfield_123`.
+     *  *  `errorMessage` the error message to display if the field value does not match the regular expression. A default error message will be shown if you don't provide one (Optional).
      *
      * ###### Date field comparison ######
      *

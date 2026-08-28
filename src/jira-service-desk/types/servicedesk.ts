@@ -385,7 +385,7 @@ export interface ProjectDetails {
   /** The category the project belongs to. */
   projectCategory?: UpdatedProjectCategory;
   /** The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes) of the project. */
-  projectTypeKey?: "software" | "service_desk" | "business";
+  projectTypeKey?: "software" | "service_desk" | "business" | "product_discovery";
   /** The URL of the project details. */
   self?: string;
   /** Whether or not the project is simplified. */

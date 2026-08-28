@@ -1,5 +1,23 @@
 # @narthia/jira-client
 
+## 3.0.2
+
+### Patch Changes
+
+- df4e37d: Synced jira-platform-v2, jira-platform-v3, jira-service-desk with upstream Atlassian OpenAPI specs.
+
+  - Changed 5 existing export signature(s).
+
+  Changed:
+
+  - `./jira-platform-v2/types/common#Project`
+  - `./jira-platform-v2/types/common#ProjectDetails`
+  - `./jira-platform-v3/types/common#Project`
+  - `./jira-platform-v3/types/common#ProjectDetails`
+  - `./jira-service-desk/types/servicedesk#ProjectDetails`
+
+  `projectTypeKey` now includes `product_discovery` for Jira Product Discovery projects. Workflow validator JSDoc documents the optional `errorMessage` parameter for `fieldMatchesRegularExpression` rules.
+
 ## 3.0.1
 
 ### Patch Changes

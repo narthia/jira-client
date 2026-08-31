@@ -361,6 +361,7 @@ export function countIssues(
  * @param params.fieldsByKeys - Reference fields by their key (rather than ID). The default is `false`.
  * @param params.failFast - Fail this request early if we can't retrieve all field data.
  * @param params.reconcileIssues - Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages.
+ * @param params.includeArchivedProjects - Whether to also return issues that belong to [archived projects](https://support.atlassian.com/jira-cloud-administration/docs/archive-a-project/). Issues in archived projects are excluded by default. Setting this to `true` returns them alongside issues from active projects; the *Browse projects* permission is still required on the archived project. The default is `false`.
  * @returns Returned if the request is successful.
  */
 export function searchAndReconsileIssuesUsingJql(
@@ -459,6 +460,12 @@ export function searchAndReconsileIssuesUsingJql(
     failFast?: boolean;
     /** Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. */
     reconcileIssues?: number[];
+    /**
+     * Whether to also return issues that belong to [archived projects](https://support.atlassian.com/jira-cloud-administration/docs/archive-a-project/). Issues in archived projects are excluded by default. Setting this to `true` returns them alongside issues from active projects; the *Browse projects* permission is still required on the archived project. The default is `false`.
+     *
+     * @default false
+     */
+    includeArchivedProjects?: boolean;
   },
   options?: {
     headers?: Record<string, string | number | boolean>;
@@ -476,6 +483,7 @@ export function searchAndReconsileIssuesUsingJql(
     fieldsByKeys,
     failFast,
     reconcileIssues,
+    includeArchivedProjects,
   } = params ?? {};
   return ctx.request({
     method: "get",
@@ -490,6 +498,7 @@ export function searchAndReconsileIssuesUsingJql(
       fieldsByKeys,
       failFast,
       reconcileIssues,
+      includeArchivedProjects,
     },
     headers: options?.headers,
     signal: options?.signal,
@@ -809,6 +818,7 @@ export function createIssueSearchService(ctx: ClientContext) {
      * @param params.fieldsByKeys - Reference fields by their key (rather than ID). The default is `false`.
      * @param params.failFast - Fail this request early if we can't retrieve all field data.
      * @param params.reconcileIssues - Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages.
+     * @param params.includeArchivedProjects - Whether to also return issues that belong to [archived projects](https://support.atlassian.com/jira-cloud-administration/docs/archive-a-project/). Issues in archived projects are excluded by default. Setting this to `true` returns them alongside issues from active projects; the *Browse projects* permission is still required on the archived project. The default is `false`.
      * @returns Returned if the request is successful.
      */
     searchAndReconsileIssuesUsingJql(
@@ -906,6 +916,12 @@ export function createIssueSearchService(ctx: ClientContext) {
         failFast?: boolean;
         /** Strong consistency issue ids to be reconciled with search results. Accepts max 50 ids. This list of ids should be consistent with each paginated request across different pages. */
         reconcileIssues?: number[];
+        /**
+         * Whether to also return issues that belong to [archived projects](https://support.atlassian.com/jira-cloud-administration/docs/archive-a-project/). Issues in archived projects are excluded by default. Setting this to `true` returns them alongside issues from active projects; the *Browse projects* permission is still required on the archived project. The default is `false`.
+         *
+         * @default false
+         */
+        includeArchivedProjects?: boolean;
       },
       options?: {
         headers?: Record<string, string | number | boolean>;

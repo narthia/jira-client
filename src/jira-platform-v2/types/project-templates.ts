@@ -964,6 +964,8 @@ export interface StatusPayload {
   /** The conflict strategy for the status already exists. FAIL - Fail execution, this always needs to be unique; USE - Use the existing entity and ignore new entity parameters; NEW - Create a new entity */
   onConflict?: "FAIL" | "USE" | "NEW";
   pcri?: ProjectCreateResourceIdentifier;
+  /** The scope of the status. Set to GLOBAL to make the status shared across projects. Leave null for the default (project-scoped) behaviour. */
+  scope?: "GLOBAL";
   /** The status category of the status. The value is case-sensitive. */
   statusCategory?: "TODO" | "IN_PROGRESS" | "DONE";
 }

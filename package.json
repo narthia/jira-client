@@ -94,7 +94,7 @@
     "check": "vp check",
     "check:fix": "vp check --fix",
     "dev": "vp pack --watch",
-    "generate": "openapi-sdk-generator -c ./narthia.config.ts",
+    "generate": "openapi-sdk-generator -c ./narthia.config.ts && bun run check:fix",
     "prepublishOnly": "vp run check && vp run build",
     "spec-sync": "node spec-sync/sync.ts",
     "spec-sync:baseline": "node spec-sync/sync.ts --write-baseline",

@@ -95,6 +95,8 @@ export interface SearchAndReconcileRequestBean {
   fields?: string[];
   /** Reference fields by their key (rather than ID). The default is `false`. */
   fieldsByKeys?: boolean;
+  /** Whether to also return issues that belong to archived projects. Archived projects are excluded by default. Requires *Browse projects* permission on the archived project. The default is `false`. */
+  includeArchivedProjects?: boolean;
   /**
    * A [JQL](https://confluence.atlassian.com/x/egORLQ) expression. For performance reasons, this parameter requires a bounded query. A bounded query is a query with a search restriction.
    *

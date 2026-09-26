@@ -114,7 +114,7 @@ export interface CreateProjectDetails {
     | "com.atlassian.jira-core-project-templates:jira-core-simplified-task-"
     | "com.atlassian.jcs:customer-service-management";
   /** The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes), which defines the application-specific feature set. If you don't specify the project template you have to specify the project type. */
-  projectTypeKey?: "software" | "service_desk" | "business";
+  projectTypeKey?: "software" | "service_desk" | "business" | "customer_service";
   /** A link to information about this project, such as project documentation */
   url?: string;
   /**

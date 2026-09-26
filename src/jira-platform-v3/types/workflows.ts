@@ -477,6 +477,16 @@ export interface WorkflowCompoundCondition {
 /** The workflow transition rule conditions tree. */
 export type WorkflowCondition = WorkflowSimpleCondition | WorkflowCompoundCondition;
 
+/** The copy workflow payload. */
+export interface WorkflowCopyRequest {
+  /** The description of the new workflow to create. Defaults to an empty description. */
+  description?: string;
+  /** The ID of the workflow to copy. */
+  workflowId: string;
+  /** The name of the new workflow to create. */
+  workflowName: string;
+}
+
 /** The details of the workflows to create. */
 export interface WorkflowCreate {
   /** The description of the workflow to create. */

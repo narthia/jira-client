@@ -5,6 +5,7 @@ import type {
   DefaultWorkflowEditorResponse,
   PageBeanWorkflow,
   WorkflowCapabilities,
+  WorkflowCopyRequest,
   WorkflowCreateRequest,
   WorkflowCreateResponse,
   WorkflowCreateValidateRequest,
@@ -984,6 +985,39 @@ export function workflowCapabilities(
     path: "/rest/api/3/workflows/capabilities",
     query: { workflowId, projectId, issueTypeId },
     headers: options?.headers,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
+
+/**
+ * Copy workflow
+ *
+ * Copies an existing workflow, and the statuses it uses, into a new workflow with the given name. The copy is created in the same scope as the workflow it is copied from. If no description is provided, the copy is created with an empty description.
+ *
+ * Copying a workflow requires permission both to read the workflow being copied and to create the copy, which is created in the same scope as its source.
+ *
+ * **[Permissions](#permissions) required:**
+ *
+ *  *  *Administer Jira* global permission to copy all, including project-scoped, workflows
+ *  *  To copy a project-scoped workflow, either the *Edit workflows* project permission, or both the *View (read-only) workflow* and *Administer projects* project permissions
+ *
+ * @returns Returned if the request is successful.
+ */
+export function copyWorkflow(
+  ctx: ClientContext,
+  params: WorkflowCopyRequest,
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<WorkflowCreateResponse> {
+  return ctx.request({
+    method: "post",
+    path: "/rest/api/3/workflows/copy",
+    headers: options?.headers,
+    body: params,
     signal: options?.signal,
     extensions: options?.extensions,
   });
@@ -2134,6 +2168,31 @@ export function createWorkflowsService(ctx: ClientContext) {
       }
     ): Promise<WorkflowCapabilities> {
       return workflowCapabilities(ctx, params, options);
+    },
+
+    /**
+     * Copy workflow
+     *
+     * Copies an existing workflow, and the statuses it uses, into a new workflow with the given name. The copy is created in the same scope as the workflow it is copied from. If no description is provided, the copy is created with an empty description.
+     *
+     * Copying a workflow requires permission both to read the workflow being copied and to create the copy, which is created in the same scope as its source.
+     *
+     * **[Permissions](#permissions) required:**
+     *
+     *  *  *Administer Jira* global permission to copy all, including project-scoped, workflows
+     *  *  To copy a project-scoped workflow, either the *Edit workflows* project permission, or both the *View (read-only) workflow* and *Administer projects* project permissions
+     *
+     * @returns Returned if the request is successful.
+     */
+    copyWorkflow(
+      params: WorkflowCopyRequest,
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<WorkflowCreateResponse> {
+      return copyWorkflow(ctx, params, options);
     },
 
     /**

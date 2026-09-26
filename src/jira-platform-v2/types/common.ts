@@ -1417,7 +1417,7 @@ export interface Project {
   projectCategory?: ProjectCategory;
   /** The [project type](https://confluence.atlassian.com/x/GwiiLQ#Jiraapplicationsoverview-Productfeaturesandprojecttypes) of the project. */
   projectTypeKey?: "software" | "service_desk" | "business" | "product_discovery";
-  /** Map of project properties */
+  /** Map of project properties. Only the properties named in the request's properties query parameter are returned, so this is an empty object when that parameter is omitted. */
   properties?: Record<string, unknown>;
   /**
    * The date when the project is deleted permanently.

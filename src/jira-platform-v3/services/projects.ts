@@ -82,6 +82,7 @@ export function getAllProjects(
  *  *  Jira Core, the default, enables `business` projects.
  *  *  Jira Service Management enables `service_desk` projects.
  *  *  Jira Software enables `software` projects.
+ *  *  Jira Customer Service enables `customer_service` projects.
  *
  * To determine which features are installed, go to **Jira settings** > **Apps** > **Manage apps** and review the System Apps list. To add Jira Software or Jira Service Management into a JIRA instance, use **Jira settings** > **Apps** > **Finding new apps**. For more information, see [ Managing add-ons](https://confluence.atlassian.com/x/S31NLg).
  *
@@ -357,7 +358,7 @@ export function searchProjects(
  *
  * @param params.projectIdOrKey - The project ID or project key (case sensitive).
  * @param params.expand - Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Note that the project description, issue types, and project lead are included in all responses by default. Expand options include: *  `description` The project description. *  `issueTypes` The issue types associated with the project. *  `lead` The project lead. *  `projectKeys` All project keys associated with the project. *  `issueTypeHierarchy` The project issue type hierarchy.
- * @param params.properties - A list of project properties to return for the project. This parameter accepts a comma-separated list.
+ * @param params.properties - A list of project properties to return for the project. This parameter accepts a comma-separated list. Note that only the properties named here are returned in `properties` in the response; that object is empty when this parameter is omitted.
  * @returns Returned if successful.
  */
 export function getProject(
@@ -375,7 +376,7 @@ export function getProject(
      *  *  `issueTypeHierarchy` The project issue type hierarchy.
      */
     expand?: string;
-    /** A list of project properties to return for the project. This parameter accepts a comma-separated list. */
+    /** A list of project properties to return for the project. This parameter accepts a comma-separated list. Note that only the properties named here are returned in `properties` in the response; that object is empty when this parameter is omitted. */
     properties?: string[];
   },
   options?: {
@@ -795,6 +796,7 @@ export function createProjectsService(ctx: ClientContext) {
      *  *  Jira Core, the default, enables `business` projects.
      *  *  Jira Service Management enables `service_desk` projects.
      *  *  Jira Software enables `software` projects.
+     *  *  Jira Customer Service enables `customer_service` projects.
      *
      * To determine which features are installed, go to **Jira settings** > **Apps** > **Manage apps** and review the System Apps list. To add Jira Software or Jira Service Management into a JIRA instance, use **Jira settings** > **Apps** > **Finding new apps**. For more information, see [ Managing add-ons](https://confluence.atlassian.com/x/S31NLg).
      *
@@ -1016,7 +1018,7 @@ export function createProjectsService(ctx: ClientContext) {
      *
      * @param params.projectIdOrKey - The project ID or project key (case sensitive).
      * @param params.expand - Use [expand](#expansion) to include additional information in the response. This parameter accepts a comma-separated list. Note that the project description, issue types, and project lead are included in all responses by default. Expand options include: *  `description` The project description. *  `issueTypes` The issue types associated with the project. *  `lead` The project lead. *  `projectKeys` All project keys associated with the project. *  `issueTypeHierarchy` The project issue type hierarchy.
-     * @param params.properties - A list of project properties to return for the project. This parameter accepts a comma-separated list.
+     * @param params.properties - A list of project properties to return for the project. This parameter accepts a comma-separated list. Note that only the properties named here are returned in `properties` in the response; that object is empty when this parameter is omitted.
      * @returns Returned if successful.
      */
     getProject(
@@ -1033,7 +1035,7 @@ export function createProjectsService(ctx: ClientContext) {
          *  *  `issueTypeHierarchy` The project issue type hierarchy.
          */
         expand?: string;
-        /** A list of project properties to return for the project. This parameter accepts a comma-separated list. */
+        /** A list of project properties to return for the project. This parameter accepts a comma-separated list. Note that only the properties named here are returned in `properties` in the response; that object is empty when this parameter is omitted. */
         properties?: string[];
       },
       options?: {

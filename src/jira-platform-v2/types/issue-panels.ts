@@ -11,6 +11,36 @@ export interface ForgePanelProjectPinRequest {
   projectList: ProjectPinAction[];
 }
 
+/** The pin status of an issue panel (added by a Forge app) for a single project. */
+export interface ForgePanelProjectPinStatus {
+  /** The reason the pin status could not be read for the project. Null if the pin status was read successfully. */
+  error?: string;
+  /** Whether the issue panel is currently pinned to the project. */
+  pinned?: boolean;
+  /**
+   * The time the issue panel was pinned to the project, in epoch milliseconds.
+   *
+   * @format int64
+   */
+  pinnedAt?: number;
+  /** The project ID or key supplied in the request. */
+  projectIdOrKey?: string;
+}
+
+export interface ForgePanelProjectPinStatusRequest {
+  /** The moduleId of the Forge panel in the format `ari:cloud:ecosystem::extension/{app-id}/{environment-id}/static/{module-key}` */
+  moduleId: string;
+  /** The IDs or keys of the projects to check the issue panel pin status for. */
+  projectList: string[];
+}
+
+export interface ForgePanelProjectPinStatusResponse {
+  /** The moduleId of the Forge panel that was requested. */
+  moduleId?: string;
+  /** The pin status of the issue panel, with one entry per requested project. */
+  statuses?: ForgePanelProjectPinStatus[];
+}
+
 /** The list of projects to pin or unpin the issue panel to or from. */
 export interface ProjectPinAction {
   /** The action to perform: PIN or UNPIN. */

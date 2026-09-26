@@ -4,6 +4,8 @@ import type { ClientContext } from "../../client/index.ts";
 import type {
   ForgePanelProjectPinAsyncResponse,
   ForgePanelProjectPinRequest,
+  ForgePanelProjectPinStatusRequest,
+  ForgePanelProjectPinStatusResponse,
 } from "../types/index.ts";
 
 /**
@@ -36,6 +38,36 @@ export function bulkPinUnpinProjectsAsync(
   });
 }
 
+/**
+ * Get issue panel pin status for projects
+ *
+ * Get the pin status of an issue panel (added by a Forge app) for multiple projects.
+ *
+ * The operation is read-only and runs synchronously. Projects that do not exist, or that you do not have permission to access, are returned in the response with the panel reported as not pinned and the reason in the `error` field; the request itself still succeeds.
+ *
+ * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+ *
+ * @returns Returned if the request is successful.
+ */
+export function getBulkPinStatus(
+  ctx: ClientContext,
+  params: ForgePanelProjectPinStatusRequest,
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<ForgePanelProjectPinStatusResponse> {
+  return ctx.request({
+    method: "post",
+    path: "/rest/api/3/forge/panel/action/bulk/status",
+    headers: options?.headers,
+    body: params,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
+
 /** This resource supports bulk pinning and unpinning of [issue panels](https://developer.atlassian.com/platform/forge/) that are added by a Forge app. Only Jira administrators can use it. */
 export function createIssuePanelsService(ctx: ClientContext) {
   return {
@@ -59,6 +91,28 @@ export function createIssuePanelsService(ctx: ClientContext) {
       }
     ): Promise<ForgePanelProjectPinAsyncResponse> {
       return bulkPinUnpinProjectsAsync(ctx, params, options);
+    },
+
+    /**
+     * Get issue panel pin status for projects
+     *
+     * Get the pin status of an issue panel (added by a Forge app) for multiple projects.
+     *
+     * The operation is read-only and runs synchronously. Projects that do not exist, or that you do not have permission to access, are returned in the response with the panel reported as not pinned and the reason in the `error` field; the request itself still succeeds.
+     *
+     * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
+     *
+     * @returns Returned if the request is successful.
+     */
+    getBulkPinStatus(
+      params: ForgePanelProjectPinStatusRequest,
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<ForgePanelProjectPinStatusResponse> {
+      return getBulkPinStatus(ctx, params, options);
     },
   };
 }

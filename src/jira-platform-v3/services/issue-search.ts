@@ -86,7 +86,7 @@ export function getIssuePickerResource(
 /**
  * Check issues against JQL
  *
- * Checks whether one or more issues would be returned by one or more JQL queries.
+ * Checks whether one or more issues would be returned by one or more JQL queries. Up to 10 JQL queries can be specified and up to 50 issue IDs included in the request.
  *
  * **[Permissions](#permissions) required:** None, however, issues are only matched against JQL queries where the user has:
  *
@@ -596,7 +596,7 @@ export function createIssueSearchService(ctx: ClientContext) {
     /**
      * Check issues against JQL
      *
-     * Checks whether one or more issues would be returned by one or more JQL queries.
+     * Checks whether one or more issues would be returned by one or more JQL queries. Up to 10 JQL queries can be specified and up to 50 issue IDs included in the request.
      *
      * **[Permissions](#permissions) required:** None, however, issues are only matched against JQL queries where the user has:
      *

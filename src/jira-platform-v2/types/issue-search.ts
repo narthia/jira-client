@@ -37,9 +37,9 @@ export interface IssuePickerSuggestionsIssueType {
 
 /** List of issues and JQL queries. */
 export interface IssuesAndJqlQueries {
-  /** A list of issue IDs. */
+  /** A list of up to 50 issue IDs. */
   issueIds: number[];
-  /** A list of JQL queries. */
+  /** A list of up to 10 JQL queries. */
   jqls: string[];
 }
 

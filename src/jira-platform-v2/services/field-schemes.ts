@@ -121,6 +121,8 @@ export function createFieldAssociationScheme(
  *
  * Update fields associated with field association schemes.
  *
+ * **Request body limits:** a single request can update associations for at most **100 fields** (the top-level field ID keys of the request body), and each field association item may reference at most 50 field schemes. Exceeding a limit returns a 400 response with an error such as "The fieldIds must contain no more than 100 items."
+ *
  * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
  *
  * @returns Returned if the field association update was successful.
@@ -177,6 +179,8 @@ export function removeFieldsAssociatedWithSchemes(
  *
  * Update field association item parameters in field association schemes.
  *
+ * **Request body limits:** a single request can update parameters for at most **100 fields** (the top-level field ID keys of the request body). In addition, each field may include at most 50 update items, and each update item may reference at most 50 field schemes. Exceeding any of these limits returns a 400 response with an error such as "The fieldIds must contain no more than 100 items."
+ *
  * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
  *
  * @returns Returned if the field parameter update was successful.
@@ -204,6 +208,8 @@ export function updateFieldAssociationSchemeItemParameters(
  * Remove field parameters
  *
  * Remove field association parameters overrides for work types.
+ *
+ * **Request body limits:** a single request can remove at most **100 parameters**. The number of removals is counted as the sum, across every removal entry, of the number of work types multiplied by the number of parameter names in that entry. Exceeding this limit returns a 400 response with the error "Request exceeds maximum number of parameters that can be removed 100".
  *
  * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
  *
@@ -686,6 +692,8 @@ export function createFieldSchemesService(ctx: ClientContext) {
      *
      * Update fields associated with field association schemes.
      *
+     * **Request body limits:** a single request can update associations for at most **100 fields** (the top-level field ID keys of the request body), and each field association item may reference at most 50 field schemes. Exceeding a limit returns a 400 response with an error such as "The fieldIds must contain no more than 100 items."
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
      *
      * @returns Returned if the field association update was successful.
@@ -726,6 +734,8 @@ export function createFieldSchemesService(ctx: ClientContext) {
      *
      * Update field association item parameters in field association schemes.
      *
+     * **Request body limits:** a single request can update parameters for at most **100 fields** (the top-level field ID keys of the request body). In addition, each field may include at most 50 update items, and each update item may reference at most 50 field schemes. Exceeding any of these limits returns a 400 response with an error such as "The fieldIds must contain no more than 100 items."
+     *
      * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
      *
      * @returns Returned if the field parameter update was successful.
@@ -745,6 +755,8 @@ export function createFieldSchemesService(ctx: ClientContext) {
      * Remove field parameters
      *
      * Remove field association parameters overrides for work types.
+     *
+     * **Request body limits:** a single request can remove at most **100 parameters**. The number of removals is counted as the sum, across every removal entry, of the number of work types multiplied by the number of parameter names in that entry. Exceeding this limit returns a 400 response with the error "Request exceeds maximum number of parameters that can be removed 100".
      *
      * **[Permissions](#permissions) required:** *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg).
      *

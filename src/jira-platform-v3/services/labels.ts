@@ -10,6 +10,8 @@ import type { PageBeanString } from "../types/index.ts";
  *
  * @param params.startAt - The index of the first item to return in a page of results (page offset).
  * @param params.maxResults - The maximum number of items to return per page.
+ * @param params.query - Case-insensitive prefix used to filter labels before pagination.
+ * @param params.scope - RECENT\_PROJECTS or ALL\_BROWSEABLE\_PROJECTS. Omitted scope retains the unbounded search. Blank or unrecognised values use ALL\_BROWSEABLE\_PROJECTS.
  * @returns Returned if the request is successful.
  */
 export function getAllLabels(
@@ -29,6 +31,10 @@ export function getAllLabels(
      * @format int32
      */
     maxResults?: number;
+    /** Case-insensitive prefix used to filter labels before pagination. */
+    query?: string;
+    /** RECENT\_PROJECTS or ALL\_BROWSEABLE\_PROJECTS. Omitted scope retains the unbounded search. Blank or unrecognised values use ALL\_BROWSEABLE\_PROJECTS. */
+    scope?: string;
   },
   options?: {
     headers?: Record<string, string | number | boolean>;
@@ -36,11 +42,11 @@ export function getAllLabels(
     extensions?: Record<string, unknown>;
   }
 ): Promise<PageBeanString> {
-  const { startAt, maxResults } = params ?? {};
+  const { startAt, maxResults, query, scope } = params ?? {};
   return ctx.request({
     method: "get",
     path: "/rest/api/3/label",
-    query: { startAt, maxResults },
+    query: { startAt, maxResults, query, scope },
     headers: options?.headers,
     signal: options?.signal,
     extensions: options?.extensions,
@@ -57,6 +63,8 @@ export function createLabelsService(ctx: ClientContext) {
      *
      * @param params.startAt - The index of the first item to return in a page of results (page offset).
      * @param params.maxResults - The maximum number of items to return per page.
+     * @param params.query - Case-insensitive prefix used to filter labels before pagination.
+     * @param params.scope - RECENT\_PROJECTS or ALL\_BROWSEABLE\_PROJECTS. Omitted scope retains the unbounded search. Blank or unrecognised values use ALL\_BROWSEABLE\_PROJECTS.
      * @returns Returned if the request is successful.
      */
     getAllLabels(
@@ -75,6 +83,10 @@ export function createLabelsService(ctx: ClientContext) {
          * @format int32
          */
         maxResults?: number;
+        /** Case-insensitive prefix used to filter labels before pagination. */
+        query?: string;
+        /** RECENT\_PROJECTS or ALL\_BROWSEABLE\_PROJECTS. Omitted scope retains the unbounded search. Blank or unrecognised values use ALL\_BROWSEABLE\_PROJECTS. */
+        scope?: string;
       },
       options?: {
         headers?: Record<string, string | number | boolean>;

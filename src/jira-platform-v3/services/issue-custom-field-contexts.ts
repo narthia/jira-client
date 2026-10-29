@@ -2,8 +2,10 @@
 
 import type { ClientContext } from "../../client/index.ts";
 import type {
+  AddIssueTypesToContext,
   CreateCustomFieldContext,
   CustomFieldContextDefaultValueUpdate,
+  CustomFieldContextDefaultValuesUpdate,
   CustomFieldContextUpdateDetails,
   IssueTypeIds,
   PageBeanContextDefaultValues,
@@ -137,6 +139,7 @@ export function createCustomFieldContext(
  *  *  `CustomFieldContextDefaultValueLabels` (type `labels`) for labels.
  *  *  `CustomFieldContextDefaultValueTextField` (type `textfield`) for text fields.
  *  *  `CustomFieldContextDefaultValueTextArea` (type `textarea`) for text area fields.
+ *  *  `CustomFieldContextDefaultValueLongText` (type `longtext`) for plain text paragraph fields.
  *  *  `CustomFieldContextDefaultValueReadOnly` (type `readonly`) for read only (text) fields.
  *  *  `CustomFieldContextDefaultValueMultipleVersion` (type `version.multiple`) for single choice version pickers.
  *  *  `CustomFieldContextDefaultValueSingleVersion` (type `version.single`) for multiple choice version pickers.
@@ -224,6 +227,7 @@ export function getDefaultValues(
  *  *  `CustomFieldContextDefaultValueLabels` (type `labels`) for labels.
  *  *  `CustomFieldContextDefaultValueTextField` (type `textfield`) for text fields.
  *  *  `CustomFieldContextDefaultValueTextArea` (type `textarea`) for text area fields.
+ *  *  `CustomFieldContextDefaultValueLongText` (type `longtext`) for plain text paragraph fields.
  *  *  `CustomFieldContextDefaultValueReadOnly` (type `readonly`) for read only (text) fields.
  *  *  `CustomFieldContextDefaultValueMultipleVersion` (type `version.multiple`) for single choice version pickers.
  *  *  `CustomFieldContextDefaultValueSingleVersion` (type `version.single`) for multiple choice version pickers.
@@ -331,6 +335,42 @@ export function getContextDefaultValues(
     pathParams: { fieldId },
     query: { contextId, issueTypeId, startAt, maxResults },
     headers: options?.headers,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
+
+/**
+ * Set default values for a custom field by context and issue type
+ *
+ * Updates default values for individual issue types in custom field contexts.
+ *
+ * Only tenants enrolled in the early access program (EAP) can access this resource. See the [EAP announcement](https://ecosystem.atlassian.net/browse/CHANGE-3082) for details.
+ *
+ * Each entry targets either one issue type through \{@code issueTypeId\}, or the catch-all configuration through \{@code isAnyIssueType=true\}. A null value removes the default for that target. Entries not included in the request are left unchanged.
+ *
+ * @param params.fieldId - The ID of the custom field, for example \{@code customfield\_10000\}.
+ * @returns Returned if all default values were updated successfully.
+ */
+export function setContextDefaultValues(
+  ctx: ClientContext,
+  params: CustomFieldContextDefaultValuesUpdate & {
+    /** The ID of the custom field, for example \{@code customfield\_10000\}. */
+    fieldId: string;
+  },
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<unknown> {
+  const { fieldId, ...body } = params;
+  return ctx.request({
+    method: "put",
+    path: "/rest/api/3/field/{fieldId}/context/defaultValues",
+    pathParams: { fieldId },
+    headers: options?.headers,
+    body: body,
     signal: options?.signal,
     extensions: options?.extensions,
   });
@@ -589,7 +629,7 @@ export function deleteCustomFieldContext(
  *
  * Adds issue types to a custom field context, appending the issue types to the issue types list.
  *
- * A custom field context without any issue types applies to all issue types. Adding issue types to such a custom field context would result in it applying to only the listed issue types.
+ * A custom field context without any issue types applies to all issue types. Adding issue types replaces the any-issue-type mapping unless \{@code isAnyIssueType\} is true. A supplied \{@code defaultValue\} applies to newly added mappings. If omitted, the default value of the first existing issue type mapping is copied. Existing mappings retain their defaults.
  *
  * If any of the issue types exists in the custom field context, the operation fails and no issue types are added.
  *
@@ -603,7 +643,7 @@ export function deleteCustomFieldContext(
  */
 export function addIssueTypesToContext(
   ctx: ClientContext,
-  params: IssueTypeIds & {
+  params: AddIssueTypesToContext & {
     /** The ID of the custom field. */
     fieldId: string;
     /**
@@ -877,6 +917,7 @@ export function createIssueCustomFieldContextsService(ctx: ClientContext) {
      *  *  `CustomFieldContextDefaultValueLabels` (type `labels`) for labels.
      *  *  `CustomFieldContextDefaultValueTextField` (type `textfield`) for text fields.
      *  *  `CustomFieldContextDefaultValueTextArea` (type `textarea`) for text area fields.
+     *  *  `CustomFieldContextDefaultValueLongText` (type `longtext`) for plain text paragraph fields.
      *  *  `CustomFieldContextDefaultValueReadOnly` (type `readonly`) for read only (text) fields.
      *  *  `CustomFieldContextDefaultValueMultipleVersion` (type `version.multiple`) for single choice version pickers.
      *  *  `CustomFieldContextDefaultValueSingleVersion` (type `version.single`) for multiple choice version pickers.
@@ -954,6 +995,7 @@ export function createIssueCustomFieldContextsService(ctx: ClientContext) {
      *  *  `CustomFieldContextDefaultValueLabels` (type `labels`) for labels.
      *  *  `CustomFieldContextDefaultValueTextField` (type `textfield`) for text fields.
      *  *  `CustomFieldContextDefaultValueTextArea` (type `textarea`) for text area fields.
+     *  *  `CustomFieldContextDefaultValueLongText` (type `longtext`) for plain text paragraph fields.
      *  *  `CustomFieldContextDefaultValueReadOnly` (type `readonly`) for read only (text) fields.
      *  *  `CustomFieldContextDefaultValueMultipleVersion` (type `version.multiple`) for single choice version pickers.
      *  *  `CustomFieldContextDefaultValueSingleVersion` (type `version.single`) for multiple choice version pickers.
@@ -1044,6 +1086,32 @@ export function createIssueCustomFieldContextsService(ctx: ClientContext) {
       }
     ): Promise<PageBeanContextDefaultValues> {
       return getContextDefaultValues(ctx, params, options);
+    },
+
+    /**
+     * Set default values for a custom field by context and issue type
+     *
+     * Updates default values for individual issue types in custom field contexts.
+     *
+     * Only tenants enrolled in the early access program (EAP) can access this resource. See the [EAP announcement](https://ecosystem.atlassian.net/browse/CHANGE-3082) for details.
+     *
+     * Each entry targets either one issue type through \{@code issueTypeId\}, or the catch-all configuration through \{@code isAnyIssueType=true\}. A null value removes the default for that target. Entries not included in the request are left unchanged.
+     *
+     * @param params.fieldId - The ID of the custom field, for example \{@code customfield\_10000\}.
+     * @returns Returned if all default values were updated successfully.
+     */
+    setContextDefaultValues(
+      params: CustomFieldContextDefaultValuesUpdate & {
+        /** The ID of the custom field, for example \{@code customfield\_10000\}. */
+        fieldId: string;
+      },
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<unknown> {
+      return setContextDefaultValues(ctx, params, options);
     },
 
     /**
@@ -1249,7 +1317,7 @@ export function createIssueCustomFieldContextsService(ctx: ClientContext) {
      *
      * Adds issue types to a custom field context, appending the issue types to the issue types list.
      *
-     * A custom field context without any issue types applies to all issue types. Adding issue types to such a custom field context would result in it applying to only the listed issue types.
+     * A custom field context without any issue types applies to all issue types. Adding issue types replaces the any-issue-type mapping unless \{@code isAnyIssueType\} is true. A supplied \{@code defaultValue\} applies to newly added mappings. If omitted, the default value of the first existing issue type mapping is copied. Existing mappings retain their defaults.
      *
      * If any of the issue types exists in the custom field context, the operation fails and no issue types are added.
      *
@@ -1262,7 +1330,7 @@ export function createIssueCustomFieldContextsService(ctx: ClientContext) {
      * @returns Returned if operation is successful.
      */
     addIssueTypesToContext(
-      params: IssueTypeIds & {
+      params: AddIssueTypesToContext & {
         /** The ID of the custom field. */
         fieldId: string;
         /**

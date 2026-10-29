@@ -326,6 +326,11 @@ export interface ErrorMessage {
   message: string;
 }
 
+export interface ErrorResponse {
+  errorMessages?: string[];
+  errors?: Record<string, string>;
+}
+
 /** Details about a notification associated with an event. */
 export interface EventNotification {
   /** The email address. */

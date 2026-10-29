@@ -2,6 +2,46 @@
 
 import type { ErrorCollection } from "./common.ts";
 
+export interface AuditEntry {
+  caller?: string;
+  createdAt?: string;
+  filterId?: string;
+  jql?: string;
+  requestUrl?: string;
+  user?: AuditUser;
+  userAgent?: string;
+  validationMessage?: string;
+}
+
+export interface AuditPage {
+  entries?: AuditEntry[];
+  isLast?: boolean;
+  nextPageToken?: string;
+  nextPageURL?: string;
+}
+
+export interface AuditUser {
+  accountId?: string;
+  active?: boolean;
+  avatarUrls?: AuditUserAvatarUrls;
+  displayName?: string;
+  key?: string;
+  name?: string;
+  /** @format uri */
+  self?: string;
+}
+
+export interface AuditUserAvatarUrls {
+  /** @format uri */
+  "16x16"?: string;
+  /** @format uri */
+  "24x24"?: string;
+  /** @format uri */
+  "32x32"?: string;
+  /** @format uri */
+  "48x48"?: string;
+}
+
 /** A field auto-complete suggestion. */
 export interface AutoCompleteSuggestion {
   /** The display name of a suggested item. If `fieldValue` or `predicateValue` are provided, the matching text is highlighted with the HTML bold tag. */

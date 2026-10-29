@@ -61,6 +61,7 @@ import { createMyselfService } from "./services/myself.ts";
 import { createPermissionSchemesService } from "./services/permission-schemes.ts";
 import { createPermissionsService } from "./services/permissions.ts";
 import { createPlansService } from "./services/plans.ts";
+import { createPoliciesService } from "./services/policies.ts";
 import { createPrioritySchemesService } from "./services/priority-schemes.ts";
 import { createProjectAvatarsService } from "./services/project-avatars.ts";
 import { createProjectCategoriesService } from "./services/project-categories.ts";
@@ -235,6 +236,13 @@ export function createPlatformV2Sdk(config: SdkConfig) {
     groupAndUserPicker: createGroupAndUserPickerService(ctx),
     /** This resource represents license metrics. Use it to get available metrics for Jira licences. */
     licenseMetrics: createLicenseMetricsService(ctx),
+    /**
+     * This resource represents JQL search auto-complete details. Use it to obtain JQL search auto-complete data and suggestions for use in programmatic construction of queries or custom query builders. It also provides operations to:
+     *
+     *  *  convert one or more JQL queries with user identifiers (username or user key) to equivalent JQL queries with account IDs.
+     *  *  convert readable details in one or more JQL queries to IDs where a user doesn't have permission to view the entity whose details are readable.
+     */
+    jql: createJqlService(ctx),
     /** This resource represents various ways to search for issues. Use it to search for issues with a JQL query and find issues to populate an issue picker. */
     issueSearch: createIssueSearchService(ctx),
     /** This resource represents [issue](#api-group-Issues) properties, which provides for storing custom data against an issue. Use it to get, set, and delete issue properties as well as obtain details of all properties on an issue. Operations to bulk update and delete issue properties are also provided. Issue properties are a type of [entity property](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/). */
@@ -309,13 +317,6 @@ export function createPlatformV2Sdk(config: SdkConfig) {
      *  *  update default screen scheme of issue type screen scheme.
      */
     issueTypeScreenSchemes: createIssueTypeScreenSchemesService(ctx),
-    /**
-     * This resource represents JQL search auto-complete details. Use it to obtain JQL search auto-complete data and suggestions for use in programmatic construction of queries or custom query builders. It also provides operations to:
-     *
-     *  *  convert one or more JQL queries with user identifiers (username or user key) to equivalent JQL queries with account IDs.
-     *  *  convert readable details in one or more JQL queries to IDs where a user doesn't have permission to view the entity whose details are readable.
-     */
-    jql: createJqlService(ctx),
     /** This resource represents JQL function's precomputations. Precomputation is a mapping between custom function call and JQL fragment returned by this function. Use it to get and update precomputations. */
     jqlFunctionsApps: createJqlFunctionsAppsService(ctx),
     /** This resource represents available labels. Use it to get available labels for the global label field. */
@@ -354,6 +355,8 @@ export function createPlatformV2Sdk(config: SdkConfig) {
     plans: createPlansService(ctx),
     /** This resource represents planning settings for plan-only and Atlassian teams in a plan. Use it to get, create, update and delete planning settings. */
     teamsInPlan: createTeamsInPlanService(ctx),
+    /** This resource represents policies. Use it to get, create, update, and delete policies, to apply them to and remove them from projects, and to inspect the policies and rules that apply to a project. */
+    policies: createPoliciesService(ctx),
     /** This resource represents issue priorities. Use it to get, create and update issue priorities and details for individual issue priorities. */
     issuePriorities: createIssuePrioritiesService(ctx),
     /** This resource represents issue priority schemes. Use it to get priority schemes and related information, and to create, update and delete priority schemes. */

@@ -2,6 +2,7 @@
 
 import type { ClientContext } from "../../client/index.ts";
 import type {
+  AuditPage,
   AutoCompleteSuggestions,
   ConvertedJqlQueries,
   JqlPersonalDataMigrationRequest,
@@ -12,6 +13,51 @@ import type {
   SanitizedJqlQueries,
   SearchAutoCompleteFilter,
 } from "../types/index.ts";
+
+/**
+ * Get invalid JQL searches
+ *
+ * Returns JQL searches that need updating because Jira can no longer support them. Use the entries to find affected saved filters and JQL used by apps, automations, scripts, or REST integrations.
+ *
+ * Entries are ordered by creation time, newest first, and retained for three days. Pass the `nextPageToken` returned in a previous response to retrieve the next page. Results may be restricted to a user by external account ID.
+ *
+ * **[Permissions](#permissions) required:** *Administer Jira* global permission.
+ *
+ * @param params.userAccountId - The optional external account ID used to restrict the entries returned.
+ * @param params.nextPageToken - The token returned by a previous response to retrieve the next page.
+ * @param params.maxResults - The maximum number of entries to return, from 1 to 100 and defaulting to 50.
+ * @returns Returned when the request is successful.
+ */
+export function getAuditEntries(
+  ctx: ClientContext,
+  params?: {
+    /** The optional external account ID used to restrict the entries returned. */
+    userAccountId?: string;
+    /** The token returned by a previous response to retrieve the next page. */
+    nextPageToken?: string;
+    /**
+     * The maximum number of entries to return, from 1 to 100 and defaulting to 50.
+     *
+     * @format int32
+     */
+    maxResults?: number;
+  },
+  options?: {
+    headers?: Record<string, string | number | boolean>;
+    signal?: AbortSignal;
+    extensions?: Record<string, unknown>;
+  }
+): Promise<AuditPage> {
+  const { userAccountId, nextPageToken, maxResults } = params ?? {};
+  return ctx.request({
+    method: "get",
+    path: "/rest/api/3/invalid-jqls-access-log",
+    query: { userAccountId, nextPageToken, maxResults },
+    headers: options?.headers,
+    signal: options?.signal,
+    extensions: options?.extensions,
+  });
+}
 
 /**
  * Get field reference data (GET)
@@ -251,6 +297,42 @@ export function sanitiseJqlQueries(
  */
 export function createJqlService(ctx: ClientContext) {
   return {
+    /**
+     * Get invalid JQL searches
+     *
+     * Returns JQL searches that need updating because Jira can no longer support them. Use the entries to find affected saved filters and JQL used by apps, automations, scripts, or REST integrations.
+     *
+     * Entries are ordered by creation time, newest first, and retained for three days. Pass the `nextPageToken` returned in a previous response to retrieve the next page. Results may be restricted to a user by external account ID.
+     *
+     * **[Permissions](#permissions) required:** *Administer Jira* global permission.
+     *
+     * @param params.userAccountId - The optional external account ID used to restrict the entries returned.
+     * @param params.nextPageToken - The token returned by a previous response to retrieve the next page.
+     * @param params.maxResults - The maximum number of entries to return, from 1 to 100 and defaulting to 50.
+     * @returns Returned when the request is successful.
+     */
+    getAuditEntries(
+      params?: {
+        /** The optional external account ID used to restrict the entries returned. */
+        userAccountId?: string;
+        /** The token returned by a previous response to retrieve the next page. */
+        nextPageToken?: string;
+        /**
+         * The maximum number of entries to return, from 1 to 100 and defaulting to 50.
+         *
+         * @format int32
+         */
+        maxResults?: number;
+      },
+      options?: {
+        headers?: Record<string, string | number | boolean>;
+        signal?: AbortSignal;
+        extensions?: Record<string, unknown>;
+      }
+    ): Promise<AuditPage> {
+      return getAuditEntries(ctx, params, options);
+    },
+
     /**
      * Get field reference data (GET)
      *
